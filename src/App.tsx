@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
+import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminVehicles from "./pages/admin/AdminVehicles";
@@ -66,12 +67,20 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            {/* Customer sub-pages (to be created) */}
-            {/* <Route path="/dashboard/vehicles/:id" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><CustomerVehicleDetail /></ProtectedRoute>} /> */}
+            {/* Customer sub-pages */}
+            <Route
+              path="/dashboard/vehicles/:id"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "admin"]}>
+                  <CustomerVehicleDetail />
+                </ProtectedRoute>
+              }
+            />
             {/* <Route path="/dashboard/tracking" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><VINTracking /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/quotes" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><QuotesRequests /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/documents" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><Documents /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/profile" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><Profile /></ProtectedRoute>} /> */}
+
 
             {/* ==================== ADMIN ROUTES ==================== */}
             {/* These routes are ONLY accessible by admins */}
