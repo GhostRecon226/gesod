@@ -437,6 +437,7 @@ export type Database = {
         Returns: boolean
       }
       is_owner: { Args: { _user_id: string }; Returns: boolean }
+      track_vin_public: { Args: { p_vin: string }; Returns: Json }
     }
     Enums: {
       account_status: "active" | "suspended"
