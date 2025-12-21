@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Truck,
   Menu,
@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { adminNavGroups } from "@/config/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode;
@@ -37,6 +38,16 @@ export function AdminDashboardLayout({
 }: AdminDashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Admin";
+  const initials = userName.slice(0, 2).toUpperCase();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,15 +127,15 @@ export function AdminDashboardLayout({
               <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-sidebar-accent/50">
                 <div className="h-8 w-8 rounded-full bg-sidebar-accent flex items-center justify-center">
                   <span className="text-xs font-medium text-sidebar-accent-foreground">
-                    AD
+                    {initials}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-sidebar-foreground truncate">
-                    Admin User
+                    {userName}
                   </p>
                   <p className="text-xs text-sidebar-muted truncate">
-                    Super Admin
+                    Administrator
                   </p>
                 </div>
                 <ChevronDown className="h-4 w-4 text-sidebar-muted" />
@@ -136,7 +147,7 @@ export function AdminDashboardLayout({
                 Account Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </DropdownMenuItem>
@@ -188,12 +199,12 @@ export function AdminDashboardLayout({
               <div className="hidden lg:flex items-center gap-3 pl-3 border-l border-border">
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                   <span className="text-xs font-medium text-primary-foreground">
-                    AD
+                    {initials}
                   </span>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Admin</p>
-                  <p className="text-xs text-muted-foreground">Super Admin</p>
+                  <p className="text-sm font-medium text-foreground">{userName}</p>
+                  <p className="text-xs text-muted-foreground">Administrator</p>
                 </div>
               </div>
             </div>

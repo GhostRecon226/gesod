@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Truck,
   Menu,
@@ -19,17 +19,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { customerNavItems } from "@/config/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface CustomerDashboardLayoutProps {
   children: React.ReactNode;
-  userName?: string;
-  userEmail?: string;
 }
 
 export function CustomerDashboardLayout({
   children,
-  userName = "Customer",
-  userEmail = "customer@example.com",
 }: CustomerDashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [notifications] = React.useState([
@@ -38,8 +35,17 @@ export function CustomerDashboardLayout({
     { id: 3, message: "New invoice available", unread: false },
   ]);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   const unreadCount = notifications.filter((n) => n.unread).length;
+  const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Customer";
+  const userEmail = user?.email || "";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -118,6 +124,7 @@ export function CustomerDashboardLayout({
           <Button
             variant="ghost"
             className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground"
+            onClick={handleSignOut}
           >
             <LogOut className="h-4 w-4" />
             Sign Out
@@ -202,7 +209,7 @@ export function CustomerDashboardLayout({
                     <Settings className="h-4 w-4 mr-2" />
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive">
+                  <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </DropdownMenuItem>
