@@ -12,6 +12,7 @@ import {
   ArrowLeft,
   Car,
   Info,
+  ShieldAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,15 @@ import {
   PublicVinTrackingResult,
   maskVin,
 } from "@/services/publicVinTrackingService";
+import { useRateLimiter } from "@/hooks/useRateLimiter";
+
+// Rate limiter config: 10 searches per 5 minutes, max 30 unique VINs per session
+const RATE_LIMIT_CONFIG = {
+  maxRequests: 10,
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  maxUniqueItems: 30,
+  storageKey: "vin-tracking-rate-limit",
+};
 
 // Map database status to StatusBadge status type
 function mapStatus(dbStatus: string): StatusType {
@@ -48,6 +58,8 @@ export default function PublicVinTracking() {
   const [error, setError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [result, setResult] = useState<PublicVinTrackingResult | null>(null);
+  
+  const rateLimiter = useRateLimiter(RATE_LIMIT_CONFIG);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, "");
@@ -66,6 +78,14 @@ export default function PublicVinTracking() {
     const validation = vinSchema.safeParse(vinInput);
     if (!validation.success) {
       setValidationError(validation.error.errors[0]?.message || "Invalid VIN");
+      return;
+    }
+
+    // Check rate limit before making request
+    if (!rateLimiter.checkAndRecord(vinInput)) {
+      setError(
+        "Too many search requests. Please wait a few minutes before trying again."
+      );
       return;
     }
 
@@ -166,7 +186,7 @@ export default function PublicVinTracking() {
                   type="submit"
                   size="lg"
                   className="h-12 px-8"
-                  disabled={isLoading || vinInput.length !== 17}
+                  disabled={isLoading || vinInput.length !== 17 || rateLimiter.isRateLimited}
                 >
                   {isLoading ? (
                     <>
@@ -186,6 +206,16 @@ export default function PublicVinTracking() {
               <p className="text-sm text-muted-foreground text-right">
                 {vinInput.length}/17 characters
               </p>
+
+              {/* Rate Limit Warning */}
+              {rateLimiter.isRateLimited && (
+                <Alert className="border-amber-500/50 bg-amber-500/10">
+                  <ShieldAlert className="h-4 w-4 text-amber-600" />
+                  <AlertDescription className="text-amber-700 dark:text-amber-400">
+                    Search temporarily limited. Please wait a few minutes before trying again.
+                  </AlertDescription>
+                </Alert>
+              )}
 
               {/* Validation Error */}
               {validationError && (
