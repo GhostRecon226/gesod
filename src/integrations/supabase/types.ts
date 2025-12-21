@@ -50,6 +50,50 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          created_at: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          mime_type: string | null
+          uploaded_by: string
+          vin_record_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          uploaded_by: string
+          vin_record_id: string
+        }
+        Update: {
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          mime_type?: string | null
+          uploaded_by?: string
+          vin_record_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_vin_record_id_fkey"
+            columns: ["vin_record_id"]
+            isOneToOne: false
+            referencedRelation: "vin_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_name: string | null
@@ -257,6 +301,7 @@ export type Database = {
       account_status: "active" | "suspended"
       app_role: "admin" | "customer"
       auction_source: "copart" | "iaai" | "other"
+      document_type: "invoice" | "bill_of_lading" | "photo" | "other"
       vehicle_source: "auction" | "direct"
       vehicle_type: "car" | "suv" | "truck"
       vin_status:
@@ -397,6 +442,7 @@ export const Constants = {
       account_status: ["active", "suspended"],
       app_role: ["admin", "customer"],
       auction_source: ["copart", "iaai", "other"],
+      document_type: ["invoice", "bill_of_lading", "photo", "other"],
       vehicle_source: ["auction", "direct"],
       vehicle_type: ["car", "suv", "truck"],
       vin_status: [
