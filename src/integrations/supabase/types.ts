@@ -151,6 +151,54 @@ export type Database = {
           },
         ]
       }
+      vin_records: {
+        Row: {
+          created_at: string
+          current_status: Database["public"]["Enums"]["vin_status"]
+          customer_id: string
+          id: string
+          is_active: boolean
+          updated_at: string
+          vehicle_id: string
+          vin: string
+        }
+        Insert: {
+          created_at?: string
+          current_status?: Database["public"]["Enums"]["vin_status"]
+          customer_id: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          vehicle_id: string
+          vin: string
+        }
+        Update: {
+          created_at?: string
+          current_status?: Database["public"]["Enums"]["vin_status"]
+          customer_id?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          vehicle_id?: string
+          vin?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vin_records_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vin_records_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -176,6 +224,14 @@ export type Database = {
       auction_source: "copart" | "iaai" | "other"
       vehicle_source: "auction" | "direct"
       vehicle_type: "car" | "suv" | "truck"
+      vin_status:
+        | "pending"
+        | "active"
+        | "awaiting_action"
+        | "in_progress"
+        | "delayed"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -308,6 +364,15 @@ export const Constants = {
       auction_source: ["copart", "iaai", "other"],
       vehicle_source: ["auction", "direct"],
       vehicle_type: ["car", "suv", "truck"],
+      vin_status: [
+        "pending",
+        "active",
+        "awaiting_action",
+        "in_progress",
+        "delayed",
+        "completed",
+        "cancelled",
+      ],
     },
   },
 } as const
