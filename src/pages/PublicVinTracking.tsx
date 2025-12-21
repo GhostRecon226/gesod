@@ -11,6 +11,7 @@ import {
   Loader2,
   ArrowLeft,
   Car,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -118,10 +119,31 @@ export default function PublicVinTracking() {
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Track Your Vehicle
           </h1>
-          <p className="text-muted-foreground">
-            Enter your 17-character VIN to view the current status of your shipment
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Enter your 17-character VIN to view the current shipment status as recorded by GESOD RIDES
           </p>
         </div>
+
+        {/* Disclaimer Notice */}
+        <Card className="mb-6 border-border bg-accent/30">
+          <CardContent className="py-4">
+            <div className="flex items-start gap-3">
+              <Info className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p>
+                  <span className="font-medium text-foreground">Status-Based Tracking:</span>{" "}
+                  This service displays milestone updates as recorded by our operations team. 
+                  It does not provide GPS-based location tracking.
+                </p>
+                <p>
+                  Updates are provided by GESOD RIDES based on information received from our 
+                  logistics partners. Timelines shown are indicative and may be affected by 
+                  customs, weather, port congestion, or other external factors beyond our control.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Search Form */}
         <Card className="mb-8">
@@ -338,10 +360,10 @@ export default function PublicVinTracking() {
         {/* Initial State Helper */}
         {!result && !error && !isLoading && (
           <Card className="bg-muted/30 border-dashed">
-            <CardContent className="pt-6 text-center">
+            <CardContent className="py-8 text-center">
               <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
               <p className="text-muted-foreground">
-                Enter a valid 17-character VIN above to track your vehicle shipment
+                Enter a valid 17-character VIN above to view your shipment status
               </p>
               <p className="text-sm text-muted-foreground mt-2">
                 Your VIN can be found on your vehicle documents or dashboard
@@ -349,6 +371,16 @@ export default function PublicVinTracking() {
             </CardContent>
           </Card>
         )}
+
+        {/* Footer Disclaimer */}
+        <div className="mt-12 pt-6 border-t border-border">
+          <p className="text-xs text-muted-foreground text-center max-w-2xl mx-auto">
+            Status information is provided by GESOD RIDES for informational purposes only. 
+            Shipment timelines are estimates and subject to change due to external factors 
+            including but not limited to customs processing, weather conditions, and port operations. 
+            For detailed inquiries, please contact our support team.
+          </p>
+        </div>
       </main>
     </div>
   );
