@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 export type VehicleType = "car" | "suv" | "truck";
 export type VehicleSource = "auction" | "direct";
 export type AuctionSource = "copart" | "iaai" | "other";
+export type VinStatus = "pending" | "active" | "awaiting_action" | "in_progress" | "delayed" | "completed" | "cancelled";
 
 export interface Vehicle {
   id: string;
@@ -18,12 +19,21 @@ export interface Vehicle {
   updated_at: string;
 }
 
+export interface VinRecord {
+  id: string;
+  vin: string;
+  current_status: VinStatus;
+  is_active: boolean;
+  created_at: string;
+}
+
 export interface VehicleWithCustomer extends Vehicle {
   customers: {
     id: string;
     full_name: string;
     email: string;
   };
+  vin_records?: VinRecord[];
 }
 
 export interface CreateVehicleData {
@@ -48,7 +58,7 @@ export interface UpdateVehicleData {
   lot_number?: string | null;
 }
 
-// Fetch all vehicles with customer info (admin only due to RLS)
+// Fetch all vehicles with customer info and VIN records (admin only due to RLS)
 export async function fetchVehicles() {
   const { data, error } = await supabase
     .from("vehicles")
@@ -58,6 +68,13 @@ export async function fetchVehicles() {
         id,
         full_name,
         email
+      ),
+      vin_records (
+        id,
+        vin,
+        current_status,
+        is_active,
+        created_at
       )
     `)
     .order("created_at", { ascending: false });
