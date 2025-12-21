@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PublicVinTracking from "./pages/PublicVinTracking";
 import PublicQuote from "./pages/PublicQuote";
+import OceanFreightQuote from "./pages/OceanFreightQuote";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
@@ -49,6 +50,8 @@ const App = () => (
             {/* Public pages */}
             <Route path="/track" element={<PublicVinTracking />} />
             <Route path="/quote" element={<PublicQuote />} />
+            <Route path="/quote/ocean-freight" element={<OceanFreightQuote />} />
+            {/* <Route path="/quote/inland-freight" element={<InlandFreightQuote />} /> */}
             {/* <Route path="/services" element={<Services />} /> */}
             {/* <Route path="/auctions" element={<Auctions />} /> */}
             {/* <Route path="/contact" element={<Contact />} /> */}

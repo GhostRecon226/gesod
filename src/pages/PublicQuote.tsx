@@ -21,9 +21,10 @@ export default function PublicQuote() {
   const navigate = useNavigate();
 
   const handleContinue = () => {
-    if (selectedType) {
-      // Navigate to the appropriate quote form with the type as a query param
-      navigate(`/quote/request?type=${selectedType}`);
+    if (selectedType === "ocean_freight") {
+      navigate("/quote/ocean-freight");
+    } else if (selectedType === "inland_freight") {
+      navigate("/quote/inland-freight");
     }
   };
 
