@@ -9,6 +9,7 @@ import { RedirectIfAuthenticated } from "@/components/auth/RedirectIfAuthenticat
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PublicVinTracking from "./pages/PublicVinTracking";
+import PublicQuote from "./pages/PublicQuote";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
@@ -47,9 +48,9 @@ const App = () => (
 
             {/* Public pages */}
             <Route path="/track" element={<PublicVinTracking />} />
+            <Route path="/quote" element={<PublicQuote />} />
             {/* <Route path="/services" element={<Services />} /> */}
             {/* <Route path="/auctions" element={<Auctions />} /> */}
-            {/* <Route path="/quote" element={<GetQuote />} /> */}
             {/* <Route path="/contact" element={<Contact />} /> */}
 
             {/* ==================== CUSTOMER ROUTES ==================== */}
