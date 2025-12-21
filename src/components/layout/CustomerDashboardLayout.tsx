@@ -1,17 +1,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
   Truck,
-  Package,
-  FileText,
-  Settings,
-  HelpCircle,
   Menu,
   X,
   LogOut,
   Bell,
   User,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,21 +18,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface NavItem {
-  title: string;
-  href: string;
-  icon: React.ElementType;
-}
-
-const navItems: NavItem[] = [
-  { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { title: "My Vehicles", href: "/dashboard/vehicles", icon: Truck },
-  { title: "Shipments", href: "/dashboard/shipments", icon: Package },
-  { title: "Documents", href: "/dashboard/documents", icon: FileText },
-  { title: "Settings", href: "/dashboard/settings", icon: Settings },
-  { title: "Help & Support", href: "/dashboard/support", icon: HelpCircle },
-];
+import { customerNavItems } from "@/config/navigation";
 
 interface CustomerDashboardLayoutProps {
   children: React.ReactNode;
@@ -98,7 +80,7 @@ export function CustomerDashboardLayout({
 
         {/* Navigation */}
         <nav className="flex flex-col gap-1 p-4">
-          {navItems.map((item) => {
+          {customerNavItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link
