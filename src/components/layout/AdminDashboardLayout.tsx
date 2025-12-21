@@ -1,21 +1,14 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
   Truck,
-  Package,
-  Users,
-  FileText,
-  Settings,
-  BarChart3,
-  Shield,
-  Database,
   Menu,
   X,
   LogOut,
   Bell,
   Search,
   ChevronDown,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,47 +20,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface NavItem {
-  title: string;
-  href: string;
-  icon: React.ElementType;
-}
-
-interface NavGroup {
-  title: string;
-  items: NavItem[];
-}
-
-const navGroups: NavGroup[] = [
-  {
-    title: "Overview",
-    items: [
-      { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
-      { title: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-    ],
-  },
-  {
-    title: "Operations",
-    items: [
-      { title: "Vehicles", href: "/admin/vehicles", icon: Truck },
-      { title: "Shipments", href: "/admin/shipments", icon: Package },
-      { title: "Documents", href: "/admin/documents", icon: FileText },
-    ],
-  },
-  {
-    title: "Management",
-    items: [
-      { title: "Customers", href: "/admin/customers", icon: Users },
-      { title: "Permissions", href: "/admin/permissions", icon: Shield },
-      { title: "Data Export", href: "/admin/export", icon: Database },
-    ],
-  },
-  {
-    title: "System",
-    items: [{ title: "Settings", href: "/admin/settings", icon: Settings }],
-  },
-];
+import { adminNavGroups } from "@/config/navigation";
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode;
@@ -127,7 +80,7 @@ export function AdminDashboardLayout({
 
         {/* Navigation */}
         <nav className="flex flex-col gap-6 p-4 overflow-y-auto max-h-[calc(100vh-8rem)]">
-          {navGroups.map((group) => (
+          {adminNavGroups.map((group) => (
             <div key={group.title}>
               <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
                 {group.title}

@@ -3,18 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Truck, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
-interface NavItem {
-  title: string;
-  href: string;
-}
-
-const navItems: NavItem[] = [
-  { title: "Home", href: "/" },
-  { title: "Services", href: "/services" },
-  { title: "About", href: "/about" },
-  { title: "Contact", href: "/contact" },
-];
+import { publicNavItems } from "@/config/navigation";
 
 interface PublicLayoutProps {
   children: React.ReactNode;
@@ -40,8 +29,8 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:gap-8">
-            {navItems.map((item) => {
+          <div className="hidden md:flex md:items-center md:gap-6">
+            {publicNavItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link
@@ -89,20 +78,21 @@ export function PublicLayout({ children }: PublicLayoutProps) {
         {mobileMenuOpen && (
           <div className="border-t border-border bg-card md:hidden">
             <div className="space-y-1 px-4 py-4">
-              {navItems.map((item) => {
+              {publicNavItems.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
                   <Link
                     key={item.href}
                     to={item.href}
                     className={cn(
-                      "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                      "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                       isActive
                         ? "bg-accent text-primary"
                         : "text-muted-foreground hover:bg-accent hover:text-foreground"
                     )}
                     onClick={() => setMobileMenuOpen(false)}
                   >
+                    <item.icon className="h-4 w-4" />
                     {item.title}
                   </Link>
                 );
@@ -147,7 +137,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
             <div>
               <h4 className="text-sm font-semibold text-foreground">Quick Links</h4>
               <ul className="mt-4 space-y-2">
-                {navItems.map((item) => (
+                {publicNavItems.slice(0, 5).map((item) => (
                   <li key={item.href}>
                     <Link
                       to={item.href}
