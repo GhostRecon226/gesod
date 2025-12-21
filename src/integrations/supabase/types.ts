@@ -124,6 +124,56 @@ export type Database = {
         }
         Relationships: []
       }
+      quote_requests: {
+        Row: {
+          created_at: string
+          customer_id: string
+          destination_location: string
+          id: string
+          origin_location: string
+          quote_amount: number | null
+          quote_status: Database["public"]["Enums"]["quote_status"]
+          quote_type: Database["public"]["Enums"]["quote_type"]
+          updated_at: string
+          valid_until: string | null
+          vehicle_details: string
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          destination_location: string
+          id?: string
+          origin_location: string
+          quote_amount?: number | null
+          quote_status?: Database["public"]["Enums"]["quote_status"]
+          quote_type: Database["public"]["Enums"]["quote_type"]
+          updated_at?: string
+          valid_until?: string | null
+          vehicle_details: string
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          destination_location?: string
+          id?: string
+          origin_location?: string
+          quote_amount?: number | null
+          quote_status?: Database["public"]["Enums"]["quote_status"]
+          quote_type?: Database["public"]["Enums"]["quote_type"]
+          updated_at?: string
+          valid_until?: string | null
+          vehicle_details?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -302,6 +352,8 @@ export type Database = {
       app_role: "admin" | "customer"
       auction_source: "copart" | "iaai" | "other"
       document_type: "invoice" | "bill_of_lading" | "photo" | "other"
+      quote_status: "pending" | "issued" | "expired" | "accepted"
+      quote_type: "ocean_freight" | "inland_freight"
       vehicle_source: "auction" | "direct"
       vehicle_type: "car" | "suv" | "truck"
       vin_status:
@@ -443,6 +495,8 @@ export const Constants = {
       app_role: ["admin", "customer"],
       auction_source: ["copart", "iaai", "other"],
       document_type: ["invoice", "bill_of_lading", "photo", "other"],
+      quote_status: ["pending", "issued", "expired", "accepted"],
+      quote_type: ["ocean_freight", "inland_freight"],
       vehicle_source: ["auction", "direct"],
       vehicle_type: ["car", "suv", "truck"],
       vin_status: [
