@@ -12,6 +12,7 @@ import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminVehicles from "./pages/admin/AdminVehicles";
+import AdminVehicleDetail from "./pages/admin/AdminVehicleDetail";
 import AdminVins from "./pages/admin/AdminVins";
 import NotFound from "./pages/NotFound";
 
@@ -86,6 +87,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminVehicles />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/vehicles/:id"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminVehicleDetail />
                 </ProtectedRoute>
               }
             />
