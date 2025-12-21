@@ -1,6 +1,9 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth, UserRole } from "@/contexts/AuthContext";
-import { Loader2 } from "lucide-react";
+import { useAuthorization } from "@/hooks/useAuthorization";
+import { Loader2, ShieldX } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,6 +12,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, role, loading } = useAuth();
+  const { getRedirectPath } = useAuthorization();
   const location = useLocation();
 
   if (loading) {
@@ -26,9 +30,27 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   // If specific roles are required, check if user has one of them
   if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(role)) {
-    // Redirect to appropriate dashboard based on role
-    const redirectPath = role === "admin" ? "/admin" : "/dashboard";
-    return <Navigate to={redirectPath} replace />;
+    // Show access denied page instead of silent redirect
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-destructive/10 flex items-center justify-center">
+              <ShieldX className="h-6 w-6 text-destructive" />
+            </div>
+            <CardTitle>Access Denied</CardTitle>
+            <CardDescription>
+              You don't have permission to access this page.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Button asChild>
+              <a href={getRedirectPath()}>Go to Dashboard</a>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return <>{children}</>;
