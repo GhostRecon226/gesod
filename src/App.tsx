@@ -12,6 +12,7 @@ import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminVehicles from "./pages/admin/AdminVehicles";
+import AdminVins from "./pages/admin/AdminVins";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -85,6 +86,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminVehicles />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/vins"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminVins />
                 </ProtectedRoute>
               }
             />
