@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { RedirectIfAuthenticated } from "@/components/auth/RedirectIfAuthenticated";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerDashboard from "./pages/CustomerDashboard";
@@ -21,11 +22,29 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* Public Routes */}
+            {/* ==================== PUBLIC ROUTES ==================== */}
+            {/* These routes are accessible to everyone */}
             <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
+            
+            {/* Auth page - redirects to dashboard if already logged in */}
+            <Route
+              path="/auth"
+              element={
+                <RedirectIfAuthenticated>
+                  <Auth />
+                </RedirectIfAuthenticated>
+              }
+            />
 
-            {/* Customer Protected Routes */}
+            {/* Public pages (to be created) */}
+            {/* <Route path="/services" element={<Services />} /> */}
+            {/* <Route path="/auctions" element={<Auctions />} /> */}
+            {/* <Route path="/quote" element={<GetQuote />} /> */}
+            {/* <Route path="/track" element={<TrackVIN />} /> */}
+            {/* <Route path="/contact" element={<Contact />} /> */}
+
+            {/* ==================== CUSTOMER ROUTES ==================== */}
+            {/* These routes require authentication - accessible by customers AND admins */}
             <Route
               path="/dashboard"
               element={
@@ -34,8 +53,15 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            {/* Customer sub-pages (to be created) */}
+            {/* <Route path="/dashboard/vehicles" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><MyVehicles /></ProtectedRoute>} /> */}
+            {/* <Route path="/dashboard/tracking" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><VINTracking /></ProtectedRoute>} /> */}
+            {/* <Route path="/dashboard/quotes" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><QuotesRequests /></ProtectedRoute>} /> */}
+            {/* <Route path="/dashboard/documents" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><Documents /></ProtectedRoute>} /> */}
+            {/* <Route path="/dashboard/profile" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><Profile /></ProtectedRoute>} /> */}
 
-            {/* Admin Protected Routes */}
+            {/* ==================== ADMIN ROUTES ==================== */}
+            {/* These routes are ONLY accessible by admins */}
             <Route
               path="/admin"
               element={
@@ -44,8 +70,17 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            {/* Admin sub-pages (to be created) */}
+            {/* <Route path="/admin/customers" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCustomers /></ProtectedRoute>} /> */}
+            {/* <Route path="/admin/vehicles" element={<ProtectedRoute allowedRoles={["admin"]}><AdminVehicles /></ProtectedRoute>} /> */}
+            {/* <Route path="/admin/status" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStatusUpdates /></ProtectedRoute>} /> */}
+            {/* <Route path="/admin/quotes" element={<ProtectedRoute allowedRoles={["admin"]}><AdminQuotes /></ProtectedRoute>} /> */}
+            {/* <Route path="/admin/bids" element={<ProtectedRoute allowedRoles={["admin"]}><AdminBidRequests /></ProtectedRoute>} /> */}
+            {/* <Route path="/admin/auctions" element={<ProtectedRoute allowedRoles={["admin"]}><AdminAuctions /></ProtectedRoute>} /> */}
+            {/* <Route path="/admin/documents" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDocuments /></ProtectedRoute>} /> */}
+            {/* <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettings /></ProtectedRoute>} /> */}
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            {/* ==================== CATCH-ALL ==================== */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
