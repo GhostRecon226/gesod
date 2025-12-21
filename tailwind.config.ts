@@ -56,6 +56,16 @@ export default {
           foreground: "hsl(var(--pending-foreground))",
           muted: "hsl(var(--pending-muted))",
         },
+        awaiting: {
+          DEFAULT: "hsl(var(--awaiting))",
+          foreground: "hsl(var(--awaiting-foreground))",
+          muted: "hsl(var(--awaiting-muted))",
+        },
+        "in-progress": {
+          DEFAULT: "hsl(var(--in-progress))",
+          foreground: "hsl(var(--in-progress-foreground))",
+          muted: "hsl(var(--in-progress-muted))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",

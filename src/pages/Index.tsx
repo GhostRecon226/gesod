@@ -1,8 +1,7 @@
-import { Truck, Package, Users, DollarSign, AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Truck, Package, Users, DollarSign, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -13,14 +12,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { StatusBadge, type StatusType } from "@/components/ui/status-badge";
 
-const recentShipments = [
+const recentShipments: Array<{
+  id: string;
+  vehicle: string;
+  origin: string;
+  destination: string;
+  status: StatusType;
+  eta: string;
+}> = [
   {
     id: "SHP-001",
     vehicle: "2024 Toyota Land Cruiser",
     origin: "Tokyo, Japan",
     destination: "Lagos, Nigeria",
-    status: "in-transit" as const,
+    status: "in-progress",
     eta: "Dec 28, 2025",
   },
   {
@@ -28,7 +35,7 @@ const recentShipments = [
     vehicle: "2023 Mercedes-Benz G63",
     origin: "Stuttgart, Germany",
     destination: "Accra, Ghana",
-    status: "pending" as const,
+    status: "pending",
     eta: "Jan 05, 2026",
   },
   {
@@ -36,7 +43,7 @@ const recentShipments = [
     vehicle: "2024 Range Rover Sport",
     origin: "Birmingham, UK",
     destination: "Nairobi, Kenya",
-    status: "delivered" as const,
+    status: "completed",
     eta: "Dec 15, 2025",
   },
   {
@@ -44,7 +51,7 @@ const recentShipments = [
     vehicle: "2023 BMW X7",
     origin: "Munich, Germany",
     destination: "Johannesburg, SA",
-    status: "delayed" as const,
+    status: "delayed",
     eta: "Dec 30, 2025",
   },
   {
@@ -52,19 +59,10 @@ const recentShipments = [
     vehicle: "2024 Lexus LX 600",
     origin: "Nagoya, Japan",
     destination: "Abuja, Nigeria",
-    status: "completed" as const,
+    status: "active",
     eta: "Dec 10, 2025",
   },
 ];
-
-const statusConfig = {
-  pending: { label: "Pending", icon: Clock },
-  "in-transit": { label: "In Transit", icon: Truck },
-  delivered: { label: "Delivered", icon: CheckCircle2 },
-  delayed: { label: "Delayed", icon: AlertCircle },
-  completed: { label: "Completed", icon: CheckCircle2 },
-  cancelled: { label: "Cancelled", icon: XCircle },
-};
 
 export default function Index() {
   return (
@@ -146,28 +144,23 @@ export default function Index() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {recentShipments.map((shipment) => {
-                    const status = statusConfig[shipment.status];
-                    return (
-                      <TableRow key={shipment.id}>
-                        <TableCell className="font-medium">
-                          {shipment.id}
-                        </TableCell>
-                        <TableCell>{shipment.vehicle}</TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {shipment.origin} → {shipment.destination}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant={shipment.status}>
-                            {status.label}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {shipment.eta}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                  {recentShipments.map((shipment) => (
+                    <TableRow key={shipment.id}>
+                      <TableCell className="font-medium">
+                        {shipment.id}
+                      </TableCell>
+                      <TableCell>{shipment.vehicle}</TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {shipment.origin} → {shipment.destination}
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={shipment.status} showIcon />
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {shipment.eta}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </CardContent>
@@ -227,13 +220,13 @@ export default function Index() {
             <div>
               <h4 className="mb-3 text-sm font-semibold text-foreground">Status Badges</h4>
               <div className="flex flex-wrap gap-3">
-                <Badge variant="pending">Pending</Badge>
-                <Badge variant="active">Active</Badge>
-                <Badge variant="in-transit">In Transit</Badge>
-                <Badge variant="completed">Completed</Badge>
-                <Badge variant="delivered">Delivered</Badge>
-                <Badge variant="delayed">Delayed</Badge>
-                <Badge variant="cancelled">Cancelled</Badge>
+                <StatusBadge status="pending" showIcon />
+                <StatusBadge status="active" showIcon />
+                <StatusBadge status="awaiting" showIcon />
+                <StatusBadge status="in-progress" showIcon />
+                <StatusBadge status="delayed" showIcon />
+                <StatusBadge status="completed" showIcon />
+                <StatusBadge status="cancelled" showIcon />
               </div>
             </div>
 

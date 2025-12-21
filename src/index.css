@@ -60,6 +60,16 @@
     --pending-foreground: 0 0% 100%;
     --pending-muted: 213 30% 94%;
     
+    /* Awaiting - Muted Purple */
+    --awaiting: 262 40% 55%;
+    --awaiting-foreground: 0 0% 100%;
+    --awaiting-muted: 262 30% 94%;
+    
+    /* In Progress - Muted Cyan */
+    --in-progress: 190 50% 45%;
+    --in-progress-foreground: 0 0% 100%;
+    --in-progress-muted: 190 35% 93%;
+    
     /* Borders & Inputs */
     --border: 220 13% 88%;
     --input: 220 13% 88%;
@@ -118,6 +128,14 @@
     --pending: 213 35% 50%;
     --pending-foreground: 0 0% 100%;
     --pending-muted: 213 25% 18%;
+    
+    --awaiting: 262 35% 50%;
+    --awaiting-foreground: 0 0% 100%;
+    --awaiting-muted: 262 25% 18%;
+    
+    --in-progress: 190 40% 45%;
+    --in-progress-foreground: 0 0% 100%;
+    --in-progress-muted: 190 30% 18%;
     
     --border: 213 35% 22%;
     --input: 213 35% 22%;
