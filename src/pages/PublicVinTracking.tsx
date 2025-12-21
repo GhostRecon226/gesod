@@ -24,6 +24,7 @@ import {
   vinSchema,
   TrackVinResponse,
   PublicVinTrackingResult,
+  maskVin,
 } from "@/services/publicVinTrackingService";
 
 // Map database status to StatusBadge status type
@@ -195,10 +196,12 @@ export default function PublicVinTracking() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <div>
                     <p className="text-sm text-muted-foreground">VIN</p>
-                    <p className="font-mono font-medium">{result.vin}</p>
+                    <p className="font-mono font-medium tracking-wider">
+                      {maskVin(result.vin)}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Vehicle</p>
@@ -211,6 +214,19 @@ export default function PublicVinTracking() {
                     <p className="font-medium capitalize">{result.vehicle.type}</p>
                   </div>
                   <div>
+                    <p className="text-sm text-muted-foreground">Source</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <Badge variant="secondary" className="capitalize">
+                        {result.vehicle.source}
+                      </Badge>
+                      {result.vehicle.source === "auction" && result.vehicle.auction_source && (
+                        <Badge variant="outline" className="uppercase text-xs">
+                          {result.vehicle.auction_source}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2 lg:col-span-2">
                     <p className="text-sm text-muted-foreground">Current Status</p>
                     <div className="mt-1">
                       <StatusBadge
