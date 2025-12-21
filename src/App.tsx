@@ -12,6 +12,7 @@ import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
 import CustomerDocuments from "./pages/customer/CustomerDocuments";
+import CustomerQuotes from "./pages/customer/CustomerQuotes";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminVehicles from "./pages/admin/AdminVehicles";
@@ -85,8 +86,15 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/dashboard/quotes"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "admin"]}>
+                  <CustomerQuotes />
+                </ProtectedRoute>
+              }
+            />
             {/* <Route path="/dashboard/tracking" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><VINTracking /></ProtectedRoute>} /> */}
-            {/* <Route path="/dashboard/quotes" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><QuotesRequests /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/profile" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><Profile /></ProtectedRoute>} */}
 
             {/* ==================== ADMIN ROUTES ==================== */}
