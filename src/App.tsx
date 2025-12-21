@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -70,8 +71,15 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/customers"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminCustomers />
+                </ProtectedRoute>
+              }
+            />
             {/* Admin sub-pages (to be created) */}
-            {/* <Route path="/admin/customers" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCustomers /></ProtectedRoute>} /> */}
             {/* <Route path="/admin/vehicles" element={<ProtectedRoute allowedRoles={["admin"]}><AdminVehicles /></ProtectedRoute>} /> */}
             {/* <Route path="/admin/status" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStatusUpdates /></ProtectedRoute>} /> */}
             {/* <Route path="/admin/quotes" element={<ProtectedRoute allowedRoles={["admin"]}><AdminQuotes /></ProtectedRoute>} /> */}
