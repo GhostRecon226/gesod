@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      bid_requests: {
+        Row: {
+          admin_notes: string | null
+          auction_vehicle_reference: string
+          created_at: string
+          customer_id: string
+          destination_country: string
+          destination_port: string
+          id: string
+          max_bid_amount: number
+          request_status: Database["public"]["Enums"]["bid_request_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          auction_vehicle_reference: string
+          created_at?: string
+          customer_id: string
+          destination_country: string
+          destination_port: string
+          id?: string
+          max_bid_amount: number
+          request_status?: Database["public"]["Enums"]["bid_request_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          auction_vehicle_reference?: string
+          created_at?: string
+          customer_id?: string
+          destination_country?: string
+          destination_port?: string
+          id?: string
+          max_bid_amount?: number
+          request_status?: Database["public"]["Enums"]["bid_request_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bid_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           account_status: Database["public"]["Enums"]["account_status"]
@@ -351,6 +398,7 @@ export type Database = {
       account_status: "active" | "suspended"
       app_role: "admin" | "customer"
       auction_source: "copart" | "iaai" | "other"
+      bid_request_status: "pending" | "approved" | "rejected" | "won" | "lost"
       document_type: "invoice" | "bill_of_lading" | "photo" | "other"
       quote_status: "pending" | "issued" | "expired" | "accepted"
       quote_type: "ocean_freight" | "inland_freight"
@@ -494,6 +542,7 @@ export const Constants = {
       account_status: ["active", "suspended"],
       app_role: ["admin", "customer"],
       auction_source: ["copart", "iaai", "other"],
+      bid_request_status: ["pending", "approved", "rejected", "won", "lost"],
       document_type: ["invoice", "bill_of_lading", "photo", "other"],
       quote_status: ["pending", "issued", "expired", "accepted"],
       quote_type: ["ocean_freight", "inland_freight"],
