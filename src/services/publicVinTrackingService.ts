@@ -33,10 +33,18 @@ export interface PublicVinTrackingResult {
     model: string;
     year: number;
     type: string;
+    source: "auction" | "direct";
+    auction_source: string | null;
   };
   current_status: VinStatus;
   is_active: boolean;
   status_history: PublicVinStatusUpdate[];
+}
+
+// Mask VIN to show only last 4 characters
+export function maskVin(vin: string): string {
+  if (vin.length <= 4) return vin;
+  return "*".repeat(vin.length - 4) + vin.slice(-4);
 }
 
 export interface TrackVinResponse {
