@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
@@ -12,14 +12,14 @@ const badgeVariants = cva(
         secondary: "bg-muted text-muted-foreground",
         destructive: "bg-destructive-muted text-destructive",
         outline: "border border-border text-foreground",
-        // Status-specific badges for logistics
+        // Standardized status badges
         pending: "bg-pending-muted text-pending",
         active: "bg-success-muted text-success",
-        completed: "bg-success-muted text-success",
+        awaiting: "bg-awaiting-muted text-awaiting",
+        "in-progress": "bg-in-progress-muted text-in-progress",
         delayed: "bg-warning-muted text-warning",
+        completed: "bg-success-muted text-success",
         cancelled: "bg-destructive-muted text-destructive",
-        "in-transit": "bg-pending-muted text-pending",
-        delivered: "bg-success-muted text-success",
       },
     },
     defaultVariants: {
