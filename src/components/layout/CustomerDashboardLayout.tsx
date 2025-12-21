@@ -5,7 +5,6 @@ import {
   Menu,
   X,
   LogOut,
-  Bell,
   User,
   Settings,
 } from "lucide-react";
@@ -20,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { customerNavItems } from "@/config/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
 
 interface CustomerDashboardLayoutProps {
   children: React.ReactNode;
@@ -29,16 +29,10 @@ export function CustomerDashboardLayout({
   children,
 }: CustomerDashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [notifications] = React.useState([
-    { id: 1, message: "Your shipment #12345 has been delivered", unread: true },
-    { id: 2, message: "Document verification complete", unread: true },
-    { id: 3, message: "New invoice available", unread: false },
-  ]);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
-  const unreadCount = notifications.filter((n) => n.unread).length;
   const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Customer";
   const userEmail = user?.email || "";
 
@@ -152,44 +146,7 @@ export function CustomerDashboardLayout({
 
           <div className="flex items-center gap-3">
             {/* Notifications */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                  <Bell className="h-5 w-5" />
-                  {unreadCount > 0 && (
-                    <span className="absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-xs text-destructive-foreground">
-                      {unreadCount}
-                    </span>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <div className="px-3 py-2 border-b border-border">
-                  <p className="text-sm font-semibold">Notifications</p>
-                </div>
-                {notifications.map((notification) => (
-                  <DropdownMenuItem
-                    key={notification.id}
-                    className={cn(
-                      "flex items-start gap-2 p-3",
-                      notification.unread && "bg-accent/50"
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "mt-1 h-2 w-2 rounded-full shrink-0",
-                        notification.unread ? "bg-primary" : "bg-transparent"
-                      )}
-                    />
-                    <span className="text-sm">{notification.message}</span>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-center justify-center text-primary">
-                  View all notifications
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <NotificationDropdown />
 
             {/* User Menu (mobile) */}
             <div className="lg:hidden">
