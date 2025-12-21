@@ -174,6 +174,7 @@ export default function AdminVehicles() {
 
   const handleFormSubmit = async (data: {
     customer_id: string;
+    vin: string;
     make: string;
     model: string;
     year: number;
@@ -183,6 +184,7 @@ export default function AdminVehicles() {
     lot_number?: string | null;
   }) => {
     if (selectedVehicle) {
+      // Update only vehicle fields (VIN cannot be changed)
       await updateMutation.mutateAsync({
         id: selectedVehicle.id,
         data: {
@@ -197,8 +199,10 @@ export default function AdminVehicles() {
         },
       });
     } else {
+      // Create new vehicle with VIN
       await createMutation.mutateAsync({
         customer_id: data.customer_id,
+        vin: data.vin.toUpperCase(),
         make: data.make,
         model: data.model,
         year: data.year,

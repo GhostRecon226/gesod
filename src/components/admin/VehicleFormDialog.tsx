@@ -29,7 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import {
-  Vehicle,
+  VehicleWithCustomer,
   VehicleType,
   VehicleSource,
   AuctionSource,
@@ -39,8 +39,16 @@ import {
 } from "@/services/vehicleService";
 import { Customer } from "@/services/customerService";
 
+// Standard VIN regex - 17 alphanumeric characters (excluding I, O, Q)
+const VIN_REGEX = /^[A-HJ-NPR-Z0-9]{17}$/i;
+
 const vehicleSchema = z.object({
   customer_id: z.string().min(1, "Please select a customer"),
+  vin: z.string()
+    .trim()
+    .min(17, "VIN must be exactly 17 characters")
+    .max(17, "VIN must be exactly 17 characters")
+    .regex(VIN_REGEX, "Invalid VIN format. VIN must be 17 alphanumeric characters (I, O, Q not allowed)"),
   make: z.string().trim().min(1, "Make is required").max(100, "Make must be less than 100 characters"),
   model: z.string().trim().min(1, "Model is required").max(100, "Model must be less than 100 characters"),
   year: z.coerce
@@ -58,7 +66,7 @@ type VehicleFormData = z.infer<typeof vehicleSchema>;
 interface VehicleFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  vehicle?: Vehicle | null;
+  vehicle?: VehicleWithCustomer | null;
   customers: Customer[];
   onSubmit: (data: VehicleFormData) => Promise<void>;
   isLoading?: boolean;
@@ -73,11 +81,15 @@ export function VehicleFormDialog({
   isLoading,
 }: VehicleFormDialogProps) {
   const isEditing = !!vehicle;
+  
+  // Get the primary VIN from vehicle
+  const primaryVin = vehicle?.vin_records?.find(v => v.is_active)?.vin || vehicle?.vin_records?.[0]?.vin || "";
 
   const form = useForm<VehicleFormData>({
     resolver: zodResolver(vehicleSchema),
     defaultValues: {
       customer_id: vehicle?.customer_id || "",
+      vin: primaryVin,
       make: vehicle?.make || "",
       model: vehicle?.model || "",
       year: vehicle?.year || new Date().getFullYear(),
@@ -100,9 +112,11 @@ export function VehicleFormDialog({
 
   // Reset form when vehicle changes
   useEffect(() => {
+    const vin = vehicle?.vin_records?.find(v => v.is_active)?.vin || vehicle?.vin_records?.[0]?.vin || "";
     if (vehicle) {
       form.reset({
         customer_id: vehicle.customer_id,
+        vin: vin,
         make: vehicle.make,
         model: vehicle.model,
         year: vehicle.year,
@@ -114,6 +128,7 @@ export function VehicleFormDialog({
     } else {
       form.reset({
         customer_id: "",
+        vin: "",
         make: "",
         model: "",
         year: new Date().getFullYear(),
@@ -168,6 +183,31 @@ export function VehicleFormDialog({
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="vin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    VIN <span className="text-destructive">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="1HGBH41JXMN109186" 
+                      {...field} 
+                      className="font-mono uppercase"
+                      maxLength={17}
+                      disabled={isEditing} // VIN cannot be changed after creation
+                    />
+                  </FormControl>
+                  <FormMessage />
+                  {isEditing && (
+                    <p className="text-xs text-muted-foreground">VIN cannot be changed after creation</p>
+                  )}
                 </FormItem>
               )}
             />

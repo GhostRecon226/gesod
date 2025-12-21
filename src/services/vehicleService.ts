@@ -45,6 +45,7 @@ export interface CreateVehicleData {
   source: VehicleSource;
   auction_source?: AuctionSource | null;
   lot_number?: string | null;
+  vin: string; // Required for new vehicles
 }
 
 export interface UpdateVehicleData {
@@ -56,6 +57,23 @@ export interface UpdateVehicleData {
   source?: VehicleSource;
   auction_source?: AuctionSource | null;
   lot_number?: string | null;
+}
+
+// Check if a VIN already exists
+export async function checkVinExists(vin: string, excludeVehicleId?: string): Promise<boolean> {
+  let query = supabase
+    .from("vin_records")
+    .select("id, vehicle_id")
+    .eq("vin", vin.toUpperCase());
+  
+  if (excludeVehicleId) {
+    query = query.neq("vehicle_id", excludeVehicleId);
+  }
+  
+  const { data, error } = await query;
+  
+  if (error) throw error;
+  return (data?.length || 0) > 0;
 }
 
 // Fetch all vehicles with customer info and VIN records (admin only due to RLS)
@@ -114,11 +132,20 @@ export async function fetchVehicleById(id: string) {
   return data as VehicleWithCustomer;
 }
 
-// Create a new vehicle (admin only)
+// Create a new vehicle with VIN record (admin only)
 export async function createVehicle(vehicleData: CreateVehicleData) {
-  const { data, error } = await supabase
+  const { vin, ...vehicleFields } = vehicleData;
+  
+  // Check VIN uniqueness first
+  const vinExists = await checkVinExists(vin);
+  if (vinExists) {
+    throw new Error(`VIN "${vin.toUpperCase()}" already exists in the system`);
+  }
+  
+  // Create the vehicle
+  const { data: vehicle, error: vehicleError } = await supabase
     .from("vehicles")
-    .insert(vehicleData)
+    .insert(vehicleFields)
     .select(`
       *,
       customers (
@@ -129,8 +156,27 @@ export async function createVehicle(vehicleData: CreateVehicleData) {
     `)
     .single();
 
-  if (error) throw error;
-  return data as VehicleWithCustomer;
+  if (vehicleError) throw vehicleError;
+
+  // Create the VIN record linked to this vehicle
+  const { error: vinError } = await supabase
+    .from("vin_records")
+    .insert({
+      vehicle_id: vehicle.id,
+      customer_id: vehicleData.customer_id,
+      vin: vin.toUpperCase(),
+      current_status: "pending",
+      is_active: true,
+    });
+
+  if (vinError) {
+    // Rollback: delete the vehicle if VIN creation fails
+    await supabase.from("vehicles").delete().eq("id", vehicle.id);
+    throw vinError;
+  }
+
+  // Fetch the complete vehicle with VIN records
+  return fetchVehicleById(vehicle.id);
 }
 
 // Update a vehicle (admin only)
