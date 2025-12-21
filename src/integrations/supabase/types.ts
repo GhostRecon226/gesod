@@ -215,6 +215,51 @@ export type Database = {
         }
         Relationships: []
       }
+      public_quote_requests: {
+        Row: {
+          admin_notes: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          destination_location: string
+          id: string
+          origin_location: string
+          quote_status: Database["public"]["Enums"]["quote_status"]
+          quote_type: Database["public"]["Enums"]["quote_type"]
+          updated_at: string
+          vehicle_details: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          destination_location: string
+          id?: string
+          origin_location: string
+          quote_status?: Database["public"]["Enums"]["quote_status"]
+          quote_type: Database["public"]["Enums"]["quote_type"]
+          updated_at?: string
+          vehicle_details: string
+        }
+        Update: {
+          admin_notes?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          destination_location?: string
+          id?: string
+          origin_location?: string
+          quote_status?: Database["public"]["Enums"]["quote_status"]
+          quote_type?: Database["public"]["Enums"]["quote_type"]
+          updated_at?: string
+          vehicle_details?: string
+        }
+        Relationships: []
+      }
       quote_requests: {
         Row: {
           created_at: string
@@ -425,6 +470,18 @@ export type Database = {
     }
     Functions: {
       can_access: { Args: { _user_id: string }; Returns: boolean }
+      create_public_quote_request: {
+        Args: {
+          p_contact_email: string
+          p_contact_name: string
+          p_contact_phone: string
+          p_destination_location: string
+          p_origin_location: string
+          p_quote_type: Database["public"]["Enums"]["quote_type"]
+          p_vehicle_details: string
+        }
+        Returns: Json
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
