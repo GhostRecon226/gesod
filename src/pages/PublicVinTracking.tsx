@@ -292,6 +292,18 @@ export default function PublicVinTracking() {
               </CardContent>
             </Card>
 
+            {/* Login CTA */}
+            <div className="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-sm text-muted-foreground">
+                Is this your vehicle? Log in to view full details and documents.
+              </p>
+              <Link to="/auth">
+                <Button variant="outline" size="sm" className="whitespace-nowrap">
+                  Log In
+                </Button>
+              </Link>
+            </div>
+
             {/* Status Timeline */}
             <Card>
               <CardHeader>
