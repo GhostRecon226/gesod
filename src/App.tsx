@@ -9,6 +9,7 @@ import { RedirectIfAuthenticated } from "@/components/auth/RedirectIfAuthenticat
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CustomerDashboard from "./pages/CustomerDashboard";
+import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminVehicles from "./pages/admin/AdminVehicles";
@@ -57,8 +58,16 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/dashboard/vehicles"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "admin"]}>
+                  <CustomerVehicles />
+                </ProtectedRoute>
+              }
+            />
             {/* Customer sub-pages (to be created) */}
-            {/* <Route path="/dashboard/vehicles" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><MyVehicles /></ProtectedRoute>} /> */}
+            {/* <Route path="/dashboard/vehicles/:id" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><CustomerVehicleDetail /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/tracking" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><VINTracking /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/quotes" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><QuotesRequests /></ProtectedRoute>} /> */}
             {/* <Route path="/dashboard/documents" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><Documents /></ProtectedRoute>} /> */}
