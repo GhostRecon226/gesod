@@ -101,6 +101,56 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicles: {
+        Row: {
+          auction_source: Database["public"]["Enums"]["auction_source"] | null
+          created_at: string
+          customer_id: string
+          id: string
+          lot_number: string | null
+          make: string
+          model: string
+          source: Database["public"]["Enums"]["vehicle_source"]
+          updated_at: string
+          vehicle_type: Database["public"]["Enums"]["vehicle_type"]
+          year: number
+        }
+        Insert: {
+          auction_source?: Database["public"]["Enums"]["auction_source"] | null
+          created_at?: string
+          customer_id: string
+          id?: string
+          lot_number?: string | null
+          make: string
+          model: string
+          source: Database["public"]["Enums"]["vehicle_source"]
+          updated_at?: string
+          vehicle_type: Database["public"]["Enums"]["vehicle_type"]
+          year: number
+        }
+        Update: {
+          auction_source?: Database["public"]["Enums"]["auction_source"] | null
+          created_at?: string
+          customer_id?: string
+          id?: string
+          lot_number?: string | null
+          make?: string
+          model?: string
+          source?: Database["public"]["Enums"]["vehicle_source"]
+          updated_at?: string
+          vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -123,6 +173,9 @@ export type Database = {
     Enums: {
       account_status: "active" | "suspended"
       app_role: "admin" | "customer"
+      auction_source: "copart" | "iaai" | "other"
+      vehicle_source: "auction" | "direct"
+      vehicle_type: "car" | "suv" | "truck"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -252,6 +305,9 @@ export const Constants = {
     Enums: {
       account_status: ["active", "suspended"],
       app_role: ["admin", "customer"],
+      auction_source: ["copart", "iaai", "other"],
+      vehicle_source: ["auction", "direct"],
+      vehicle_type: ["car", "suv", "truck"],
     },
   },
 } as const
