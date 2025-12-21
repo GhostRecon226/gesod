@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
 import {
   Search,
   Plus,
@@ -11,6 +12,7 @@ import {
   ArrowUpDown,
   CheckCircle2,
   Clock,
+  Eye,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -484,6 +486,12 @@ export default function AdminVehicles() {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild>
+                                  <Link to={`/admin/vehicles/${vehicle.id}`}>
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    View Details
+                                  </Link>
+                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleEdit(vehicle)}>
                                   <Pencil className="h-4 w-4 mr-2" />
                                   Edit
