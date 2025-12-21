@@ -199,6 +199,41 @@ export type Database = {
           },
         ]
       }
+      vin_status_updates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          status: Database["public"]["Enums"]["vin_status"]
+          updated_by: string
+          vin_record_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status: Database["public"]["Enums"]["vin_status"]
+          updated_by: string
+          vin_record_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["vin_status"]
+          updated_by?: string
+          vin_record_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vin_status_updates_vin_record_id_fkey"
+            columns: ["vin_record_id"]
+            isOneToOne: false
+            referencedRelation: "vin_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
