@@ -162,6 +162,21 @@ export default function AdminVehicleDetail() {
   return (
     <AdminDashboardLayout>
       <div className="space-y-6">
+        {/* Completed Banner */}
+        {isCompleted && (
+          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900 rounded-lg p-4 flex items-center gap-3">
+            <CheckCircle2 className="h-5 w-5 text-green-600" />
+            <div>
+              <p className="font-medium text-green-800 dark:text-green-200">
+                Vehicle Completed
+              </p>
+              <p className="text-sm text-green-600 dark:text-green-400">
+                This vehicle is marked as completed. Status updates and document uploads are disabled.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -189,11 +204,21 @@ export default function AdminVehicleDetail() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setStatusDialogOpen(true)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setStatusDialogOpen(true)}
+              disabled={isCompleted}
+              title={isCompleted ? "Cannot add status to completed vehicle" : undefined}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Status
             </Button>
-            <Button variant="outline" onClick={() => setDocumentDialogOpen(true)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setDocumentDialogOpen(true)}
+              disabled={isCompleted}
+              title={isCompleted ? "Cannot upload documents to completed vehicle" : undefined}
+            >
               <Upload className="h-4 w-4 mr-2" />
               Upload Document
             </Button>
@@ -381,14 +406,16 @@ export default function AdminVehicleDetail() {
               <div className="text-center py-8 text-muted-foreground">
                 <Clock className="h-12 w-12 mx-auto mb-2 opacity-50" />
                 <p>No status updates yet</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-4"
-                  onClick={() => setStatusDialogOpen(true)}
-                >
-                  Add First Status Update
-                </Button>
+                {!isCompleted && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-4"
+                    onClick={() => setStatusDialogOpen(true)}
+                  >
+                    Add First Status Update
+                  </Button>
+                )}
               </div>
             )}
           </CardContent>
@@ -406,10 +433,12 @@ export default function AdminVehicleDetail() {
                 Files and documents linked to this VIN
               </CardDescription>
             </div>
-            <Button variant="outline" size="sm" onClick={() => setDocumentDialogOpen(true)}>
-              <Upload className="h-4 w-4 mr-2" />
-              Upload
-            </Button>
+            {!isCompleted && (
+              <Button variant="outline" size="sm" onClick={() => setDocumentDialogOpen(true)}>
+                <Upload className="h-4 w-4 mr-2" />
+                Upload
+              </Button>
+            )}
           </CardHeader>
           <CardContent>
             {documentsLoading ? (
@@ -452,14 +481,16 @@ export default function AdminVehicleDetail() {
                           >
                             <Download className="h-4 w-4" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setDeleteDocId(doc.id)}
-                            className="text-destructive hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          {!isCompleted && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setDeleteDocId(doc.id)}
+                              className="text-destructive hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -469,15 +500,17 @@ export default function AdminVehicleDetail() {
             ) : (
               <div className="text-center py-8 text-muted-foreground">
                 <FileText className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                <p>No documents uploaded yet</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-4"
-                  onClick={() => setDocumentDialogOpen(true)}
-                >
-                  Upload First Document
-                </Button>
+                <p>No documents uploaded{isCompleted ? "" : " yet"}</p>
+                {!isCompleted && (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-4"
+                    onClick={() => setDocumentDialogOpen(true)}
+                  >
+                    Upload First Document
+                  </Button>
+                )}
               </div>
             )}
           </CardContent>

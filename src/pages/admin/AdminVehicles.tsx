@@ -165,11 +165,21 @@ export default function AdminVehicles() {
   };
 
   const handleEdit = (vehicle: VehicleWithCustomer) => {
+    // Prevent editing completed vehicles
+    const vin = getPrimaryVin(vehicle);
+    if (vin?.current_status === "completed") {
+      return;
+    }
     setSelectedVehicle(vehicle);
     setFormOpen(true);
   };
 
   const handleDelete = (vehicle: VehicleWithCustomer) => {
+    // Prevent deleting completed vehicles
+    const vin = getPrimaryVin(vehicle);
+    if (vin?.current_status === "completed") {
+      return;
+    }
     setSelectedVehicle(vehicle);
     setDeleteOpen(true);
   };
@@ -492,18 +502,22 @@ export default function AdminVehicles() {
                                     View Details
                                   </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleEdit(vehicle)}>
-                                  <Pencil className="h-4 w-4 mr-2" />
-                                  Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem
-                                  onClick={() => handleDelete(vehicle)}
-                                  className="text-destructive"
-                                >
-                                  <Trash2 className="h-4 w-4 mr-2" />
-                                  Delete
-                                </DropdownMenuItem>
+                                {!isCompleted(vehicle) && (
+                                  <>
+                                    <DropdownMenuItem onClick={() => handleEdit(vehicle)}>
+                                      <Pencil className="h-4 w-4 mr-2" />
+                                      Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem
+                                      onClick={() => handleDelete(vehicle)}
+                                      className="text-destructive"
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </TableCell>
