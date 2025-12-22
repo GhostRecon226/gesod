@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Ship, Truck, Gavel, Clock, CheckCircle2, XCircle, AlertCircle, DollarSign } from "lucide-react";
+import { Ship, Truck, Gavel, Clock, CheckCircle2, XCircle, DollarSign } from "lucide-react";
 import { CustomerDashboardLayout } from "@/components/layout/CustomerDashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,12 @@ import {
   CustomerQuoteRequest,
   CustomerBidRequest,
 } from "@/hooks/useCustomerQuotes";
-import { QuoteStatus, BidRequestStatus } from "@/services/customerQuoteService";
+import { 
+  QuoteStatus, 
+  BidRequestStatus,
+  getVehicleSummary,
+  getVinFromDetails,
+} from "@/services/customerQuoteService";
 
 // Quote type labels and icons
 const quoteTypeConfig: Record<string, { label: string; icon: typeof Ship }> = {
@@ -28,11 +33,11 @@ const quoteTypeConfig: Record<string, { label: string; icon: typeof Ship }> = {
 };
 
 // Quote status config
-const quoteStatusConfig: Record<QuoteStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const quoteStatusConfig: Record<QuoteStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; className?: string }> = {
   pending: { label: "Pending", variant: "secondary" },
-  issued: { label: "Issued", variant: "default" },
+  issued: { label: "Issued", variant: "default", className: "bg-primary text-primary-foreground" },
   expired: { label: "Expired", variant: "destructive" },
-  accepted: { label: "Accepted", variant: "outline" },
+  accepted: { label: "Accepted", variant: "outline", className: "border-active text-active" },
 };
 
 // Bid status config
@@ -45,12 +50,12 @@ const bidStatusConfig: Record<BidRequestStatus, { label: string; variant: "defau
 };
 
 // Format currency
-function formatCurrency(amount: number): string {
+function formatCurrency(amount: number, currency: string | null = "USD"): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: currency || "USD",
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 
@@ -127,7 +132,10 @@ export default function CustomerQuotes() {
                 ) : !quotes || quotes.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     <Ship className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No quote requests yet.</p>
+                    <p className="font-medium">No quote requests yet</p>
+                    <p className="text-sm mt-1">
+                      Submit a quote request to see it here.
+                    </p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -135,10 +143,10 @@ export default function CustomerQuotes() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Type</TableHead>
-                          <TableHead>Vehicle Details</TableHead>
+                          <TableHead>Vehicle</TableHead>
                           <TableHead>Route</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Amount</TableHead>
+                          <TableHead>Quote Amount</TableHead>
                           <TableHead>Valid Until</TableHead>
                           <TableHead>Submitted</TableHead>
                         </TableRow>
@@ -171,7 +179,10 @@ export default function CustomerQuotes() {
                 ) : !bids || bids.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     <Gavel className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <p>No bid requests yet.</p>
+                    <p className="font-medium">No bid requests yet</p>
+                    <p className="text-sm mt-1">
+                      Submit a bid request to see it here.
+                    </p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -207,36 +218,54 @@ function QuoteRow({ quote }: { quote: CustomerQuoteRequest }) {
   const typeConfig = quoteTypeConfig[quote.quote_type] || { label: quote.quote_type, icon: Ship };
   const TypeIcon = typeConfig.icon;
   const statusConfig = quoteStatusConfig[quote.quote_status];
+  
+  // Parse vehicle details for display
+  const vehicleSummary = getVehicleSummary(quote.vehicle_details);
+  const vin = getVinFromDetails(quote.vehicle_details);
 
   return (
     <TableRow>
       <TableCell>
         <div className="flex items-center gap-2">
           <TypeIcon className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm">{typeConfig.label}</span>
+          <span className="text-sm font-medium">{typeConfig.label}</span>
         </div>
       </TableCell>
       <TableCell>
-        <span className="text-sm">{quote.vehicle_details}</span>
+        <div>
+          <p className="text-sm font-medium">{vehicleSummary}</p>
+          {vin && (
+            <p className="text-xs text-muted-foreground font-mono">
+              VIN: {vin}
+            </p>
+          )}
+        </div>
       </TableCell>
       <TableCell>
         <div className="text-sm">
-          <span className="text-muted-foreground">From:</span> {quote.origin_location}
-          <br />
-          <span className="text-muted-foreground">To:</span> {quote.destination_location}
+          <div className="flex items-center gap-1">
+            <span className="text-muted-foreground text-xs">From:</span> 
+            <span>{quote.origin_location}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-muted-foreground text-xs">To:</span> 
+            <span>{quote.destination_location}</span>
+          </div>
         </div>
       </TableCell>
       <TableCell>
-        <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
+        <Badge variant={statusConfig.variant} className={statusConfig.className}>
+          {statusConfig.label}
+        </Badge>
       </TableCell>
       <TableCell>
         {quote.quote_amount ? (
-          <span className="font-medium text-success flex items-center gap-1">
+          <span className="font-semibold text-primary flex items-center gap-1">
             <DollarSign className="h-3 w-3" />
-            {formatCurrency(quote.quote_amount)}
+            {formatCurrency(quote.quote_amount, quote.currency)}
           </span>
         ) : (
-          <span className="text-muted-foreground">—</span>
+          <span className="text-muted-foreground text-sm">Awaiting quote</span>
         )}
       </TableCell>
       <TableCell>
