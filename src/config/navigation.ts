@@ -17,6 +17,7 @@ import {
   Gavel,
   Settings,
   Info,
+  HelpCircle,
   type LucideIcon,
 } from "lucide-react";
 
@@ -40,6 +41,7 @@ export const publicNavItems: NavItem[] = [
   { title: "Home", href: "/", icon: Home },
   { title: "About", href: "/about", icon: Info },
   { title: "Services", href: "/services", icon: Briefcase },
+  { title: "How It Works", href: "/how-it-works", icon: HelpCircle },
   { title: "Auction Vehicles", href: "/auctions", icon: Gavel },
   { title: "Request a Quote", href: "/quote", icon: FileQuestion },
   { title: "VIN Tracking", href: "/track", icon: Search },
