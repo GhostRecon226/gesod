@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
-import { Gavel, MapPin, Calendar, Car, Loader2, ImageOff } from "lucide-react";
+import { Gavel, MapPin, Calendar, Car, Loader2, ImageOff, AlertTriangle } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -83,6 +83,23 @@ export default function PublicAuctions() {
         </div>
       </section>
 
+      {/* Disclaimer Banner */}
+      <section className="bg-warning-muted border-y border-warning/20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
+            <div className="text-sm text-muted-foreground">
+              <p className="font-medium text-foreground mb-1">Important Disclaimer</p>
+              <p>
+                GESOD RIDES does not own these vehicles. All listings are from third-party auction platforms 
+                (Copart, IAAI, etc.). We provide bidding assistance on your behalf. Auction fees, buyer premiums, 
+                shipping, and customs/clearing costs are separate from the vehicle price. Winning bids are not guaranteed.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Info Section */}
       <section className="bg-muted/50 py-12 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -90,15 +107,15 @@ export default function PublicAuctions() {
             <div className="grid gap-8 md:grid-cols-2 items-center">
               <div>
                 <h2 className="text-2xl font-bold text-foreground sm:text-3xl">
-                  Interested in a Vehicle?
+                  How Our Bidding Service Works
                 </h2>
                 <p className="mt-4 text-muted-foreground">
                   GESOD RIDES provides bidding assistance and full import logistics services for 
-                  auction vehicles. We help you navigate the entire process from bidding to delivery.
+                  auction vehicles. We bid on your behalf and handle the entire process from purchase to delivery.
                 </p>
                 <ul className="mt-6 space-y-3">
                   {[
-                    "Professional bidding assistance",
+                    "Professional bidding assistance on your behalf",
                     "Title and documentation handling",
                     "Inland and ocean freight services",
                     "Real-time VIN tracking",
@@ -109,6 +126,12 @@ export default function PublicAuctions() {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-6 p-4 bg-muted rounded-lg">
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Note:</strong> Final costs include auction fees, buyer premiums, inland transport, 
+                    ocean freight, and destination clearing charges. We provide transparent quotes for all services.
+                  </p>
+                </div>
               </div>
               <div className="flex justify-center">
                 <div className="bg-primary/5 rounded-xl p-8 text-center">
