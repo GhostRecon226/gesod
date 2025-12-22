@@ -15,35 +15,33 @@ import {
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { FeatureIcon } from "@/components/marketing/FeatureIcon";
+import { Icon3D } from "@/components/ui/icon-3d";
 
 const services = [
   {
     icon: Gavel,
     title: "Auction Sourcing Support",
     description: "We help you identify vehicles from major U.S. auction platforms like Copart and IAAI. We provide information on available listings to help you make informed decisions.",
-    gradient: "from-blue-500 to-blue-600",
-    bgGlow: "bg-blue-500/10",
+    color: "blue" as const,
   },
   {
     icon: Truck,
     title: "Bid-on-Behalf Services",
     description: "For customers who prefer assistance, we can place bids on your behalf at auctions. You set the maximum bid amount; we handle the bidding process according to your instructions.",
-    gradient: "from-emerald-500 to-emerald-600",
-    bgGlow: "bg-emerald-500/10",
+    color: "emerald" as const,
   },
   {
     icon: Ship,
     title: "Ocean Freight Coordination",
     description: "We coordinate RORO (Roll-on/Roll-off) and container shipping for vehicles heading to international destinations. Quotes are provided based on your specific route and vehicle specifications.",
-    gradient: "from-violet-500 to-violet-600",
-    bgGlow: "bg-violet-500/10",
+    color: "violet" as const,
   },
   {
     icon: MapPin,
     title: "Inland Vehicle Towing",
     description: "We arrange ground transportation from auction yards to ports or designated pickup locations within the United States. Pricing depends on distance and vehicle condition.",
-    gradient: "from-orange-500 to-orange-600",
-    bgGlow: "bg-orange-500/10",
+    color: "orange" as const,
   },
 ];
 
@@ -52,33 +50,25 @@ const whyChooseUs = [
     icon: Shield,
     title: "Structured Process",
     description: "Clear, defined steps from vehicle selection through delivery. No guesswork about what happens next.",
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-    borderColor: "border-blue-500/20",
+    color: "blue" as const,
   },
   {
     icon: MapPin,
     title: "Status-Based VIN Tracking",
     description: "Monitor your vehicle's progress through our tracking system. Status updates are provided as milestones are reached.",
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-    borderColor: "border-emerald-500/20",
+    color: "emerald" as const,
   },
   {
     icon: FileText,
     title: "Centralized Documentation",
     description: "Access invoices, bills of lading, and other documents through your customer dashboard. All paperwork in one place.",
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
-    borderColor: "border-violet-500/20",
+    color: "violet" as const,
   },
   {
     icon: MessageCircle,
     title: "Clear Communication",
     description: "We communicate updates proactively. If there are delays or issues, you will hear from us directly.",
-    color: "text-orange-500",
-    bgColor: "bg-orange-500/10",
-    borderColor: "border-orange-500/20",
+    color: "orange" as const,
   },
 ];
 
@@ -147,10 +137,8 @@ export default function About() {
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-3xl blur-2xl" />
               <Card className="relative border-0 bg-gradient-to-br from-card via-card to-accent/20 shadow-xl">
                 <CardContent className="p-8 sm:p-10">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-lg">
-                      <Shield className="h-6 w-6 text-white" />
-                    </div>
+                  <div className="flex items-center gap-4 mb-6">
+                    <Icon3D icon={Shield} color="blue" variant="raised" size="lg" />
                     <h3 className="text-xl font-semibold text-foreground">Our Approach</h3>
                   </div>
                   <ul className="space-y-4">
@@ -199,10 +187,9 @@ export default function About() {
                 key={idx} 
                 className="group relative border-0 bg-card shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
               >
-                <div className={`absolute inset-0 ${service.bgGlow} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                <CardContent className="relative pt-6">
-                  <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <service.icon className="h-6 w-6 text-white" />
+                <CardContent className="relative pt-8 pb-6">
+                  <div className="mb-6">
+                    <FeatureIcon icon={service.icon} color={service.color} size="lg" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">
                     {service.title}
@@ -293,11 +280,17 @@ export default function About() {
             {whyChooseUs.map((item, idx) => (
               <Card 
                 key={idx} 
-                className={`group border-2 ${item.borderColor} bg-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}
+                className="group border bg-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
               >
-                <CardContent className="pt-6 text-center">
-                  <div className={`h-14 w-14 rounded-2xl ${item.bgColor} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <item.icon className={`h-7 w-7 ${item.color}`} />
+                <CardContent className="pt-8 pb-6 text-center">
+                  <div className="flex justify-center mb-5">
+                    <Icon3D 
+                      icon={item.icon} 
+                      color={item.color} 
+                      variant="floating" 
+                      size="lg"
+                      animate
+                    />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">
                     {item.title}
