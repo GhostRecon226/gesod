@@ -13,6 +13,7 @@ import PublicQuote from "./pages/PublicQuote";
 import OceanFreightQuote from "./pages/OceanFreightQuote";
 import InlandFreightQuote from "./pages/InlandFreightQuote";
 import PublicAuctions from "./pages/PublicAuctions";
+import PublicAuctionDetail from "./pages/PublicAuctionDetail";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/quote/ocean-freight" element={<OceanFreightQuote />} />
             <Route path="/quote/inland-freight" element={<InlandFreightQuote />} />
             <Route path="/auctions" element={<PublicAuctions />} />
+            <Route path="/auctions/:id" element={<PublicAuctionDetail />} />
             {/* <Route path="/services" element={<Services />} /> */}
             {/* <Route path="/contact" element={<Contact />} /> */}
 
