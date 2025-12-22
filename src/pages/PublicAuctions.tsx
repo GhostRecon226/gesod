@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { Link } from "react-router-dom";
 import { Gavel, MapPin, Calendar, Car, Loader2, ImageOff } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -138,9 +139,10 @@ function AuctionVehicleCard({ vehicle, getSourceBadge }: AuctionVehicleCardProps
   const primaryImage = hasImages ? vehicle.vehicle_images![0] : null;
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
-      {/* Image Section */}
-      <div className="aspect-[16/10] bg-muted relative overflow-hidden">
+    <Link to={`/auctions/${vehicle.id}`}>
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group cursor-pointer">
+        {/* Image Section */}
+        <div className="aspect-[16/10] bg-muted relative overflow-hidden">
         {primaryImage ? (
           <img
             src={primaryImage}
@@ -196,7 +198,8 @@ function AuctionVehicleCard({ vehicle, getSourceBadge }: AuctionVehicleCardProps
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
