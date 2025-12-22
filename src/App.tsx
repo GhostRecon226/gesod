@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { RedirectIfAuthenticated } from "@/components/auth/RedirectIfAuthenticated";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import PublicVinTracking from "./pages/PublicVinTracking";
 import PublicQuote from "./pages/PublicQuote";
@@ -44,7 +44,7 @@ const App = () => (
           <Routes>
             {/* ==================== PUBLIC ROUTES ==================== */}
             {/* These routes are accessible to everyone */}
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Home />} />
             
             {/* Auth page - redirects to dashboard if already logged in */}
             <Route
