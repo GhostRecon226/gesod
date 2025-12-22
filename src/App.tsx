@@ -14,6 +14,7 @@ import OceanFreightQuote from "./pages/OceanFreightQuote";
 import InlandFreightQuote from "./pages/InlandFreightQuote";
 import PublicAuctions from "./pages/PublicAuctions";
 import PublicAuctionDetail from "./pages/PublicAuctionDetail";
+import About from "./pages/About";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
@@ -54,6 +55,7 @@ const App = () => (
             />
 
             {/* Public pages */}
+            <Route path="/about" element={<About />} />
             <Route path="/track" element={<PublicVinTracking />} />
             <Route path="/quote" element={<PublicQuote />} />
             <Route path="/quote/ocean-freight" element={<OceanFreightQuote />} />
@@ -61,7 +63,6 @@ const App = () => (
             <Route path="/auctions" element={<PublicAuctions />} />
             <Route path="/auctions/:id" element={<PublicAuctionDetail />} />
             {/* <Route path="/services" element={<Services />} /> */}
-            {/* <Route path="/contact" element={<Contact />} /> */}
 
             {/* ==================== CUSTOMER ROUTES ==================== */}
             {/* These routes require authentication - accessible by customers AND admins */}
