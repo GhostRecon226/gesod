@@ -16,6 +16,7 @@ import PublicAuctions from "./pages/PublicAuctions";
 import PublicAuctionDetail from "./pages/PublicAuctionDetail";
 import About from "./pages/About";
 import Services from "./pages/Services";
+import HowItWorks from "./pages/HowItWorks";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
@@ -58,6 +59,7 @@ const App = () => (
             {/* Public pages */}
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/track" element={<PublicVinTracking />} />
             <Route path="/quote" element={<PublicQuote />} />
             <Route path="/quote/ocean-freight" element={<OceanFreightQuote />} />
