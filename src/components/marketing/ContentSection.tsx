@@ -85,8 +85,8 @@ interface FeatureCardProps {
 
 export function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div className="relative rounded-xl border border-border bg-card p-6 transition-shadow hover:shadow-md">
-      <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-primary">
+    <div className="group relative rounded-xl border border-border bg-card p-6 transition-all hover:shadow-lg hover:-translate-y-1">
+      <div className="mb-4">
         {icon}
       </div>
       <h3 className="text-lg font-semibold text-foreground">{title}</h3>
