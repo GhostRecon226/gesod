@@ -49,23 +49,28 @@ const services = [
 const processSteps = [
   {
     step: "01",
-    title: "Browse & Select",
-    description: "Review auction vehicle listings and identify vehicles of interest.",
+    title: "Find a Vehicle or Request a Service",
+    description: "Browse auction listings or contact us about bidding, shipping, or towing services.",
   },
   {
     step: "02",
-    title: "Request a Quote",
-    description: "Submit details and receive cost estimates for our services.",
+    title: "Request a Bid or Quote",
+    description: "Submit your maximum bid amount or request a quote for freight services.",
   },
   {
     step: "03",
-    title: "We Handle Logistics",
-    description: "From bidding to shipping, we coordinate the entire process.",
+    title: "Confirm Service or Auction Outcome",
+    description: "Receive confirmation of auction results or approve your service quote to proceed.",
   },
   {
     step: "04",
-    title: "Track Progress",
-    description: "Monitor status updates through our VIN tracking system.",
+    title: "Track Vehicle by VIN",
+    description: "Monitor your vehicle's status through our VIN tracking system as it moves through the process.",
+  },
+  {
+    step: "05",
+    title: "Completion",
+    description: "Your vehicle arrives at the destination. Final documentation is provided for your records.",
   },
 ];
 
