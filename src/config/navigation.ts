@@ -41,8 +41,8 @@ export const publicNavItems: NavItem[] = [
   { title: "About", href: "/about", icon: Info },
   { title: "Services", href: "/services", icon: Briefcase },
   { title: "Auction Vehicles", href: "/auctions", icon: Gavel },
-  { title: "Get a Quote", href: "/quote", icon: FileQuestion },
-  { title: "Track VIN", href: "/track", icon: Search },
+  { title: "Request a Quote", href: "/quote", icon: FileQuestion },
+  { title: "VIN Tracking", href: "/track", icon: Search },
 ];
 
 // Customer dashboard navigation
