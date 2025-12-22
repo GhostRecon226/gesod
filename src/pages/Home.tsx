@@ -107,50 +107,57 @@ export default function Home() {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8">
-              <Package className="h-4 w-4" />
-              Vehicle Sourcing & Logistics Facilitation
-            </div>
-            
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Simplifying Vehicle Imports{" "}
+            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl xl:text-6xl leading-tight">
+              Vehicle Auction Support, Shipping & VIN Tracking{" "}
               <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                from the U.S.
+                — All in One Platform
               </span>
             </h1>
             
-            <p className="mt-6 text-lg text-muted-foreground leading-relaxed sm:text-xl max-w-3xl mx-auto">
-              GESOD RIDES coordinates auction bidding, inland transport, and ocean freight 
-              for clients importing vehicles from United States auctions. We handle the 
-              logistics so you can focus on your business.
-            </p>
+            {/* Service explanations */}
+            <div className="mt-8 max-w-2xl mx-auto">
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                GESOD RIDES coordinates vehicle imports from U.S. auctions:
+              </p>
+              <ul className="mt-4 space-y-2 text-muted-foreground">
+                <li className="flex items-center justify-center gap-2">
+                  <Gavel className="h-4 w-4 text-primary shrink-0" />
+                  <span>Auction bidding support — we bid on your behalf at Copart, IAAI, and other platforms</span>
+                </li>
+                <li className="flex items-center justify-center gap-2">
+                  <Ship className="h-4 w-4 text-primary shrink-0" />
+                  <span>RORO shipping — ocean freight from U.S. ports to international destinations</span>
+                </li>
+                <li className="flex items-center justify-center gap-2">
+                  <Truck className="h-4 w-4 text-primary shrink-0" />
+                  <span>Inland towing — vehicle transport from auction yards to ports</span>
+                </li>
+              </ul>
+            </div>
 
+            {/* Primary CTAs */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="text-base px-8">
-                <Link to="/services">
-                  Explore Our Services
+                <Link to="/auctions">
+                  View Auction Vehicles
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Link>
               </Button>
               <Button variant="outline" asChild size="lg" className="text-base px-8">
-                <Link to="/quote">Request a Quote</Link>
+                <Link to="/quote">Get a Quote</Link>
               </Button>
             </div>
 
-            {/* Trust indicators */}
-            <div className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success" />
-                <span>Status-based VIN tracking</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success" />
-                <span>Transparent pricing</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="h-4 w-4 text-success" />
-                <span>Centralized documentation</span>
-              </div>
+            {/* Secondary CTA */}
+            <div className="mt-6">
+              <Link 
+                to="/track" 
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                <Search className="h-4 w-4" />
+                <span>Track a Vehicle by VIN</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
           </div>
         </div>
