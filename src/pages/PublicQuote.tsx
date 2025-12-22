@@ -57,10 +57,11 @@ export default function PublicQuote() {
             <FileQuestion className="h-7 w-7 text-primary" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Get a Quote
+            Request a Quote
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Select the type of service you need and we will provide you with an estimated quote for your vehicle shipping needs.
+            Select the type of service you need. We will provide an estimated quote 
+            based on your vehicle and route details.
           </p>
         </div>
 

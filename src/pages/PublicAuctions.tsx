@@ -37,11 +37,11 @@ export default function PublicAuctions() {
               <span className="text-sm font-medium text-primary">Auction Vehicles</span>
             </div>
             <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Curated Auction Opportunities
+              Auction Vehicle Listings
             </h1>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Browse our selection of active auction vehicle listings. Contact us to learn more 
-              about bidding assistance and import services.
+              Browse available auction vehicles from third-party platforms. 
+              Contact us to request bidding assistance.
             </p>
           </div>
         </div>
@@ -115,10 +115,10 @@ export default function PublicAuctions() {
                 </p>
                 <ul className="mt-6 space-y-3">
                   {[
-                    "Professional bidding assistance on your behalf",
-                    "Title and documentation handling",
-                    "Inland and ocean freight services",
-                    "Real-time VIN tracking",
+                    "Bidding assistance on your behalf at U.S. auctions",
+                    "Title and documentation coordination",
+                    "Inland transport and ocean freight services",
+                    "VIN status tracking through our customer portal",
                   ].map((item) => (
                     <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
                       <div className="h-1.5 w-1.5 rounded-full bg-primary" />

@@ -245,8 +245,14 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                 </span>
               </Link>
               <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-                Professional vehicle import and logistics solutions. Trusted by
-                businesses worldwide for reliable, efficient transportation services.
+                Vehicle sourcing and logistics facilitation. We coordinate auction 
+                bidding, inland transport, and ocean freight services for clients 
+                importing vehicles from the United States.
+              </p>
+              <p className="mt-3 text-xs text-muted-foreground">
+                GESOD RIDES is a logistics facilitation company. We do not own 
+                vehicles or transport equipment. All services are provided in 
+                coordination with third-party partners.
               </p>
             </div>
 
@@ -271,16 +277,57 @@ export function PublicLayout({ children }: PublicLayoutProps) {
             <div>
               <h4 className="text-sm font-semibold text-foreground">Contact</h4>
               <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                <li>contact@gesodrides.com</li>
-                <li>+1 (555) 123-4567</li>
-                <li>123 Logistics Way, Suite 100</li>
-                <li>Business City, BC 12345</li>
+                <li>
+                  <span className="font-medium text-foreground">Email:</span>
+                  <br />
+                  contact@gesodrides.com
+                </li>
+                <li>
+                  <span className="font-medium text-foreground">Phone:</span>
+                  <br />
+                  +1 (555) 123-4567
+                </li>
+                <li>
+                  <span className="font-medium text-foreground">Hours:</span>
+                  <br />
+                  Mon–Fri: 9:00 AM – 6:00 PM EST
+                </li>
               </ul>
             </div>
           </div>
 
+          {/* Trust Elements & Legal */}
+          <div className="mt-8 pt-8 border-t border-border">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-xs text-muted-foreground mb-6">
+              <div>
+                <p className="font-medium text-foreground mb-1">Terminology</p>
+                <p>
+                  "VIN Tracking" refers to status-based milestone updates, not GPS tracking.
+                  "Quote" means an estimate subject to final confirmation.
+                  "Auction Vehicles" are third-party listings, not owned by GESOD RIDES.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium text-foreground mb-1">Service Scope</p>
+                <p>
+                  We facilitate logistics coordination. Actual transport is performed by 
+                  licensed carriers and shipping lines. We do not guarantee auction outcomes, 
+                  customs clearance, or specific delivery dates.
+                </p>
+              </div>
+              <div>
+                <p className="font-medium text-foreground mb-1">Estimates & Timelines</p>
+                <p>
+                  All quotes and timelines are indicative. Final costs depend on vehicle 
+                  specifications, carrier rates, and market conditions. Delays may occur 
+                  due to factors beyond our control.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Bottom Bar */}
-          <div className="mt-8 border-t border-border pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} GESOD RIDES. All rights reserved.
             </p>

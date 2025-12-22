@@ -137,10 +137,10 @@ export default function PublicVinTracking() {
       <main className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Track Your Vehicle
+            VIN Status Tracking
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Enter your 17-character VIN to view the current shipment status as recorded by GESOD RIDES
+            Enter your 17-character VIN to view shipment status milestones as recorded by GESOD RIDES.
           </p>
         </div>
 
