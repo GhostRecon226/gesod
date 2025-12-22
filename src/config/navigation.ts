@@ -16,6 +16,7 @@ import {
   MessageSquare,
   Gavel,
   Settings,
+  Info,
   type LucideIcon,
 } from "lucide-react";
 
@@ -37,11 +38,11 @@ export interface NavConfig {
 // Public navigation - visible to all users
 export const publicNavItems: NavItem[] = [
   { title: "Home", href: "/", icon: Home },
+  { title: "About", href: "/about", icon: Info },
   { title: "Services", href: "/services", icon: Briefcase },
   { title: "Auction Vehicles", href: "/auctions", icon: Gavel },
   { title: "Get a Quote", href: "/quote", icon: FileQuestion },
   { title: "Track VIN", href: "/track", icon: Search },
-  { title: "Contact", href: "/contact", icon: Phone },
 ];
 
 // Customer dashboard navigation
