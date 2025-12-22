@@ -56,6 +56,18 @@ export async function fetchAuctionVehicles() {
   return data as AuctionVehicle[];
 }
 
+// Fetch active auction vehicles (public access)
+export async function fetchActiveAuctionVehicles() {
+  const { data, error } = await supabase
+    .from("auction_vehicles")
+    .select("*")
+    .eq("status", "active")
+    .order("auction_date", { ascending: true });
+
+  if (error) throw error;
+  return data as AuctionVehicle[];
+}
+
 // Fetch single auction vehicle by ID
 export async function fetchAuctionVehicleById(id: string) {
   const { data, error } = await supabase

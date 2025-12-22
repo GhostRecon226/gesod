@@ -12,6 +12,7 @@ import PublicVinTracking from "./pages/PublicVinTracking";
 import PublicQuote from "./pages/PublicQuote";
 import OceanFreightQuote from "./pages/OceanFreightQuote";
 import InlandFreightQuote from "./pages/InlandFreightQuote";
+import PublicAuctions from "./pages/PublicAuctions";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
@@ -55,8 +56,8 @@ const App = () => (
             <Route path="/quote" element={<PublicQuote />} />
             <Route path="/quote/ocean-freight" element={<OceanFreightQuote />} />
             <Route path="/quote/inland-freight" element={<InlandFreightQuote />} />
+            <Route path="/auctions" element={<PublicAuctions />} />
             {/* <Route path="/services" element={<Services />} /> */}
-            {/* <Route path="/auctions" element={<Auctions />} /> */}
             {/* <Route path="/contact" element={<Contact />} /> */}
 
             {/* ==================== CUSTOMER ROUTES ==================== */}
