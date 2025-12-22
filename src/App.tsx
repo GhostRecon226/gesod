@@ -22,6 +22,7 @@ import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminVehicles from "./pages/admin/AdminVehicles";
 import AdminVehicleDetail from "./pages/admin/AdminVehicleDetail";
 import AdminVins from "./pages/admin/AdminVins";
+import AdminQuotes from "./pages/admin/AdminQuotes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -145,9 +146,16 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/quotes"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminQuotes />
+                </ProtectedRoute>
+              }
+            />
             {/* Admin sub-pages (to be created) */}
             {/* <Route path="/admin/status" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStatusUpdates /></ProtectedRoute>} /> */}
-            {/* <Route path="/admin/quotes" element={<ProtectedRoute allowedRoles={["admin"]}><AdminQuotes /></ProtectedRoute>} /> */}
             {/* <Route path="/admin/bids" element={<ProtectedRoute allowedRoles={["admin"]}><AdminBidRequests /></ProtectedRoute>} /> */}
             {/* <Route path="/admin/auctions" element={<ProtectedRoute allowedRoles={["admin"]}><AdminAuctions /></ProtectedRoute>} /> */}
             {/* <Route path="/admin/documents" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDocuments /></ProtectedRoute>} /> */}
