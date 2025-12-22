@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { publicNavItems } from "@/config/navigation";
+import { publicHeaderNavItems, publicFooterNavItems } from "@/config/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface PublicLayoutProps {
@@ -52,7 +52,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-6">
-            {publicNavItems.map((item) => {
+            {publicHeaderNavItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link
@@ -159,7 +159,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
         {mobileMenuOpen && (
           <div className="border-t border-border bg-card md:hidden">
             <div className="space-y-1 px-4 py-4">
-              {publicNavItems.map((item) => {
+              {publicHeaderNavItems.map((item) => {
                 const isActive = location.pathname === item.href;
                 return (
                   <Link
@@ -260,7 +260,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
             <div>
               <h4 className="text-sm font-semibold text-foreground">Quick Links</h4>
               <ul className="mt-4 space-y-2">
-                {publicNavItems.slice(0, 5).map((item) => (
+                {publicFooterNavItems.slice(0, 7).map((item) => (
                   <li key={item.href}>
                     <Link
                       to={item.href}

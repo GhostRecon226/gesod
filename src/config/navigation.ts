@@ -36,8 +36,17 @@ export interface NavConfig {
   admin: NavItem[];
 }
 
-// Public navigation - visible to all users
-export const publicNavItems: NavItem[] = [
+// Public navigation - header (main navigation bar)
+export const publicHeaderNavItems: NavItem[] = [
+  { title: "Home", href: "/", icon: Home },
+  { title: "About", href: "/about", icon: Info },
+  { title: "Services", href: "/services", icon: Briefcase },
+  { title: "Request a Quote", href: "/quote", icon: FileQuestion },
+  { title: "VIN Tracking", href: "/track", icon: Search },
+];
+
+// Public navigation - footer only items
+export const publicFooterNavItems: NavItem[] = [
   { title: "Home", href: "/", icon: Home },
   { title: "About", href: "/about", icon: Info },
   { title: "Services", href: "/services", icon: Briefcase },
@@ -46,6 +55,9 @@ export const publicNavItems: NavItem[] = [
   { title: "Request a Quote", href: "/quote", icon: FileQuestion },
   { title: "VIN Tracking", href: "/track", icon: Search },
 ];
+
+// All public nav items (for backward compatibility)
+export const publicNavItems: NavItem[] = publicFooterNavItems;
 
 // Customer dashboard navigation
 export const customerNavItems: NavItem[] = [
