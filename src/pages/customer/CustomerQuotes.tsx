@@ -41,12 +41,12 @@ const quoteStatusConfig: Record<QuoteStatus, { label: string; variant: "default"
 };
 
 // Bid status config
-const bidStatusConfig: Record<BidRequestStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: typeof Clock }> = {
+const bidStatusConfig: Record<BidRequestStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: typeof Clock; className?: string }> = {
   pending: { label: "Pending", variant: "secondary", icon: Clock },
   approved: { label: "Approved", variant: "default", icon: CheckCircle2 },
   rejected: { label: "Rejected", variant: "destructive", icon: XCircle },
-  won: { label: "Won", variant: "outline", icon: CheckCircle2 },
-  lost: { label: "Lost", variant: "destructive", icon: XCircle },
+  won: { label: "Won", variant: "outline", icon: CheckCircle2, className: "border-active text-active bg-active/10" },
+  lost: { label: "Lost", variant: "outline", icon: XCircle, className: "border-muted-foreground text-muted-foreground" },
 };
 
 // Format currency
@@ -189,9 +189,9 @@ export default function CustomerQuotes() {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Auction Reference</TableHead>
-                          <TableHead>Destination</TableHead>
+                          <TableHead>Auction Vehicle</TableHead>
                           <TableHead>Max Bid</TableHead>
+                          <TableHead>Destination</TableHead>
                           <TableHead>Status</TableHead>
                           <TableHead>Submitted</TableHead>
                         </TableRow>
@@ -289,10 +289,28 @@ function BidRow({ bid }: { bid: CustomerBidRequest }) {
   const statusConfig = bidStatusConfig[bid.request_status];
   const StatusIcon = statusConfig.icon;
 
+  // Build vehicle display from linked auction vehicle or reference
+  const vehicleDisplay = bid.auction_vehicle
+    ? `${bid.auction_vehicle.year} ${bid.auction_vehicle.make} ${bid.auction_vehicle.model}`
+    : null;
+
   return (
     <TableRow>
       <TableCell>
-        <span className="font-mono text-sm">{bid.auction_vehicle_reference}</span>
+        <div>
+          {vehicleDisplay && (
+            <p className="text-sm font-medium">{vehicleDisplay}</p>
+          )}
+          <p className="text-xs text-muted-foreground font-mono">
+            {bid.auction_vehicle_reference}
+          </p>
+        </div>
+      </TableCell>
+      <TableCell>
+        <span className="font-semibold text-primary flex items-center gap-1">
+          <DollarSign className="h-3 w-3" />
+          {formatCurrency(bid.max_bid_amount)}
+        </span>
       </TableCell>
       <TableCell>
         <div className="text-sm">
@@ -300,10 +318,7 @@ function BidRow({ bid }: { bid: CustomerBidRequest }) {
         </div>
       </TableCell>
       <TableCell>
-        <span className="font-medium">{formatCurrency(bid.max_bid_amount)}</span>
-      </TableCell>
-      <TableCell>
-        <Badge variant={statusConfig.variant} className="gap-1">
+        <Badge variant={statusConfig.variant} className={`gap-1 ${statusConfig.className || ""}`}>
           <StatusIcon className="h-3 w-3" />
           {statusConfig.label}
         </Badge>

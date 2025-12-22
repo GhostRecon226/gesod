@@ -22,13 +22,20 @@ export interface CustomerQuoteRequest {
 export interface CustomerBidRequest {
   id: string;
   auction_vehicle_reference: string;
+  auction_vehicle_id: string | null;
   max_bid_amount: number;
   destination_port: string;
   destination_country: string;
   request_status: BidRequestStatus;
-  admin_notes: string | null;
   created_at: string;
   updated_at: string;
+  auction_vehicle?: {
+    id: string;
+    make: string;
+    model: string;
+    year: number;
+    lot_number: string;
+  } | null;
 }
 
 // Helper to parse vehicle details and extract VIN
@@ -89,7 +96,18 @@ export async function fetchCustomerBidRequests(): Promise<CustomerBidRequest[]> 
 
   const { data, error } = await supabase
     .from("bid_requests")
-    .select("*")
+    .select(`
+      id,
+      auction_vehicle_reference,
+      auction_vehicle_id,
+      max_bid_amount,
+      destination_port,
+      destination_country,
+      request_status,
+      created_at,
+      updated_at,
+      auction_vehicle:auction_vehicles(id, make, model, year, lot_number)
+    `)
     .eq("customer_id", customer.id)
     .order("created_at", { ascending: false });
 
