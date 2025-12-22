@@ -23,23 +23,26 @@ const services = [
   {
     icon: Gavel,
     color: "blue" as const,
-    title: "Auction Bidding Assistance",
-    description: "We place bids on your behalf at U.S. auction platforms like Copart and IAAI.",
+    title: "Auction Vehicle Bidding Support",
+    description: "We place bids on your behalf at U.S. vehicle auctions including Copart and IAAI. You provide your maximum bid amount, and we handle the bidding process.",
     href: "/services#auction-bidding",
+    action: "Learn More",
   },
   {
     icon: Ship,
     color: "violet" as const,
-    title: "Ocean Freight",
-    description: "RORO shipping coordination from U.S. ports to international destinations.",
+    title: "Ocean Freight (RORO)",
+    description: "Roll-on/Roll-off shipping from U.S. ports to international destinations. We coordinate with shipping lines to transport your vehicle overseas.",
     href: "/services#ocean-freight",
+    action: "Learn More",
   },
   {
     icon: Truck,
     color: "orange" as const,
-    title: "Inland Transport",
-    description: "Vehicle pickup from auction yards and transport to designated ports.",
+    title: "Inland Vehicle Towing",
+    description: "Vehicle transport from auction yards to U.S. ports. We arrange pickup and delivery to ensure your vehicle reaches the departure port.",
     href: "/services#inland-freight",
+    action: "Learn More",
   },
 ];
 
