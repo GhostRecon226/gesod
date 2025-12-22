@@ -14,6 +14,7 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  DollarSign,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -48,8 +49,10 @@ import { Badge } from "@/components/ui/badge";
 import {
   usePublicQuoteRequests,
   useUpdateQuoteStatus,
+  useUpdateQuoteResponse,
   PublicQuoteRequest,
 } from "@/hooks/usePublicQuoteRequests";
+import { QuoteDetailDialog } from "@/components/admin/QuoteDetailDialog";
 
 // Helper to parse vehicle details JSON
 function parseVehicleDetails(detailsStr: string): {
@@ -118,13 +121,26 @@ function QuoteTypeBadge({ type }: { type: string }) {
   );
 }
 
+// Format currency
+function formatCurrency(amount: number | null, currency: string | null): string {
+  if (amount === null) return "—";
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency || "USD",
+  });
+  return formatter.format(amount);
+}
+
 export default function AdminQuotes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedQuote, setSelectedQuote] = useState<PublicQuoteRequest | null>(null);
+  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
 
   const { data: quotes, isLoading, error } = usePublicQuoteRequests();
   const updateStatusMutation = useUpdateQuoteStatus();
+  const updateResponseMutation = useUpdateQuoteResponse();
 
   // Filter quotes
   const filteredQuotes = useMemo(() => {
@@ -164,6 +180,25 @@ export default function AdminQuotes() {
 
   const handleStatusChange = (quoteId: string, status: "pending" | "issued" | "expired" | "accepted") => {
     updateStatusMutation.mutate({ id: quoteId, status });
+  };
+
+  const handleOpenDetail = (quote: PublicQuoteRequest) => {
+    setSelectedQuote(quote);
+    setDetailDialogOpen(true);
+  };
+
+  const handleQuoteResponseSubmit = async (data: {
+    quote_status: "pending" | "issued" | "expired" | "accepted";
+    quote_amount: number | null;
+    currency: string;
+    valid_until: string | null;
+    admin_notes: string | null;
+  }) => {
+    if (!selectedQuote) return;
+    await updateResponseMutation.mutateAsync({
+      id: selectedQuote.id,
+      ...data,
+    });
   };
 
   if (error) {
@@ -279,6 +314,7 @@ export default function AdminQuotes() {
                     <TableHead>Type</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Vehicle</TableHead>
+                    <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Created</TableHead>
                     <TableHead className="w-[50px]"></TableHead>
@@ -288,7 +324,11 @@ export default function AdminQuotes() {
                   {filteredQuotes.map((quote) => {
                     const vin = getVinFromDetails(quote.vehicle_details);
                     return (
-                      <TableRow key={quote.id}>
+                      <TableRow 
+                        key={quote.id} 
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => handleOpenDetail(quote)}
+                      >
                         <TableCell className="font-mono text-xs">
                           {quote.id.slice(0, 8)}...
                         </TableCell>
@@ -320,12 +360,24 @@ export default function AdminQuotes() {
                           </div>
                         </TableCell>
                         <TableCell>
+                          {quote.quote_amount ? (
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="h-3 w-3 text-muted-foreground" />
+                              <span className="font-medium">
+                                {formatCurrency(quote.quote_amount, quote.currency)}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
                           <QuoteStatusBadge status={quote.quote_status} />
                         </TableCell>
                         <TableCell>
                           {format(new Date(quote.created_at), "MMM d, yyyy")}
                         </TableCell>
-                        <TableCell>
+                        <TableCell onClick={(e) => e.stopPropagation()}>
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                               <Button variant="ghost" size="icon">
@@ -333,15 +385,15 @@ export default function AdminQuotes() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleOpenDetail(quote)}>
                                 <Eye className="h-4 w-4 mr-2" />
-                                View Details
+                                View & Respond
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
                               <DropdownMenuSub>
                                 <DropdownMenuSubTrigger>
                                   <Clock className="h-4 w-4 mr-2" />
-                                  Update Status
+                                  Quick Status
                                 </DropdownMenuSubTrigger>
                                 <DropdownMenuSubContent>
                                   <DropdownMenuItem onClick={() => handleStatusChange(quote.id, "pending")}>
@@ -392,6 +444,15 @@ export default function AdminQuotes() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Quote Detail Dialog */}
+      <QuoteDetailDialog
+        open={detailDialogOpen}
+        onOpenChange={setDetailDialogOpen}
+        quote={selectedQuote}
+        onSubmit={handleQuoteResponseSubmit}
+        isLoading={updateResponseMutation.isPending}
+      />
     </AdminDashboardLayout>
   );
 }
