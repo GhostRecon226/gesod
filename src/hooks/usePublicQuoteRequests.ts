@@ -14,6 +14,9 @@ export interface PublicQuoteRequest {
   contact_phone: string;
   admin_notes: string | null;
   customer_id: string | null;
+  quote_amount: number | null;
+  currency: string | null;
+  valid_until: string | null;
   created_at: string;
   updated_at: string;
   // Joined customer data
@@ -50,7 +53,59 @@ export function usePublicQuoteRequests() {
   });
 }
 
-// Update quote status
+// Update quote response (status, amount, currency, valid_until, notes)
+export function useUpdateQuoteResponse() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      quote_status,
+      quote_amount,
+      currency,
+      valid_until,
+      admin_notes,
+    }: {
+      id: string;
+      quote_status: "pending" | "issued" | "expired" | "accepted";
+      quote_amount: number | null;
+      currency: string;
+      valid_until: string | null;
+      admin_notes: string | null;
+    }) => {
+      const { error } = await supabase
+        .from("public_quote_requests")
+        .update({
+          quote_status,
+          quote_amount,
+          currency,
+          valid_until,
+          admin_notes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["public-quote-requests"] });
+      toast({
+        title: "Quote Updated",
+        description: "Quote response has been saved successfully.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Update Failed",
+        description: error.message,
+      });
+    },
+  });
+}
+
+// Update quote status only
 export function useUpdateQuoteStatus() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -126,7 +181,7 @@ export function useLinkQuoteToCustomer() {
   });
 }
 
-// Update admin notes
+// Update admin notes only
 export function useUpdateQuoteNotes() {
   const queryClient = useQueryClient();
   const { toast } = useToast();

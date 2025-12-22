@@ -222,13 +222,16 @@ export type Database = {
           contact_name: string
           contact_phone: string
           created_at: string
+          currency: string | null
           customer_id: string | null
           destination_location: string
           id: string
           origin_location: string
+          quote_amount: number | null
           quote_status: Database["public"]["Enums"]["quote_status"]
           quote_type: Database["public"]["Enums"]["quote_type"]
           updated_at: string
+          valid_until: string | null
           vehicle_details: string
         }
         Insert: {
@@ -237,13 +240,16 @@ export type Database = {
           contact_name: string
           contact_phone: string
           created_at?: string
+          currency?: string | null
           customer_id?: string | null
           destination_location: string
           id?: string
           origin_location: string
+          quote_amount?: number | null
           quote_status?: Database["public"]["Enums"]["quote_status"]
           quote_type: Database["public"]["Enums"]["quote_type"]
           updated_at?: string
+          valid_until?: string | null
           vehicle_details: string
         }
         Update: {
@@ -252,13 +258,16 @@ export type Database = {
           contact_name?: string
           contact_phone?: string
           created_at?: string
+          currency?: string | null
           customer_id?: string | null
           destination_location?: string
           id?: string
           origin_location?: string
+          quote_amount?: number | null
           quote_status?: Database["public"]["Enums"]["quote_status"]
           quote_type?: Database["public"]["Enums"]["quote_type"]
           updated_at?: string
+          valid_until?: string | null
           vehicle_details?: string
         }
         Relationships: [
