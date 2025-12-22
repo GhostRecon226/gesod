@@ -113,6 +113,7 @@ export default function PublicAuctionDetail() {
 
     await createBidMutation.mutateAsync({
       customer_id: customerData.id,
+      auction_vehicle_id: vehicle.id,
       auction_vehicle_reference: `${vehicle.year} ${vehicle.make} ${vehicle.model} - Lot #${vehicle.lot_number}`,
       max_bid_amount: data.max_bid_amount,
       destination_country: data.destination_country,

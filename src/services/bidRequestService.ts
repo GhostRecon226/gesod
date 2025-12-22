@@ -6,6 +6,7 @@ type BidRequestStatus = Database["public"]["Enums"]["bid_request_status"];
 export interface BidRequest {
   id: string;
   customer_id: string;
+  auction_vehicle_id: string | null;
   auction_vehicle_reference: string;
   max_bid_amount: number;
   destination_country: string;
@@ -22,10 +23,20 @@ export interface BidRequestWithCustomer extends BidRequest {
     full_name: string;
     email: string;
   };
+  auction_vehicle?: {
+    id: string;
+    make: string;
+    model: string;
+    year: number;
+    lot_number: string;
+    auction_source: string;
+    status: string;
+  } | null;
 }
 
 export interface CreateBidRequestInput {
   customer_id: string;
+  auction_vehicle_id?: string | null;
   auction_vehicle_reference: string;
   max_bid_amount: number;
   destination_country: string;
@@ -55,7 +66,8 @@ export async function getBidRequests(): Promise<BidRequestWithCustomer[]> {
     .from("bid_requests")
     .select(`
       *,
-      customer:customers(id, full_name, email)
+      customer:customers(id, full_name, email),
+      auction_vehicle:auction_vehicles(id, make, model, year, lot_number, auction_source, status)
     `)
     .order("created_at", { ascending: false });
 
@@ -69,7 +81,8 @@ export async function getBidRequest(id: string): Promise<BidRequestWithCustomer>
     .from("bid_requests")
     .select(`
       *,
-      customer:customers(id, full_name, email)
+      customer:customers(id, full_name, email),
+      auction_vehicle:auction_vehicles(id, make, model, year, lot_number, auction_source, status)
     `)
     .eq("id", id)
     .single();

@@ -98,6 +98,7 @@ export type Database = {
       bid_requests: {
         Row: {
           admin_notes: string | null
+          auction_vehicle_id: string | null
           auction_vehicle_reference: string
           created_at: string
           customer_id: string
@@ -110,6 +111,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          auction_vehicle_id?: string | null
           auction_vehicle_reference: string
           created_at?: string
           customer_id: string
@@ -122,6 +124,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          auction_vehicle_id?: string | null
           auction_vehicle_reference?: string
           created_at?: string
           customer_id?: string
@@ -133,6 +136,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "bid_requests_auction_vehicle_id_fkey"
+            columns: ["auction_vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "auction_vehicles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bid_requests_customer_id_fkey"
             columns: ["customer_id"]
