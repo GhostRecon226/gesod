@@ -5,7 +5,6 @@ import {
   Menu,
   X,
   LogOut,
-  Bell,
   Search,
   ChevronDown,
   Settings,
@@ -22,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { adminNavGroups } from "@/config/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { AdminNotificationDropdown } from "@/components/notifications/AdminNotificationDropdown";
 
 interface AdminDashboardLayoutProps {
   children: React.ReactNode;
@@ -190,10 +190,7 @@ export function AdminDashboardLayout({
               </Button>
 
               {/* Notifications */}
-              <Button variant="ghost" size="icon" className="relative">
-                <Bell className="h-5 w-5" />
-                <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-destructive" />
-              </Button>
+              <AdminNotificationDropdown />
 
               {/* User Avatar (desktop) */}
               <div className="hidden lg:flex items-center gap-3 pl-3 border-l border-border">
