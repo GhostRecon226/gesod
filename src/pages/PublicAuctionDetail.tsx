@@ -315,13 +315,14 @@ export default function PublicAuctionDetail() {
               {/* Important Disclaimers */}
               <Alert variant="default" className="border-warning/30 bg-warning-muted">
                 <AlertTriangle className="h-4 w-4 text-warning" />
-                <AlertTitle className="text-foreground">Important Information</AlertTitle>
+                <AlertTitle className="text-foreground">Important Disclaimer</AlertTitle>
                 <AlertDescription className="text-muted-foreground space-y-2">
                   <ul className="list-disc list-inside space-y-1 text-sm">
-                    <li>This vehicle is listed on a <strong>third-party auction platform</strong> ({vehicle.auction_source.toUpperCase()})</li>
-                    <li><strong>GESOD RIDES does not own this vehicle</strong> — we provide bidding assistance and logistics services</li>
-                    <li>Final cost will include <strong>auction fees, buyer premiums, and logistics charges</strong></li>
-                    <li>Vehicle condition is as-is; we recommend reviewing auction reports before bidding</li>
+                    <li><strong>GESOD RIDES does not own this vehicle</strong> — it is listed on {vehicle.auction_source.toUpperCase()}, a third-party auction platform</li>
+                    <li>We provide <strong>bidding assistance on your behalf</strong> — we bid for you, not sell to you</li>
+                    <li>Final cost includes <strong>auction fees, buyer premiums, shipping, and clearing charges</strong> (quoted separately)</li>
+                    <li>Vehicle condition is as-is; review auction reports before requesting a bid</li>
+                    <li><strong>Winning a bid is not guaranteed</strong> — outcomes depend on auction competition</li>
                   </ul>
                 </AlertDescription>
               </Alert>
@@ -479,13 +480,13 @@ export default function PublicAuctionDetail() {
                                       </FormControl>
                                       <div className="space-y-1">
                                         <FormLabel className="text-sm font-medium text-foreground cursor-pointer">
-                                          I accept the auction disclaimer
+                                          I understand and accept the terms
                                         </FormLabel>
                                         <p className="text-xs text-muted-foreground">
-                                          I understand that: (1) this vehicle is from a third-party auction, 
-                                          (2) GESOD RIDES does not own this vehicle, (3) final costs include 
-                                          auction fees, buyer premiums, and logistics charges, and (4) vehicle 
-                                          condition is sold as-is.
+                                          I understand that: (1) GESOD RIDES does not own this vehicle and will bid on my behalf, 
+                                          (2) winning is not guaranteed and depends on auction competition, (3) auction fees, 
+                                          buyer premiums, shipping, and clearing costs are separate and will be quoted, and 
+                                          (4) vehicle condition is sold as-is.
                                         </p>
                                         <FormMessage />
                                       </div>
