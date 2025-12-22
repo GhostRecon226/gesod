@@ -47,6 +47,54 @@ export type Database = {
         }
         Relationships: []
       }
+      auction_vehicles: {
+        Row: {
+          auction_date: string | null
+          auction_source: Database["public"]["Enums"]["auction_source"]
+          created_at: string
+          id: string
+          lot_number: string
+          make: string
+          model: string
+          status: Database["public"]["Enums"]["auction_vehicle_status"]
+          updated_at: string
+          vehicle_images: string[] | null
+          vehicle_type: Database["public"]["Enums"]["vehicle_type"]
+          yard_location: string | null
+          year: number
+        }
+        Insert: {
+          auction_date?: string | null
+          auction_source: Database["public"]["Enums"]["auction_source"]
+          created_at?: string
+          id?: string
+          lot_number: string
+          make: string
+          model: string
+          status?: Database["public"]["Enums"]["auction_vehicle_status"]
+          updated_at?: string
+          vehicle_images?: string[] | null
+          vehicle_type: Database["public"]["Enums"]["vehicle_type"]
+          yard_location?: string | null
+          year: number
+        }
+        Update: {
+          auction_date?: string | null
+          auction_source?: Database["public"]["Enums"]["auction_source"]
+          created_at?: string
+          id?: string
+          lot_number?: string
+          make?: string
+          model?: string
+          status?: Database["public"]["Enums"]["auction_vehicle_status"]
+          updated_at?: string
+          vehicle_images?: string[] | null
+          vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
+          yard_location?: string | null
+          year?: number
+        }
+        Relationships: []
+      }
       bid_requests: {
         Row: {
           admin_notes: string | null
@@ -567,6 +615,7 @@ export type Database = {
       account_status: "active" | "suspended"
       app_role: "admin" | "customer"
       auction_source: "copart" | "iaai" | "other"
+      auction_vehicle_status: "active" | "expired"
       bid_request_status: "pending" | "approved" | "rejected" | "won" | "lost"
       document_type: "invoice" | "bill_of_lading" | "photo" | "other"
       quote_status: "pending" | "issued" | "expired" | "accepted"
@@ -711,6 +760,7 @@ export const Constants = {
       account_status: ["active", "suspended"],
       app_role: ["admin", "customer"],
       auction_source: ["copart", "iaai", "other"],
+      auction_vehicle_status: ["active", "expired"],
       bid_request_status: ["pending", "approved", "rejected", "won", "lost"],
       document_type: ["invoice", "bill_of_lading", "photo", "other"],
       quote_status: ["pending", "issued", "expired", "accepted"],
