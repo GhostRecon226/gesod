@@ -13,6 +13,7 @@ export interface CustomerQuoteRequest {
   destination_location: string;
   quote_status: QuoteStatus;
   quote_amount: number | null;
+  currency: string | null;
   valid_until: string | null;
   created_at: string;
   updated_at: string;
@@ -30,13 +31,51 @@ export interface CustomerBidRequest {
   updated_at: string;
 }
 
+// Helper to parse vehicle details and extract VIN
+export function parseVehicleDetails(detailsStr: string): {
+  vehicle_type?: string;
+  make?: string;
+  model?: string;
+  year?: string;
+  vin?: string;
+  auction_source?: string;
+  lot_number?: string;
+  additional_notes?: string;
+} {
+  try {
+    return JSON.parse(detailsStr);
+  } catch {
+    return {};
+  }
+}
+
+// Get vehicle summary string from details JSON
+export function getVehicleSummary(details: string): string {
+  const parsed = parseVehicleDetails(details);
+  const parts = [parsed.year, parsed.make, parsed.model].filter(Boolean);
+  
+  if (parts.length === 0) {
+    return parsed.vehicle_type ? String(parsed.vehicle_type).toUpperCase() : "Vehicle";
+  }
+  
+  return parts.join(" ");
+}
+
+// Get VIN from vehicle details
+export function getVinFromDetails(details: string): string | null {
+  const parsed = parseVehicleDetails(details);
+  return parsed.vin || null;
+}
+
 // Fetch all quote requests for the current customer
+// This now fetches from public_quote_requests where customer_id matches
 export async function fetchCustomerQuoteRequests(): Promise<CustomerQuoteRequest[]> {
   const customer = await fetchCurrentCustomer();
 
+  // Fetch from public_quote_requests where customer is linked
   const { data, error } = await supabase
-    .from("quote_requests")
-    .select("*")
+    .from("public_quote_requests")
+    .select("id, quote_type, vehicle_details, origin_location, destination_location, quote_status, quote_amount, currency, valid_until, created_at, updated_at")
     .eq("customer_id", customer.id)
     .order("created_at", { ascending: false });
 
