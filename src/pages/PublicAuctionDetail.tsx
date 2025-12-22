@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -17,13 +17,14 @@ import {
   Info,
   ChevronLeft,
   ChevronRight,
-  ExternalLink,
+  CheckCircle2,
 } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Dialog,
@@ -49,18 +50,21 @@ import { supabase } from "@/integrations/supabase/client";
 
 const bidFormSchema = z.object({
   max_bid_amount: z.coerce.number().min(100, "Minimum bid amount is $100"),
-  destination_country: z.string().min(1, "Destination country is required"),
-  destination_port: z.string().min(1, "Destination port is required"),
+  destination_country: z.string().trim().min(1, "Destination country is required").max(100, "Country name too long"),
+  destination_port: z.string().trim().min(1, "Destination port is required").max(100, "Port name too long"),
+  accept_disclaimer: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the auction disclaimer to proceed" }),
+  }),
 });
 
 type BidFormData = z.infer<typeof bidFormSchema>;
 
 export default function PublicAuctionDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const { user } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [bidDialogOpen, setBidDialogOpen] = useState(false);
+  const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
   const { data: vehicle, isLoading, error } = useQuery({
     queryKey: ["auction-vehicle", id],
@@ -76,6 +80,7 @@ export default function PublicAuctionDetail() {
       max_bid_amount: 0,
       destination_country: "",
       destination_port: "",
+      accept_disclaimer: false as unknown as true,
     },
   });
 
@@ -114,8 +119,16 @@ export default function PublicAuctionDetail() {
       destination_port: data.destination_port,
     });
 
-    setBidDialogOpen(false);
+    setSubmissionSuccess(true);
     form.reset();
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setBidDialogOpen(open);
+    if (!open) {
+      setSubmissionSuccess(false);
+      form.reset();
+    }
   };
 
   const hasImages = vehicle?.vehicle_images && vehicle.vehicle_images.length > 0;
@@ -324,7 +337,7 @@ export default function PublicAuctionDetail() {
 
               {/* CTA */}
               {vehicle.status === "active" && (
-                <Dialog open={bidDialogOpen} onOpenChange={setBidDialogOpen}>
+                <Dialog open={bidDialogOpen} onOpenChange={handleDialogClose}>
                   <DialogTrigger asChild>
                     {user ? (
                       <Button size="lg" className="w-full text-base">
@@ -342,103 +355,168 @@ export default function PublicAuctionDetail() {
                   </DialogTrigger>
                   {user && (
                     <DialogContent className="sm:max-w-[500px]">
-                      <DialogHeader>
-                        <DialogTitle>Request Bidding Assistance</DialogTitle>
-                        <DialogDescription>
-                          Submit your bid request for the {vehicle.year} {vehicle.make} {vehicle.model}. 
-                          Our team will contact you to discuss details.
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      <Form {...form}>
-                        <form onSubmit={form.handleSubmit(handleBidSubmit)} className="space-y-4 mt-4">
-                          <div className="bg-muted/50 rounded-lg p-4 mb-2">
-                            <p className="text-sm font-medium text-foreground">
-                              {vehicle.year} {vehicle.make} {vehicle.model}
+                      {submissionSuccess ? (
+                        <>
+                          <div className="flex flex-col items-center justify-center py-8 text-center">
+                            <div className="h-16 w-16 rounded-full bg-success/10 flex items-center justify-center mb-4">
+                              <CheckCircle2 className="h-8 w-8 text-success" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-foreground mb-2">
+                              Bid Request Submitted!
+                            </h3>
+                            <p className="text-muted-foreground mb-6 max-w-sm">
+                              Your bid request for the <strong>{vehicle.year} {vehicle.make} {vehicle.model}</strong> has been submitted successfully. 
+                              Our team will review your request and contact you shortly.
                             </p>
-                            <p className="text-xs text-muted-foreground">
-                              Lot #{vehicle.lot_number} • {vehicle.auction_source.toUpperCase()}
-                            </p>
+                            <div className="bg-muted/50 rounded-lg p-4 w-full mb-6">
+                              <p className="text-sm text-muted-foreground">
+                                <strong>What happens next?</strong>
+                              </p>
+                              <ul className="text-sm text-muted-foreground mt-2 space-y-1 text-left list-disc list-inside">
+                                <li>Our team will review your request</li>
+                                <li>We'll contact you to confirm details</li>
+                                <li>You'll receive updates on bid status</li>
+                              </ul>
+                            </div>
+                            <div className="flex gap-3 w-full">
+                              <Button
+                                variant="outline"
+                                onClick={() => handleDialogClose(false)}
+                                className="flex-1"
+                              >
+                                Close
+                              </Button>
+                              <Button asChild className="flex-1">
+                                <Link to="/dashboard/quotes">View My Requests</Link>
+                              </Button>
+                            </div>
                           </div>
+                        </>
+                      ) : (
+                        <>
+                          <DialogHeader>
+                            <DialogTitle>Request Bidding Assistance</DialogTitle>
+                            <DialogDescription>
+                              Submit your bid request for the {vehicle.year} {vehicle.make} {vehicle.model}. 
+                              Our team will contact you to discuss details.
+                            </DialogDescription>
+                          </DialogHeader>
 
-                          <FormField
-                            control={form.control}
-                            name="max_bid_amount"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Maximum Bid Amount (USD)</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="number"
-                                    placeholder="Enter your max bid"
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormDescription>
-                                  The maximum amount you're willing to bid (excluding fees)
-                                </FormDescription>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                          <Form {...form}>
+                            <form onSubmit={form.handleSubmit(handleBidSubmit)} className="space-y-4 mt-4">
+                              <div className="bg-muted/50 rounded-lg p-4 mb-2">
+                                <p className="text-sm font-medium text-foreground">
+                                  {vehicle.year} {vehicle.make} {vehicle.model}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  Lot #{vehicle.lot_number} • {vehicle.auction_source.toUpperCase()}
+                                </p>
+                              </div>
 
-                          <FormField
-                            control={form.control}
-                            name="destination_country"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Destination Country</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g., Nigeria" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                              <FormField
+                                control={form.control}
+                                name="max_bid_amount"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Maximum Bid Amount (USD)</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="number"
+                                        placeholder="Enter your max bid"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormDescription>
+                                      The maximum amount you're willing to bid (excluding fees)
+                                    </FormDescription>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
-                          <FormField
-                            control={form.control}
-                            name="destination_port"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Destination Port</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="e.g., Lagos" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                              <FormField
+                                control={form.control}
+                                name="destination_country"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Destination Country</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g., Nigeria" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
-                          <div className="bg-warning-muted border border-warning/30 rounded-lg p-3">
-                            <p className="text-xs text-muted-foreground">
-                              By submitting, you agree that final costs include auction fees, 
-                              buyer premiums, and logistics charges which will be quoted separately.
-                            </p>
-                          </div>
+                              <FormField
+                                control={form.control}
+                                name="destination_port"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Destination Port</FormLabel>
+                                    <FormControl>
+                                      <Input placeholder="e.g., Lagos" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
 
-                          <div className="flex gap-3 pt-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              onClick={() => setBidDialogOpen(false)}
-                              className="flex-1"
-                            >
-                              Cancel
-                            </Button>
-                            <Button
-                              type="submit"
-                              disabled={createBidMutation.isPending}
-                              className="flex-1"
-                            >
-                              {createBidMutation.isPending && (
-                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                              )}
-                              Submit Request
-                            </Button>
-                          </div>
-                        </form>
-                      </Form>
+                              {/* Disclaimer Checkbox */}
+                              <FormField
+                                control={form.control}
+                                name="accept_disclaimer"
+                                render={({ field }) => (
+                                  <FormItem className="bg-warning-muted border border-warning/30 rounded-lg p-4">
+                                    <div className="flex items-start gap-3">
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value}
+                                          onCheckedChange={field.onChange}
+                                          className="mt-0.5"
+                                        />
+                                      </FormControl>
+                                      <div className="space-y-1">
+                                        <FormLabel className="text-sm font-medium text-foreground cursor-pointer">
+                                          I accept the auction disclaimer
+                                        </FormLabel>
+                                        <p className="text-xs text-muted-foreground">
+                                          I understand that: (1) this vehicle is from a third-party auction, 
+                                          (2) GESOD RIDES does not own this vehicle, (3) final costs include 
+                                          auction fees, buyer premiums, and logistics charges, and (4) vehicle 
+                                          condition is sold as-is.
+                                        </p>
+                                        <FormMessage />
+                                      </div>
+                                    </div>
+                                  </FormItem>
+                                )}
+                              />
+
+                              <div className="flex gap-3 pt-2">
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={() => handleDialogClose(false)}
+                                  className="flex-1"
+                                >
+                                  Cancel
+                                </Button>
+                                <Button
+                                  type="submit"
+                                  disabled={createBidMutation.isPending}
+                                  className="flex-1"
+                                >
+                                  {createBidMutation.isPending && (
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                  )}
+                                  Submit Request
+                                </Button>
+                              </div>
+                            </form>
+                          </Form>
+                        </>
+                      )}
                     </DialogContent>
                   )}
                 </Dialog>
