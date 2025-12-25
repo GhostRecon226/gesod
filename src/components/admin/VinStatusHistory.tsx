@@ -1,28 +1,13 @@
 import { format } from "date-fns";
-import { Clock, Trash2, User } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { StatusBadge, type StatusType } from "@/components/ui/status-badge";
+import { StatusTimeline, type TimelineStatus } from "@/components/ui/status-timeline";
 import { useVinStatusUpdates, useDeleteStatusUpdate } from "@/hooks/useVinStatusUpdates";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { VinStatus } from "@/services/vinService";
 
 interface VinStatusHistoryProps {
   vinRecordId: string;
   showDelete?: boolean;
-}
-
-// Map database status to StatusBadge status type
-function mapToStatusType(status: VinStatus): StatusType {
-  const map: Record<VinStatus, StatusType> = {
-    pending: "pending",
-    active: "active",
-    awaiting_action: "awaiting",
-    in_progress: "in-progress",
-    delayed: "delayed",
-    completed: "completed",
-    cancelled: "cancelled",
-  };
-  return map[status];
 }
 
 export function VinStatusHistory({ vinRecordId, showDelete = true }: VinStatusHistoryProps) {
@@ -31,9 +16,9 @@ export function VinStatusHistory({ vinRecordId, showDelete = true }: VinStatusHi
 
   if (isLoading) {
     return (
-      <div className="space-y-3">
+      <div className="space-y-4">
         {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-20 w-full" />
+          <Skeleton key={i} className="h-16 w-full" />
         ))}
       </div>
     );
@@ -41,62 +26,96 @@ export function VinStatusHistory({ vinRecordId, showDelete = true }: VinStatusHi
 
   if (!updates || updates.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground text-center py-4">
+      <p className="text-sm text-muted-foreground text-center py-8">
         No status updates yet.
       </p>
     );
   }
 
-  return (
-    <div className="space-y-3">
-      {updates.map((update, index) => (
-        <div
-          key={update.id}
-          className={`relative pl-6 pb-4 ${
-            index !== updates.length - 1 ? "border-l-2 border-border ml-2" : "ml-2"
-          }`}
-        >
-          <div className="absolute -left-2 top-0 w-4 h-4 rounded-full bg-primary border-2 border-background" />
+  // If delete is enabled, render custom view with delete buttons
+  if (showDelete) {
+    return (
+      <div className="space-y-0">
+        {/* Vertical line */}
+        <div className="relative">
+          <div className="absolute left-[5px] top-2 bottom-2 w-px bg-border" />
           
-          <div className="bg-muted/50 rounded-lg p-3 ml-2">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <StatusBadge status={mapToStatusType(update.status)} />
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {format(new Date(update.created_at), "MMM d, yyyy 'at' h:mm a")}
-                  </span>
-                </div>
-                
-                {update.description && (
-                  <p className="text-sm text-foreground">{update.description}</p>
-                )}
-                
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <User className="h-3 w-3" />
-                  {update.updater_profile?.full_name || update.updater_profile?.email || "Unknown"}
-                </p>
-              </div>
-              
-              {showDelete && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                  onClick={() => deleteMutation.mutate({ 
-                    id: update.id, 
-                    vinRecordId 
-                  })}
-                  disabled={deleteMutation.isPending}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          </div>
+          <ol className="space-y-0">
+            {updates.map((update, index) => {
+              const isFirst = index === 0;
+              const statusLabels: Record<string, string> = {
+                pending: "Pending",
+                active: "Active",
+                awaiting_action: "Awaiting Action",
+                in_progress: "In Progress",
+                delayed: "Delayed",
+                completed: "Completed",
+                cancelled: "Cancelled",
+              };
+
+              return (
+                <li key={update.id} className="relative flex gap-4 pb-6 last:pb-0">
+                  {/* Dot */}
+                  <div className="relative z-10 flex-shrink-0">
+                    <div
+                      className={`h-[11px] w-[11px] rounded-full border-2 bg-background ${
+                        isFirst ? "border-primary bg-primary" : "border-border"
+                      }`}
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0 -mt-0.5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1">
+                        <div className="flex items-baseline gap-3 flex-wrap">
+                          <span className={`text-sm font-medium ${isFirst ? "text-foreground" : "text-muted-foreground"}`}>
+                            {statusLabels[update.status] || update.status}
+                          </span>
+                          <time className="text-xs text-muted-foreground tabular-nums">
+                            {format(new Date(update.created_at), "MMM d, yyyy · h:mm a")}
+                          </time>
+                        </div>
+
+                        {update.description && (
+                          <p className="mt-1 text-sm text-foreground">
+                            {update.description}
+                          </p>
+                        )}
+
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {update.updater_profile?.full_name || update.updater_profile?.email || "Unknown"}
+                        </p>
+                      </div>
+
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-destructive flex-shrink-0"
+                        onClick={() => deleteMutation.mutate({ id: update.id, vinRecordId })}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
         </div>
-      ))}
-    </div>
-  );
+      </div>
+    );
+  }
+
+  // Read-only view using the shared component
+  const timelineItems: TimelineStatus[] = updates.map((update) => ({
+    id: update.id,
+    status: update.status,
+    date: update.created_at,
+    description: update.description,
+    updatedBy: update.updater_profile?.full_name || update.updater_profile?.email || undefined,
+  }));
+
+  return <StatusTimeline items={timelineItems} showUpdatedBy />;
 }

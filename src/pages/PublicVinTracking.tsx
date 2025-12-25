@@ -1,30 +1,25 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
-import { z } from "zod";
 import {
   Search,
   Truck,
   AlertCircle,
-  CheckCircle2,
-  Clock,
   Loader2,
   ArrowLeft,
   Car,
   Info,
   ShieldAlert,
+  Circle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { StatusBadge, StatusType } from "@/components/ui/status-badge";
+import { StatusTimeline, type TimelineStatus } from "@/components/ui/status-timeline";
 import {
   trackVinPublic,
   vinSchema,
-  TrackVinResponse,
   PublicVinTrackingResult,
   maskVin,
 } from "@/services/publicVinTrackingService";
@@ -38,19 +33,25 @@ const RATE_LIMIT_CONFIG = {
   storageKey: "vin-tracking-rate-limit",
 };
 
-// Map database status to StatusBadge status type
-function mapStatus(dbStatus: string): StatusType {
-  const statusMap: Record<string, StatusType> = {
-    pending: "pending",
-    active: "active",
-    awaiting_action: "awaiting",
-    in_progress: "in-progress",
-    delayed: "delayed",
-    completed: "completed",
-    cancelled: "cancelled",
-  };
-  return statusMap[dbStatus] || "pending";
-}
+const statusLabels: Record<string, string> = {
+  pending: "Pending",
+  active: "Active",
+  awaiting_action: "Awaiting Action",
+  in_progress: "In Progress",
+  delayed: "Delayed",
+  completed: "Completed",
+  cancelled: "Cancelled",
+};
+
+const statusIndicator: Record<string, string> = {
+  pending: "text-pending",
+  active: "text-in-progress",
+  awaiting_action: "text-awaiting",
+  in_progress: "text-in-progress",
+  delayed: "text-destructive",
+  completed: "text-success",
+  cancelled: "text-muted-foreground",
+};
 
 export default function PublicVinTracking() {
   const [vinInput, setVinInput] = useState("");
@@ -237,141 +238,87 @@ export default function PublicVinTracking() {
         )}
 
         {/* Results */}
-        {result && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
-            {/* Vehicle Info Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Car className="h-5 w-5 text-muted-foreground" />
+        {result && (() => {
+          const timelineItems: TimelineStatus[] = result.status_history.map((update, idx) => ({
+            id: String(idx),
+            status: update.status,
+            date: update.date,
+            description: update.description,
+          }));
+
+          return (
+            <div className="space-y-6">
+              {/* Vehicle Info */}
+              <div className="bg-card rounded-lg border border-border p-5">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mb-4">
+                  <Car className="h-4 w-4" />
                   Vehicle Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">VIN</p>
-                    <p className="font-mono font-medium tracking-wider">
-                      {maskVin(result.vin)}
-                    </p>
+                    <p className="text-xs text-muted-foreground">VIN</p>
+                    <code className="text-sm font-mono">{maskVin(result.vin)}</code>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Vehicle</p>
-                    <p className="font-medium">
+                    <p className="text-xs text-muted-foreground">Vehicle</p>
+                    <p className="text-sm">
                       {result.vehicle.year} {result.vehicle.make} {result.vehicle.model}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Type</p>
-                    <p className="font-medium capitalize">{result.vehicle.type}</p>
+                    <p className="text-xs text-muted-foreground">Type</p>
+                    <p className="text-sm capitalize">{result.vehicle.type}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Source</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <Badge variant="secondary" className="capitalize">
-                        {result.vehicle.source}
-                      </Badge>
-                      {result.vehicle.source === "auction" && result.vehicle.auction_source && (
-                        <Badge variant="outline" className="uppercase text-xs">
-                          {result.vehicle.auction_source}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="sm:col-span-2 lg:col-span-2">
-                    <p className="text-sm text-muted-foreground">Current Status</p>
-                    <div className="mt-1">
-                      <StatusBadge
-                        status={mapStatus(result.current_status)}
-                        showIcon
-                        size="lg"
-                      />
+                    <p className="text-xs text-muted-foreground">Current Status</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <Circle className={`h-2 w-2 fill-current ${statusIndicator[result.current_status]}`} />
+                      <span className="text-sm font-medium">{statusLabels[result.current_status]}</span>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Login CTA */}
-            <div className="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-sm text-muted-foreground">
-                Is this your vehicle? Log in to view full details and documents.
-              </p>
-              <Link to="/auth">
-                <Button variant="outline" size="sm" className="whitespace-nowrap">
-                  Log In
-                </Button>
-              </Link>
-            </div>
-
-            {/* Status Timeline */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Clock className="h-5 w-5 text-muted-foreground" />
-                  Status History
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {result.status_history.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-6">
-                    No status updates yet.
-                  </p>
-                ) : (
-                  <div className="relative">
-                    {/* Timeline line */}
-                    <div className="absolute left-[11px] top-2 bottom-2 w-0.5 bg-border" />
-
-                    <div className="space-y-6">
-                      {result.status_history.map((update, index) => (
-                        <div key={index} className="relative flex gap-4 pl-7">
-                          {/* Timeline dot */}
-                          <div
-                            className={`absolute left-0 top-1 h-[22px] w-[22px] rounded-full border-2 flex items-center justify-center ${
-                              index === 0
-                                ? "bg-primary border-primary"
-                                : "bg-card border-border"
-                            }`}
-                          >
-                            <div
-                              className={`h-2 w-2 rounded-full ${
-                                index === 0
-                                  ? "bg-primary-foreground"
-                                  : "bg-muted-foreground"
-                              }`}
-                            />
-                          </div>
-
-                          <div className="flex-1 pb-2">
-                            <div className="flex items-center gap-3 flex-wrap">
-                              <StatusBadge
-                                status={mapStatus(update.status)}
-                                showIcon
-                              />
-                              <span className="text-sm text-muted-foreground">
-                                {format(
-                                  new Date(update.date),
-                                  "MMM d, yyyy 'at' h:mm a"
-                                )}
-                              </span>
-                            </div>
-                            {update.description && (
-                              <p className="mt-2 text-sm text-foreground">
-                                {update.description}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                {result.vehicle.source === "auction" && (
+                  <div className="mt-4 pt-4 border-t border-border flex items-center gap-2">
+                    <Badge variant="secondary" className="capitalize text-xs">
+                      {result.vehicle.source}
+                    </Badge>
+                    {result.vehicle.auction_source && (
+                      <Badge variant="outline" className="uppercase text-xs">
+                        {result.vehicle.auction_source}
+                      </Badge>
+                    )}
                   </div>
                 )}
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Help Section */}
-            <Card className="bg-muted/50">
-              <CardContent className="pt-6">
+              {/* Login CTA */}
+              <div className="flex items-center justify-between gap-4 px-4 py-3 rounded-lg bg-muted/50 border border-border">
+                <p className="text-sm text-muted-foreground">
+                  Is this your vehicle? Log in to view full details and documents.
+                </p>
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="whitespace-nowrap">
+                    Log In
+                  </Button>
+                </Link>
+              </div>
+
+              {/* Status Timeline */}
+              <div className="bg-card rounded-lg border border-border p-5">
+                <div className="text-sm font-medium text-muted-foreground mb-5">
+                  Status History
+                </div>
+
+                <StatusTimeline 
+                  items={timelineItems}
+                  emptyMessage="No status updates yet."
+                />
+              </div>
+
+              {/* Help Section */}
+              <div className="bg-muted/30 rounded-lg border border-border p-5">
                 <div className="flex items-start gap-3">
                   <AlertCircle className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />
                   <div>
@@ -394,24 +341,22 @@ export default function PublicVinTracking() {
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Initial State Helper */}
         {!result && !error && !isLoading && (
-          <Card className="bg-muted/30 border-dashed">
-            <CardContent className="py-8 text-center">
-              <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <p className="text-muted-foreground">
-                Enter a valid 17-character VIN above to view your shipment status
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Your VIN can be found on your vehicle documents or dashboard
-              </p>
-            </CardContent>
-          </Card>
+          <div className="bg-muted/30 rounded-lg border border-dashed border-border py-8 text-center">
+            <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+            <p className="text-muted-foreground">
+              Enter a valid 17-character VIN above to view your shipment status
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Your VIN can be found on your vehicle documents or dashboard
+            </p>
+          </div>
         )}
 
         {/* Footer Disclaimer */}
