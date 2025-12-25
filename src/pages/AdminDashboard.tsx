@@ -161,9 +161,9 @@ export default function AdminDashboard() {
     <AdminDashboardLayout>
       <div className="max-w-7xl">
         {/* Header */}
-        <header className="mb-10">
+        <header className="mb-8">
           <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
+          <p className="text-muted-foreground mt-0.5">
             {format(new Date(), "EEEE, MMMM d, yyyy")}
           </p>
         </header>
@@ -172,8 +172,8 @@ export default function AdminDashboard() {
         <section className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Customers Group */}
-            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+            <div className="bg-muted/30 rounded-lg p-3.5 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
                 Customers
               </p>
               <Link to="/admin/customers" className="group block">
@@ -193,11 +193,11 @@ export default function AdminDashboard() {
             </div>
 
             {/* Vehicles Group */}
-            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+            <div className="bg-muted/30 rounded-lg p-3.5 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
                 Vehicles
               </p>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <Link to="/admin/vehicles" className="group">
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
@@ -244,11 +244,11 @@ export default function AdminDashboard() {
             </div>
 
             {/* Requests Group */}
-            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+            <div className="bg-muted/30 rounded-lg p-3.5 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
                 Requests
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <Link to="/admin/quotes" className="group">
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
@@ -283,7 +283,7 @@ export default function AdminDashboard() {
         </section>
 
         {/* Vehicle Status Distribution Chart */}
-        <section className="mb-10">
+        <section className="mb-8">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -337,10 +337,10 @@ export default function AdminDashboard() {
         </section>
 
         {/* Main Content Grid */}
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3">
           {/* Recent Activity - Table */}
           <section className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
                 Recent Activity
               </h2>
@@ -364,19 +364,19 @@ export default function AdminDashboard() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-border bg-muted/30">
-                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-2.5">
                         Status
                       </th>
-                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-2.5">
                         Vehicle
                       </th>
-                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3 hidden md:table-cell">
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-2.5 hidden md:table-cell">
                         Customer
                       </th>
-                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3 hidden lg:table-cell">
+                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-2.5 hidden lg:table-cell">
                         VIN
                       </th>
-                      <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">
+                      <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-2.5">
                         Date
                       </th>
                     </tr>
@@ -384,7 +384,7 @@ export default function AdminDashboard() {
                   <tbody className="divide-y divide-border">
                     {recentActivity.map((activity) => (
                       <tr key={activity.id} className="hover:bg-muted/20 transition-colors">
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-2.5">
                           <div className="flex items-center gap-2">
                             <Circle className={`h-2 w-2 fill-current ${statusIndicator[activity.status] || 'text-muted-foreground'}`} />
                             <span className="text-sm text-foreground">
@@ -392,22 +392,22 @@ export default function AdminDashboard() {
                             </span>
                           </div>
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-2.5">
                           <span className="text-sm text-foreground">
                             {activity.vin_record?.vehicle?.year} {activity.vin_record?.vehicle?.make} {activity.vin_record?.vehicle?.model}
                           </span>
                         </td>
-                        <td className="px-4 py-3 hidden md:table-cell">
+                        <td className="px-4 py-2.5 hidden md:table-cell">
                           <span className="text-sm text-muted-foreground">
                             {activity.vin_record?.customer?.full_name}
                           </span>
                         </td>
-                        <td className="px-4 py-3 hidden lg:table-cell">
+                        <td className="px-4 py-2.5 hidden lg:table-cell">
                           <code className="text-xs text-muted-foreground font-mono">
                             {activity.vin_record?.vin}
                           </code>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-2.5 text-right">
                           <span className="text-sm text-muted-foreground tabular-nums">
                             {format(new Date(activity.created_at), "MMM d")}
                           </span>
@@ -417,9 +417,9 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               ) : (
-                <div className="px-6 py-14 text-center">
-                  <Users className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                  <p className="text-sm font-medium text-foreground mb-1">
+                <div className="px-6 py-10 text-center">
+                  <Users className="h-9 w-9 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-sm font-medium text-foreground mb-0.5">
                     Activity will appear here
                   </p>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
@@ -432,7 +432,7 @@ export default function AdminDashboard() {
 
           {/* Pending Quotes - List */}
           <section>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
                 Pending Quotes
               </h2>
@@ -458,7 +458,7 @@ export default function AdminDashboard() {
                     <li key={action.id}>
                       <Link 
                         to="/admin/quotes" 
-                        className="block px-4 py-3 hover:bg-muted/20 transition-colors"
+                        className="block px-4 py-2.5 hover:bg-muted/20 transition-colors"
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0 flex-1">
@@ -478,9 +478,9 @@ export default function AdminDashboard() {
                   ))}
                 </ul>
               ) : (
-                <div className="px-6 py-14 text-center">
-                  <FileText className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                  <p className="text-sm font-medium text-foreground mb-1">
+                <div className="px-6 py-10 text-center">
+                  <FileText className="h-9 w-9 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-sm font-medium text-foreground mb-0.5">
                     Quote requests will appear here
                   </p>
                   <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
