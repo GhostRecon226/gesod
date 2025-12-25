@@ -12,6 +12,7 @@ import {
   Eye,
   Circle,
   X,
+  Download,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ import {
   VinStatus,
   vehicleSources,
 } from "@/services/vehicleService";
+import { exportToCsv } from "@/lib/exportCsv";
 
 type SortField = "date" | "status";
 type SortDirection = "asc" | "desc";
@@ -287,14 +289,49 @@ export default function AdminVehicles() {
     );
   }
 
+  const handleExport = () => {
+    const getPrimaryVinForExport = (vehicle: VehicleWithCustomer) => {
+      if (!vehicle.vin_records || vehicle.vin_records.length === 0) return null;
+      return vehicle.vin_records.find(v => v.is_active) || vehicle.vin_records[0];
+    };
+
+    exportToCsv(
+      filteredVehicles,
+      "vehicles",
+      [
+        { key: "id", header: "ID" },
+        { key: "vin_records", header: "VIN", transform: (_v, item) => getPrimaryVinForExport(item)?.vin || "" },
+        { key: "customers", header: "Customer", transform: (_v, item) => item.customers?.full_name || "" },
+        { key: "year", header: "Year", transform: (v) => String(v) },
+        { key: "make", header: "Make", transform: (v) => String(v) },
+        { key: "model", header: "Model", transform: (v) => String(v) },
+        { key: "vehicle_type", header: "Type", transform: (v) => String(v) },
+        { key: "source", header: "Source", transform: (v) => String(v) },
+        { key: "auction_source", header: "Auction Source", transform: (v) => v ? String(v) : "" },
+        { key: "lot_number", header: "Lot Number", transform: (v) => v ? String(v) : "" },
+        { key: "vin_records", header: "Status", transform: (_v, item) => {
+          const primary = getPrimaryVinForExport(item);
+          return primary?.current_status ? statusLabels[primary.current_status] : "";
+        }},
+        { key: "created_at", header: "Created", transform: (v) => format(new Date(String(v)), "yyyy-MM-dd") },
+      ]
+    );
+  };
+
   return (
     <AdminDashboardLayout 
       pageTitle="Vehicles" 
       actions={
-        <Button size="sm" onClick={handleCreate}>
-          <Plus className="h-4 w-4 mr-1.5" />
-          Add Vehicle
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredVehicles.length === 0}>
+            <Download className="h-4 w-4 mr-1.5" />
+            Export
+          </Button>
+          <Button size="sm" onClick={handleCreate}>
+            <Plus className="h-4 w-4 mr-1.5" />
+            Add Vehicle
+          </Button>
+        </div>
       }
     >
       <div className="space-y-6">

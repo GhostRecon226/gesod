@@ -8,6 +8,7 @@ import {
   Eye,
   Circle,
   X,
+  Download,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ import {
 } from "@/hooks/usePublicQuoteRequests";
 import { QuoteDetailDialog } from "@/components/admin/QuoteDetailDialog";
 import { useCustomers } from "@/hooks/useCustomers";
+import { exportToCsv } from "@/lib/exportCsv";
 
 function parseVehicleDetails(detailsStr: string): {
   vehicle_type?: string;
@@ -188,8 +190,38 @@ export default function AdminQuotes() {
     );
   }
 
+  const handleExport = () => {
+    exportToCsv(
+      filteredQuotes,
+      "quotes",
+      [
+        { key: "id", header: "ID", transform: (v) => String(v).slice(0, 8) },
+        { key: "quote_type", header: "Type", transform: (v) => v === "ocean_freight" ? "Ocean" : "Inland" },
+        { key: "contact_name", header: "Contact Name" },
+        { key: "contact_email", header: "Contact Email" },
+        { key: "contact_phone", header: "Contact Phone" },
+        { key: "customer_id", header: "Customer", transform: (_v, item) => item.customer?.full_name || "Guest" },
+        { key: "vehicle_details", header: "Vehicle", transform: (v) => getVehicleSummary(String(v)) },
+        { key: "origin_location", header: "Origin" },
+        { key: "destination_location", header: "Destination" },
+        { key: "quote_amount", header: "Amount", transform: (v, item) => v ? `${item.currency || "USD"} ${v}` : "" },
+        { key: "quote_status", header: "Status", transform: (v) => statusLabels[String(v)] || String(v) },
+        { key: "valid_until", header: "Valid Until", transform: (v) => v ? format(new Date(String(v)), "yyyy-MM-dd") : "" },
+        { key: "created_at", header: "Created", transform: (v) => format(new Date(String(v)), "yyyy-MM-dd") },
+      ]
+    );
+  };
+
   return (
-    <AdminDashboardLayout pageTitle="Quote Requests">
+    <AdminDashboardLayout 
+      pageTitle="Quote Requests"
+      actions={
+        <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredQuotes.length === 0}>
+          <Download className="h-4 w-4 mr-1.5" />
+          Export
+        </Button>
+      }
+    >
       <div className="space-y-6">
         {/* Stats Row */}
         <div className="grid grid-cols-3 gap-6 max-w-sm">
