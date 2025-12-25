@@ -92,7 +92,7 @@ export function VinStatusHistory({ vinRecordId, showDelete = true }: VinStatusHi
                         variant="ghost"
                         size="icon-sm"
                         className="text-muted-foreground hover:text-destructive flex-shrink-0"
-                        onClick={() => deleteMutation.mutate({ id: update.id, vinRecordId })}
+                        onClick={() => deleteMutation.mutate(update.id)}
                         disabled={deleteMutation.isPending}
                       >
                         <Trash2 className="h-3.5 w-3.5" />

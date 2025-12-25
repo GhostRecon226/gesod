@@ -32,6 +32,9 @@ import AdminVins from "./pages/admin/AdminVins";
 import AdminQuotes from "./pages/admin/AdminQuotes";
 import AdminAuctionListings from "./pages/admin/AdminAuctionListings";
 import AdminBidRequests from "./pages/admin/AdminBidRequests";
+import AdminDocuments from "./pages/admin/AdminDocuments";
+import AdminStatusUpdates from "./pages/admin/AdminStatusUpdates";
+import AdminSettings from "./pages/admin/AdminSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -195,10 +198,30 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            {/* Admin sub-pages (to be created) */}
-            {/* <Route path="/admin/status" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStatusUpdates /></ProtectedRoute>} /> */}
-            {/* <Route path="/admin/documents" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDocuments /></ProtectedRoute>} /> */}
-            {/* <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSettings /></ProtectedRoute>} /> */}
+            <Route
+              path="/admin/documents"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminDocuments />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/status"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminStatusUpdates />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminSettings />
+                </ProtectedRoute>
+              }
+            />
 
             {/* ==================== CATCH-ALL ==================== */}
             <Route path="*" element={<NotFound />} />
