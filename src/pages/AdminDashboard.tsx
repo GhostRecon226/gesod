@@ -417,9 +417,14 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               ) : (
-                <div className="px-4 py-12 text-center">
-                  <Users className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No recent activity</p>
+                <div className="px-6 py-14 text-center">
+                  <Users className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+                  <p className="text-sm font-medium text-foreground mb-1">
+                    Activity will appear here
+                  </p>
+                  <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
+                    Status changes and updates for customer vehicles will be shown in this section as they occur.
+                  </p>
                 </div>
               )}
             </div>
@@ -473,9 +478,14 @@ export default function AdminDashboard() {
                   ))}
                 </ul>
               ) : (
-                <div className="px-4 py-12 text-center">
-                  <FileText className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No pending quotes</p>
+                <div className="px-6 py-14 text-center">
+                  <FileText className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+                  <p className="text-sm font-medium text-foreground mb-1">
+                    Quote requests will appear here
+                  </p>
+                  <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
+                    New quote requests from customers and website visitors will be listed here for review.
+                  </p>
                 </div>
               )}
             </div>
