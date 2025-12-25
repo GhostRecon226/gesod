@@ -15,6 +15,7 @@ export interface AuctionVehicle {
   auction_date: string | null;
   yard_location: string | null;
   vehicle_images: string[] | null;
+  remarks: string | null;
   status: AuctionVehicleStatus;
   created_at: string;
   updated_at: string;
@@ -30,6 +31,7 @@ export interface CreateAuctionVehicleData {
   auction_date?: string | null;
   yard_location?: string | null;
   vehicle_images?: string[] | null;
+  remarks?: string | null;
 }
 
 export interface UpdateAuctionVehicleData {
@@ -42,7 +44,49 @@ export interface UpdateAuctionVehicleData {
   auction_date?: string | null;
   yard_location?: string | null;
   vehicle_images?: string[] | null;
+  remarks?: string | null;
   status?: AuctionVehicleStatus;
+}
+
+// Upload auction vehicle images to storage
+export async function uploadAuctionImages(files: File[]): Promise<string[]> {
+  const urls: string[] = [];
+  
+  for (const file of files) {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${crypto.randomUUID()}.${fileExt}`;
+    const filePath = `vehicles/${fileName}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('auction-images')
+      .upload(filePath, file);
+    
+    if (uploadError) throw uploadError;
+    
+    const { data: { publicUrl } } = supabase.storage
+      .from('auction-images')
+      .getPublicUrl(filePath);
+    
+    urls.push(publicUrl);
+  }
+  
+  return urls;
+}
+
+// Delete auction vehicle images from storage
+export async function deleteAuctionImages(urls: string[]): Promise<void> {
+  const paths = urls.map(url => {
+    const parts = url.split('/auction-images/');
+    return parts[1] || '';
+  }).filter(Boolean);
+  
+  if (paths.length > 0) {
+    const { error } = await supabase.storage
+      .from('auction-images')
+      .remove(paths);
+    
+    if (error) throw error;
+  }
 }
 
 // Fetch all auction vehicles (admin only)
