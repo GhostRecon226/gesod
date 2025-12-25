@@ -312,6 +312,18 @@ export default function PublicAuctionDetail() {
                 </CardContent>
               </Card>
 
+              {/* Remarks Section */}
+              {vehicle.remarks && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Additional Notes</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground whitespace-pre-wrap">{vehicle.remarks}</p>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Important Disclaimers */}
               <Alert variant="default" className="border-warning/30 bg-warning-muted">
                 <AlertTriangle className="h-4 w-4 text-warning" />
