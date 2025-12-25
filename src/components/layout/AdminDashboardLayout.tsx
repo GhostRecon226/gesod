@@ -5,18 +5,14 @@ import {
   Menu,
   X,
   LogOut,
-  Search,
   ChevronDown,
-  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { adminNavGroups } from "@/config/navigation";
@@ -50,11 +46,11 @@ export function AdminDashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 z-40 bg-foreground/20 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-foreground/10 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -62,41 +58,36 @@ export function AdminDashboardLayout({
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 w-64 transform bg-sidebar transition-transform duration-300 ease-in-out lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 w-56 flex flex-col bg-card border-r border-border transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo */}
-        <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
+        <div className="flex h-14 items-center justify-between border-b border-border px-4 flex-shrink-0">
           <Link to="/admin" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary">
-              <Truck className="h-5 w-5 text-sidebar-primary-foreground" />
-            </div>
-            <div>
-              <span className="text-sm font-bold text-sidebar-foreground block">
-                GESOD RIDES
-              </span>
-              <span className="text-xs text-sidebar-muted">Admin Panel</span>
-            </div>
+            <Truck className="h-5 w-5 text-foreground" />
+            <span className="text-sm font-semibold text-foreground">
+              GESOD RIDES
+            </span>
           </Link>
           <Button
             variant="ghost"
             size="icon-sm"
-            className="text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground lg:hidden"
+            className="lg:hidden"
             onClick={() => setSidebarOpen(false)}
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4" />
           </Button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex flex-col gap-6 p-4 overflow-y-auto max-h-[calc(100vh-8rem)]">
-          {adminNavGroups.map((group) => (
-            <div key={group.title}>
-              <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-muted">
+        <nav className="flex-1 overflow-y-auto py-4 px-3">
+          {adminNavGroups.map((group, idx) => (
+            <div key={group.title} className={cn(idx > 0 && "mt-6")}>
+              <p className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
                 {group.title}
               </p>
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {group.items.map((item) => {
                   const isActive = location.pathname === item.href;
                   return (
@@ -104,14 +95,14 @@ export function AdminDashboardLayout({
                       key={item.href}
                       to={item.href}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        "flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors",
                         isActive
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                          : "text-sidebar-muted hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
+                          ? "bg-accent text-foreground font-medium"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
-                      <item.icon className="h-4 w-4" />
-                      {item.title}
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">{item.title}</span>
                     </Link>
                   );
                 })}
@@ -120,33 +111,25 @@ export function AdminDashboardLayout({
           ))}
         </nav>
 
-        {/* Admin User */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-sidebar-border p-4">
+        {/* User Section */}
+        <div className="border-t border-border p-3 flex-shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors hover:bg-sidebar-accent/50">
-                <div className="h-8 w-8 rounded-full bg-sidebar-accent flex items-center justify-center">
-                  <span className="text-xs font-medium text-sidebar-accent-foreground">
+              <button className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted">
+                <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs font-medium text-muted-foreground">
                     {initials}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-sidebar-foreground truncate">
+                  <p className="text-sm font-medium text-foreground truncate">
                     {userName}
                   </p>
-                  <p className="text-xs text-sidebar-muted truncate">
-                    Administrator
-                  </p>
                 </div>
-                <ChevronDown className="h-4 w-4 text-sidebar-muted" />
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" side="top" className="w-56">
-              <DropdownMenuItem>
-                <Settings className="h-4 w-4 mr-2" />
-                Account Settings
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
+            <DropdownMenuContent align="start" side="top" className="w-48">
               <DropdownMenuItem className="text-destructive" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
@@ -157,80 +140,44 @@ export function AdminDashboardLayout({
       </aside>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Top header */}
-        <header className="sticky top-0 z-30 border-b border-border bg-card">
-          <div className="flex h-16 items-center justify-between px-4 lg:px-6">
-            <div className="flex items-center gap-4 flex-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-                onClick={() => setSidebarOpen(true)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-
-              {/* Search */}
-              <div className="hidden md:flex flex-1 max-w-md">
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search vehicles, shipments, customers..."
-                    className="pl-9 bg-background"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {/* Mobile Search */}
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Search className="h-5 w-5" />
-              </Button>
-
-              {/* Notifications */}
-              <AdminNotificationDropdown />
-
-              {/* User Avatar (desktop) */}
-              <div className="hidden lg:flex items-center gap-3 pl-3 border-l border-border">
-                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                  <span className="text-xs font-medium text-primary-foreground">
-                    {initials}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-foreground">{userName}</p>
-                  <p className="text-xs text-muted-foreground">Administrator</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Page Header with Filters/Actions */}
-          {(pageTitle || actions) && (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4 lg:px-6 py-4 bg-background border-t border-border">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-border bg-card px-4 lg:px-6 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="lg:hidden"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            {pageTitle && (
               <div>
-                {pageTitle && (
-                  <h1 className="text-xl font-semibold text-foreground">
-                    {pageTitle}
-                  </h1>
-                )}
+                <h1 className="text-sm font-medium text-foreground">
+                  {pageTitle}
+                </h1>
                 {pageDescription && (
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground">
                     {pageDescription}
                   </p>
                 )}
               </div>
-              {actions && (
-                <div className="flex items-center gap-3">{actions}</div>
-              )}
-            </div>
-          )}
+            )}
+          </div>
+
+          <div className="flex items-center gap-2">
+            {actions}
+            <AdminNotificationDropdown />
+          </div>
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-6">{children}</main>
+        <main className="flex-1 overflow-auto">
+          <div className="p-6 lg:p-8 max-w-screen-xl">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
