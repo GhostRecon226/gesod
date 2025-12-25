@@ -23,6 +23,7 @@ const loginSchema = z.object({
 const registerSchema = z.object({
   fullName: z.string().min(2, "Full name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  phone: z.string().min(10, "Please enter a valid phone number").max(20, "Phone number is too long"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
   acceptTerms: z.literal(true, {
@@ -72,7 +73,7 @@ export default function Auth() {
   // Register form
   const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { fullName: "", email: "", password: "", confirmPassword: "", acceptTerms: false as unknown as true },
+    defaultValues: { fullName: "", email: "", phone: "", password: "", confirmPassword: "", acceptTerms: false as unknown as true },
   });
 
   const acceptTerms = registerForm.watch("acceptTerms");
@@ -101,7 +102,7 @@ export default function Auth() {
 
   const handleRegister = async (data: RegisterFormData) => {
     setIsSubmitting(true);
-    const { error } = await signUp(data.email, data.password, data.fullName);
+    const { error } = await signUp(data.email, data.password, data.fullName, data.phone);
     
     if (error) {
       let message = error.message;
@@ -252,6 +253,21 @@ export default function Auth() {
             />
             {registerForm.formState.errors.email && (
               <p className="text-sm text-destructive">{registerForm.formState.errors.email.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="registerPhone">
+              Phone Number <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="registerPhone"
+              type="tel"
+              placeholder="+1 (555) 123-4567"
+              {...registerForm.register("phone")}
+            />
+            {registerForm.formState.errors.phone && (
+              <p className="text-sm text-destructive">{registerForm.formState.errors.phone.message}</p>
             )}
           </div>
 
