@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   MoreHorizontal,
@@ -7,6 +8,7 @@ import {
   Trash2,
   Loader2,
   Circle,
+  Eye,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -50,6 +52,7 @@ export default function AdminCustomers() {
   const [formOpen, setFormOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const navigate = useNavigate();
 
   const { data: customers, isLoading, error } = useCustomers();
   const createMutation = useCreateCustomer();
@@ -195,7 +198,12 @@ export default function AdminCustomers() {
                 {filteredCustomers.map((customer) => (
                   <TableRow key={customer.id} className="hover:bg-muted/20">
                     <TableCell>
-                      <span className="text-sm font-medium">{customer.full_name}</span>
+                      <button 
+                        onClick={() => navigate(`/admin/customers/${customer.id}`)}
+                        className="text-sm font-medium hover:text-primary transition-colors text-left"
+                      >
+                        {customer.full_name}
+                      </button>
                     </TableCell>
                     <TableCell>
                       <span className="text-sm text-muted-foreground">{customer.email}</span>
@@ -231,6 +239,10 @@ export default function AdminCustomers() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => navigate(`/admin/customers/${customer.id}`)}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Dashboard
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => handleEdit(customer)}>
                             <Pencil className="h-4 w-4 mr-2" />
                             Edit
