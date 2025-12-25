@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { format } from "date-fns";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Search,
   Plus,
@@ -11,6 +11,7 @@ import {
   ArrowUpDown,
   Eye,
   Circle,
+  X,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -79,9 +80,13 @@ const statusIndicator: Record<VinStatus, string> = {
 };
 
 export default function AdminVehicles() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const customerIdFromUrl = searchParams.get("customer");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [customerFilter, setCustomerFilter] = useState<string>(customerIdFromUrl || "all");
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [formOpen, setFormOpen] = useState(false);
@@ -93,6 +98,23 @@ export default function AdminVehicles() {
   const createMutation = useCreateVehicle();
   const updateMutation = useUpdateVehicle();
   const deleteMutation = useDeleteVehicle();
+
+  // Sync URL param with filter state
+  useEffect(() => {
+    if (customerIdFromUrl) {
+      setCustomerFilter(customerIdFromUrl);
+    }
+  }, [customerIdFromUrl]);
+
+  const clearCustomerFilter = () => {
+    setCustomerFilter("all");
+    setSearchParams((params) => {
+      params.delete("customer");
+      return params;
+    });
+  };
+
+  const selectedCustomer = customers?.find((c) => c.id === customerFilter);
 
   const getPrimaryVin = (vehicle: VehicleWithCustomer) => {
     if (!vehicle.vin_records || vehicle.vin_records.length === 0) return null;
@@ -129,7 +151,10 @@ export default function AdminVehicles() {
       const matchesStatus =
         statusFilter === "all" || primaryVin?.current_status === statusFilter;
 
-      return matchesSearch && matchesSource && matchesStatus;
+      const matchesCustomer =
+        customerFilter === "all" || vehicle.customer_id === customerFilter;
+
+      return matchesSearch && matchesSource && matchesStatus && matchesCustomer;
     });
 
     result.sort((a, b) => {
@@ -147,7 +172,7 @@ export default function AdminVehicles() {
     });
 
     return result;
-  }, [vehicles, searchQuery, sourceFilter, statusFilter, sortField, sortDirection]);
+  }, [vehicles, searchQuery, sourceFilter, statusFilter, customerFilter, sortField, sortDirection]);
 
   const stats = useMemo(() => {
     if (!vehicles) return { total: 0, active: 0, completed: 0 };
@@ -288,6 +313,19 @@ export default function AdminVehicles() {
             <p className="text-2xl font-semibold tabular-nums">{stats.completed}</p>
           </div>
         </div>
+
+        {/* Customer Filter Banner */}
+        {selectedCustomer && (
+          <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 flex items-center justify-between">
+            <span className="text-sm">
+              Showing vehicles for <span className="font-medium">{selectedCustomer.full_name}</span>
+            </span>
+            <Button variant="ghost" size="sm" onClick={clearCustomerFilter}>
+              <X className="h-3.5 w-3.5 mr-1" />
+              Clear filter
+            </Button>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3">

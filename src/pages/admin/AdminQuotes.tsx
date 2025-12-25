@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { format } from "date-fns";
+import { useSearchParams } from "react-router-dom";
 import {
   Search,
   Loader2,
   MoreHorizontal,
   Eye,
   Circle,
+  X,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -42,6 +44,7 @@ import {
   PublicQuoteRequest,
 } from "@/hooks/usePublicQuoteRequests";
 import { QuoteDetailDialog } from "@/components/admin/QuoteDetailDialog";
+import { useCustomers } from "@/hooks/useCustomers";
 
 function parseVehicleDetails(detailsStr: string): {
   vehicle_type?: string;
@@ -91,15 +94,37 @@ function formatCurrency(amount: number | null, currency: string | null): string 
 }
 
 export default function AdminQuotes() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const customerIdFromUrl = searchParams.get("customer");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [customerFilter, setCustomerFilter] = useState<string>(customerIdFromUrl || "all");
   const [selectedQuote, setSelectedQuote] = useState<PublicQuoteRequest | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
 
   const { data: quotes, isLoading, error } = usePublicQuoteRequests();
+  const { data: customers } = useCustomers();
   const updateStatusMutation = useUpdateQuoteStatus();
   const updateResponseMutation = useUpdateQuoteResponse();
+
+  // Sync URL param with filter state
+  useEffect(() => {
+    if (customerIdFromUrl) {
+      setCustomerFilter(customerIdFromUrl);
+    }
+  }, [customerIdFromUrl]);
+
+  const clearCustomerFilter = () => {
+    setCustomerFilter("all");
+    setSearchParams((params) => {
+      params.delete("customer");
+      return params;
+    });
+  };
+
+  const selectedCustomer = customers?.find((c) => c.id === customerFilter);
 
   const filteredQuotes = useMemo(() => {
     if (!quotes) return [];
@@ -115,10 +140,11 @@ export default function AdminQuotes() {
 
       const matchesType = typeFilter === "all" || quote.quote_type === typeFilter;
       const matchesStatus = statusFilter === "all" || quote.quote_status === statusFilter;
+      const matchesCustomer = customerFilter === "all" || quote.customer_id === customerFilter;
 
-      return matchesSearch && matchesType && matchesStatus;
+      return matchesSearch && matchesType && matchesStatus && matchesCustomer;
     });
-  }, [quotes, searchQuery, typeFilter, statusFilter]);
+  }, [quotes, searchQuery, typeFilter, statusFilter, customerFilter]);
 
   const stats = useMemo(() => {
     if (!quotes) return { total: 0, pending: 0, issued: 0 };
@@ -180,6 +206,19 @@ export default function AdminQuotes() {
             <p className="text-2xl font-semibold tabular-nums">{stats.issued}</p>
           </div>
         </div>
+
+        {/* Customer Filter Banner */}
+        {selectedCustomer && (
+          <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 flex items-center justify-between">
+            <span className="text-sm">
+              Showing quotes for <span className="font-medium">{selectedCustomer.full_name}</span>
+            </span>
+            <Button variant="ghost" size="sm" onClick={clearCustomerFilter}>
+              <X className="h-3.5 w-3.5 mr-1" />
+              Clear filter
+            </Button>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
