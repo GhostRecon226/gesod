@@ -5,13 +5,11 @@ import {
   Truck,
   MapPin,
   FileText,
-  Shield,
   CheckCircle,
   ArrowRight,
   Search,
   ClipboardList,
   Users,
-  Package,
 } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -74,30 +72,30 @@ const processSteps = [
   },
 ];
 
-const features = [
+const platformHighlights = [
   {
     icon: MapPin,
     color: "blue" as const,
-    title: "VIN Status Tracking",
-    description: "Track shipment milestones through our customer portal. Status updates at each stage of the process.",
+    title: "VIN-Based Tracking",
+    description: "Each vehicle is tracked by its unique VIN. Check status at any time through our tracking portal.",
+  },
+  {
+    icon: CheckCircle,
+    color: "emerald" as const,
+    title: "Transparent Status Updates",
+    description: "Receive clear status updates as your vehicle moves through each stage of the process.",
   },
   {
     icon: FileText,
-    color: "emerald" as const,
-    title: "Centralized Documentation",
-    description: "Access invoices, bills of lading, and shipping documents in one place.",
-  },
-  {
-    icon: Shield,
     color: "violet" as const,
-    title: "Transparent Process",
-    description: "Clear communication, defined steps, and realistic expectations throughout.",
+    title: "Centralized Documents",
+    description: "Access invoices, bills of lading, and other documentation from your customer dashboard.",
   },
   {
     icon: Users,
     color: "orange" as const,
-    title: "Dedicated Support",
-    description: "Our team is available to answer questions and provide updates on your shipments.",
+    title: "Admin-Managed Process",
+    description: "Our team handles coordination with auction houses, carriers, and shipping lines on your behalf.",
   },
 ];
 
@@ -268,36 +266,35 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Key Platform Features */}
+      {/* Platform Highlights */}
       <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
-              Why Work With Us
+              Platform Highlights
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto text-lg">
-              Our systems and processes are designed to keep you informed 
-              throughout the importation process.
+              Tools and processes designed to keep you informed throughout the vehicle import journey.
             </p>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {features.map((feature, idx) => (
+            {platformHighlights.map((highlight, idx) => (
               <div key={idx} className="text-center">
                 <div className="flex justify-center mb-5">
                   <Icon3D 
-                    icon={feature.icon} 
-                    color={feature.color} 
+                    icon={highlight.icon} 
+                    color={highlight.color} 
                     variant="floating" 
                     size="lg"
                     animate
                   />
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {feature.title}
+                  {highlight.title}
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {feature.description}
+                  {highlight.description}
                 </p>
               </div>
             ))}
