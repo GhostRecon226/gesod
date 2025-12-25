@@ -70,48 +70,71 @@ export default function CustomerDashboard() {
           </p>
         </header>
 
-        {/* Stats Row */}
+        {/* Metrics Groups */}
         <section className="mb-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Total Vehicles</p>
-              {statsLoading ? (
-                <Skeleton className="h-8 w-12" />
-              ) : (
-                <p className="text-3xl font-semibold text-foreground tabular-nums">
-                  {stats?.totalVehicles || 0}
-                </p>
-              )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Vehicles Group */}
+            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+                Vehicles
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                <Link to="/dashboard/vehicles" className="group">
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                      Total
+                    </p>
+                    {statsLoading ? (
+                      <Skeleton className="h-9 w-12" />
+                    ) : (
+                      <p className="text-3xl font-semibold text-foreground tabular-nums">
+                        {stats?.totalVehicles || 0}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Active</p>
+                  {statsLoading ? (
+                    <Skeleton className="h-9 w-12" />
+                  ) : (
+                    <p className="text-3xl font-semibold text-foreground tabular-nums">
+                      {stats?.activeVehicles || 0}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Completed</p>
+                  {statsLoading ? (
+                    <Skeleton className="h-9 w-12" />
+                  ) : (
+                    <p className="text-3xl font-semibold text-foreground tabular-nums">
+                      {stats?.completedVehicles || 0}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Active</p>
-              {statsLoading ? (
-                <Skeleton className="h-8 w-12" />
-              ) : (
-                <p className="text-3xl font-semibold text-foreground tabular-nums">
-                  {stats?.activeVehicles || 0}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Completed</p>
-              {statsLoading ? (
-                <Skeleton className="h-8 w-12" />
-              ) : (
-                <p className="text-3xl font-semibold text-foreground tabular-nums">
-                  {stats?.completedVehicles || 0}
-                </p>
-              )}
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Pending Quotes</p>
-              {statsLoading ? (
-                <Skeleton className="h-8 w-12" />
-              ) : (
-                <p className="text-3xl font-semibold text-foreground tabular-nums">
-                  {stats?.pendingQuotes || 0}
-                </p>
-              )}
+
+            {/* Requests Group */}
+            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+                Requests
+              </p>
+              <Link to="/dashboard/quotes" className="group">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                    Pending Quotes
+                  </p>
+                  {statsLoading ? (
+                    <Skeleton className="h-9 w-12" />
+                  ) : (
+                    <p className="text-3xl font-semibold text-foreground tabular-nums">
+                      {stats?.pendingQuotes || 0}
+                    </p>
+                  )}
+                </div>
+              </Link>
             </div>
           </div>
         </section>
