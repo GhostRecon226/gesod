@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import { ChartContainer } from "@/components/ui/chart";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 // Fetch dashboard statistics
 async function fetchAdminDashboardStats() {
@@ -41,6 +43,25 @@ async function fetchAdminDashboardStats() {
     delayedVehicles: delayedResult.count || 0,
     completedThisMonth: completedThisMonthResult.count || 0
   };
+}
+
+// Fetch vehicle status distribution
+async function fetchVehicleStatusDistribution() {
+  const statuses = ['active', 'in_progress', 'delayed', 'completed'] as const;
+  
+  const results = await Promise.all(
+    statuses.map(status =>
+      supabase
+        .from("vin_records")
+        .select("id", { count: "exact", head: true })
+        .eq("current_status", status)
+    )
+  );
+  
+  return statuses.map((status, index) => ({
+    name: status,
+    value: results[index].count || 0,
+  }));
 }
 
 // Fetch recent activity
@@ -114,6 +135,28 @@ export default function AdminDashboard() {
     queryFn: fetchPendingActions,
   });
 
+  const { data: statusDistribution, isLoading: chartLoading } = useQuery({
+    queryKey: ["vehicleStatusDistribution"],
+    queryFn: fetchVehicleStatusDistribution,
+  });
+
+  // Muted chart colors
+  const chartColors: Record<string, string> = {
+    active: "hsl(var(--muted-foreground))",
+    in_progress: "hsl(var(--muted-foreground) / 0.7)",
+    delayed: "hsl(45 93% 47% / 0.7)", // amber, slightly muted
+    completed: "hsl(var(--muted-foreground) / 0.4)",
+  };
+
+  const chartLabels: Record<string, string> = {
+    active: "Active",
+    in_progress: "In Progress",
+    delayed: "Delayed",
+    completed: "Completed",
+  };
+
+  const totalVehicles = statusDistribution?.reduce((sum, item) => sum + item.value, 0) || 0;
+
   return (
     <AdminDashboardLayout>
       <div className="max-w-7xl">
@@ -126,7 +169,7 @@ export default function AdminDashboard() {
         </header>
 
         {/* Metrics Groups */}
-        <section className="mb-10">
+        <section className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Customers Group */}
             <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
@@ -236,6 +279,60 @@ export default function AdminDashboard() {
                 </Link>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Vehicle Status Distribution Chart */}
+        <section className="mb-10">
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                Status Distribution
+              </p>
+            </div>
+            {chartLoading ? (
+              <Skeleton className="h-14 w-14 rounded-full" />
+            ) : totalVehicles > 0 ? (
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={statusDistribution}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={16}
+                        outerRadius={26}
+                        strokeWidth={0}
+                      >
+                        {statusDistribution?.map((entry) => (
+                          <Cell 
+                            key={entry.name} 
+                            fill={chartColors[entry.name]} 
+                          />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex gap-4 text-xs text-muted-foreground">
+                  {statusDistribution?.filter(s => s.value > 0).map((status) => (
+                    <div key={status.name} className="flex items-center gap-1.5">
+                      <span 
+                        className="h-2 w-2 rounded-full" 
+                        style={{ backgroundColor: chartColors[status.name] }}
+                      />
+                      <span>{chartLabels[status.name]}</span>
+                      <span className="tabular-nums font-medium text-foreground">{status.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">No vehicles to display</p>
+            )}
           </div>
         </section>
 
