@@ -22,6 +22,8 @@ import CustomerVehicles from "./pages/customer/CustomerVehicles";
 import CustomerVehicleDetail from "./pages/customer/CustomerVehicleDetail";
 import CustomerDocuments from "./pages/customer/CustomerDocuments";
 import CustomerQuotes from "./pages/customer/CustomerQuotes";
+import CustomerVinTracking from "./pages/customer/CustomerVinTracking";
+import CustomerProfile from "./pages/customer/CustomerProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminVehicles from "./pages/admin/AdminVehicles";
@@ -110,8 +112,22 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            {/* <Route path="/dashboard/tracking" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><VINTracking /></ProtectedRoute>} /> */}
-            {/* <Route path="/dashboard/profile" element={<ProtectedRoute allowedRoles={["customer", "admin"]}><Profile /></ProtectedRoute>} */}
+            <Route
+              path="/dashboard/tracking"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "admin"]}>
+                  <CustomerVinTracking />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/profile"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "admin"]}>
+                  <CustomerProfile />
+                </ProtectedRoute>
+              }
+            />
 
             {/* ==================== ADMIN ROUTES ==================== */}
             {/* These routes are ONLY accessible by admins */}
