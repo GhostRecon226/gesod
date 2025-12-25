@@ -8,6 +8,7 @@ import { AuthLayout } from "@/components/layout/AuthLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,6 +25,9 @@ const registerSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   confirmPassword: z.string(),
+  acceptTerms: z.literal(true, {
+    errorMap: () => ({ message: "You must accept the terms and policies to continue" }),
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match",
   path: ["confirmPassword"],
@@ -68,8 +72,10 @@ export default function Auth() {
   // Register form
   const registerForm = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { fullName: "", email: "", password: "", confirmPassword: "" },
+    defaultValues: { fullName: "", email: "", password: "", confirmPassword: "", acceptTerms: false as unknown as true },
   });
+
+  const acceptTerms = registerForm.watch("acceptTerms");
 
   // Forgot password form
   const forgotForm = useForm<ForgotFormData>({
@@ -298,7 +304,37 @@ export default function Auth() {
             )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
+          <div className="space-y-2">
+            <div className="flex items-start space-x-3">
+              <Checkbox
+                id="acceptTerms"
+                checked={acceptTerms === true}
+                onCheckedChange={(checked) => 
+                  registerForm.setValue("acceptTerms", checked === true ? true : false as unknown as true, { shouldValidate: true })
+                }
+                className="mt-1"
+              />
+              <label htmlFor="acceptTerms" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+                I agree to the{" "}
+                <Link to="/terms" className="text-primary hover:underline font-medium" target="_blank">
+                  Terms & Conditions
+                </Link>
+                ,{" "}
+                <Link to="/privacy" className="text-primary hover:underline font-medium" target="_blank">
+                  Privacy Policy
+                </Link>
+                , and{" "}
+                <Link to="/consent" className="text-primary hover:underline font-medium" target="_blank">
+                  Consent Policy
+                </Link>
+              </label>
+            </div>
+            {registerForm.formState.errors.acceptTerms && (
+              <p className="text-sm text-destructive">{registerForm.formState.errors.acceptTerms.message}</p>
+            )}
+          </div>
+
+          <Button type="submit" className="w-full" disabled={isSubmitting || acceptTerms !== true}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
