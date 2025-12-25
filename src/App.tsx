@@ -4,8 +4,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { RedirectIfAuthenticated } from "@/components/auth/RedirectIfAuthenticated";
+import { MaintenanceGuard } from "@/components/MaintenanceGuard";
+import { SessionTimeoutHandler } from "@/components/SessionTimeoutHandler";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import PublicVinTracking from "./pages/PublicVinTracking";
@@ -46,6 +49,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
+          <SettingsProvider>
+            <SessionTimeoutHandler />
+            <MaintenanceGuard>
           <Routes>
             {/* ==================== PUBLIC ROUTES ==================== */}
             {/* These routes are accessible to everyone */}
@@ -226,6 +232,8 @@ const App = () => (
             {/* ==================== CATCH-ALL ==================== */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+            </MaintenanceGuard>
+          </SettingsProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
