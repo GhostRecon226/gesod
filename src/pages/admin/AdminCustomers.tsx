@@ -2,14 +2,11 @@ import { useState } from "react";
 import { format } from "date-fns";
 import {
   Search,
-  Plus,
   MoreHorizontal,
   Pencil,
   Trash2,
-  Users,
-  UserCheck,
-  UserX,
   Loader2,
+  Circle,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -36,8 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { CustomerFormDialog } from "@/components/admin/CustomerFormDialog";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import {
@@ -62,7 +57,6 @@ export default function AdminCustomers() {
   const deleteMutation = useDeleteCustomer();
   const { toast } = useToast();
 
-  // Filter customers based on search and status
   const filteredCustomers = customers?.filter((customer) => {
     const matchesSearch =
       searchQuery === "" ||
@@ -75,14 +69,10 @@ export default function AdminCustomers() {
     return matchesSearch && matchesStatus;
   });
 
-  // Stats
-  const totalCustomers = customers?.length || 0;
-  const activeCustomers = customers?.filter((c) => c.account_status === "active").length || 0;
-  const suspendedCustomers = customers?.filter((c) => c.account_status === "suspended").length || 0;
-
-  const handleCreate = () => {
-    setSelectedCustomer(null);
-    setFormOpen(true);
+  const stats = {
+    total: customers?.length || 0,
+    active: customers?.filter((c) => c.account_status === "active").length || 0,
+    suspended: customers?.filter((c) => c.account_status === "suspended").length || 0,
   };
 
   const handleEdit = (customer: Customer) => {
@@ -117,7 +107,7 @@ export default function AdminCustomers() {
       toast({
         variant: "destructive",
         title: "Cannot create customer",
-        description: "New customers are created when users register. Use the edit function to update existing customers.",
+        description: "New customers are created when users register.",
       });
     }
   };
@@ -130,13 +120,9 @@ export default function AdminCustomers() {
     }
   };
 
-  const getStatusType = (status: AccountStatus) => {
-    return status === "active" ? "active" : "cancelled";
-  };
-
   if (error) {
     return (
-      <AdminDashboardLayout>
+      <AdminDashboardLayout pageTitle="Customers">
         <div className="flex items-center justify-center h-64">
           <p className="text-destructive">Error loading customers: {error.message}</p>
         </div>
@@ -145,63 +131,38 @@ export default function AdminCustomers() {
   }
 
   return (
-    <AdminDashboardLayout>
+    <AdminDashboardLayout pageTitle="Customers">
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Stats Row */}
+        <div className="grid grid-cols-3 gap-6 max-w-sm">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Customers</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage customer accounts and information
-            </p>
+            <p className="text-sm text-muted-foreground">Total</p>
+            <p className="text-2xl font-semibold tabular-nums">{stats.total}</p>
           </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Customers</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalCustomers}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active</CardTitle>
-              <UserCheck className="h-4 w-4 text-active" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-active">{activeCustomers}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Suspended</CardTitle>
-              <UserX className="h-4 w-4 text-destructive" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-destructive">{suspendedCustomers}</div>
-            </CardContent>
-          </Card>
+          <div>
+            <p className="text-sm text-muted-foreground">Active</p>
+            <p className="text-2xl font-semibold tabular-nums">{stats.active}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Suspended</p>
+            <p className="text-2xl font-semibold tabular-nums">{stats.suspended}</p>
+          </div>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search by name or email..."
+              placeholder="Search name or email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
+              className="pl-9 h-9"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+            <SelectTrigger className="w-[130px] h-9">
+              <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
@@ -212,83 +173,91 @@ export default function AdminCustomers() {
         </div>
 
         {/* Table */}
-        <Card>
-          <CardContent className="p-0">
-            {isLoading ? (
-              <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : filteredCustomers && filteredCustomers.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredCustomers.map((customer) => (
-                    <TableRow key={customer.id}>
-                      <TableCell className="font-medium">
-                        {customer.full_name}
-                      </TableCell>
-                      <TableCell>{customer.email}</TableCell>
-                      <TableCell>{customer.phone || "—"}</TableCell>
-                      <TableCell>{customer.country || "—"}</TableCell>
-                      <TableCell>
-                        <StatusBadge status={getStatusType(customer.account_status)} />
-                      </TableCell>
-                      <TableCell>
+        <div className="bg-card rounded-lg border border-border overflow-hidden">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : filteredCustomers && filteredCustomers.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/30 hover:bg-muted/30">
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Name</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Email</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Phone</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Country</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Status</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Joined</TableHead>
+                  <TableHead className="w-10"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredCustomers.map((customer) => (
+                  <TableRow key={customer.id} className="hover:bg-muted/20">
+                    <TableCell>
+                      <span className="text-sm font-medium">{customer.full_name}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">{customer.email}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">{customer.phone || "—"}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground">{customer.country || "—"}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1.5">
+                        <Circle 
+                          className={`h-2 w-2 fill-current ${
+                            customer.account_status === "active" 
+                              ? "text-success" 
+                              : "text-destructive"
+                          }`} 
+                        />
+                        <span className="text-sm capitalize">{customer.account_status}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-muted-foreground tabular-nums">
                         {format(new Date(customer.created_at), "MMM d, yyyy")}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleEdit(customer)}>
-                              <Pencil className="h-4 w-4 mr-2" />
-                              Edit
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => handleDelete(customer)}
-                              className="text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-                <Users className="h-12 w-12 mb-4" />
-                <p className="text-lg font-medium">No customers found</p>
-                <p className="text-sm">
-                  {searchQuery || statusFilter !== "all"
-                    ? "Try adjusting your search or filter"
-                    : "Customers appear here when users register"}
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon-sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleEdit(customer)}>
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => handleDelete(customer)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+              <p className="text-sm">No customers found</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Form Dialog */}
       <CustomerFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
@@ -297,7 +266,6 @@ export default function AdminCustomers() {
         isLoading={createMutation.isPending || updateMutation.isPending}
       />
 
-      {/* Delete Confirmation */}
       <DeleteConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}

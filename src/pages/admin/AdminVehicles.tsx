@@ -7,12 +7,10 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
-  Car,
   Loader2,
   ArrowUpDown,
-  CheckCircle2,
-  Clock,
   Eye,
+  Circle,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -39,8 +37,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { VehicleFormDialog } from "@/components/admin/VehicleFormDialog";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import {
@@ -56,16 +52,34 @@ import {
   VehicleSource,
   AuctionSource,
   VinStatus,
-  vehicleTypes,
   vehicleSources,
 } from "@/services/vehicleService";
 
 type SortField = "date" | "status";
 type SortDirection = "asc" | "desc";
 
+const statusLabels: Record<VinStatus, string> = {
+  pending: "Pending",
+  active: "Active",
+  awaiting_action: "Awaiting",
+  in_progress: "In Progress",
+  delayed: "Delayed",
+  completed: "Completed",
+  cancelled: "Cancelled",
+};
+
+const statusIndicator: Record<VinStatus, string> = {
+  pending: "text-pending",
+  active: "text-in-progress",
+  awaiting_action: "text-awaiting",
+  in_progress: "text-in-progress",
+  delayed: "text-destructive",
+  completed: "text-success",
+  cancelled: "text-muted-foreground",
+};
+
 export default function AdminVehicles() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortField, setSortField] = useState<SortField>("date");
@@ -80,13 +94,11 @@ export default function AdminVehicles() {
   const updateMutation = useUpdateVehicle();
   const deleteMutation = useDeleteVehicle();
 
-  // Helper to get primary VIN record
   const getPrimaryVin = (vehicle: VehicleWithCustomer) => {
     if (!vehicle.vin_records || vehicle.vin_records.length === 0) return null;
     return vehicle.vin_records.find(v => v.is_active) || vehicle.vin_records[0];
   };
 
-  // Status priority for sorting
   const statusPriority: Record<VinStatus, number> = {
     pending: 1,
     awaiting_action: 2,
@@ -97,7 +109,6 @@ export default function AdminVehicles() {
     cancelled: 7,
   };
 
-  // Filter and sort vehicles
   const filteredVehicles = useMemo(() => {
     if (!vehicles) return [];
 
@@ -112,19 +123,15 @@ export default function AdminVehicles() {
         vehicle.customers?.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         primaryVin?.vin.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesType =
-        typeFilter === "all" || vehicle.vehicle_type === typeFilter;
-
       const matchesSource =
         sourceFilter === "all" || vehicle.source === sourceFilter;
 
       const matchesStatus =
         statusFilter === "all" || primaryVin?.current_status === statusFilter;
 
-      return matchesSearch && matchesType && matchesSource && matchesStatus;
+      return matchesSearch && matchesSource && matchesStatus;
     });
 
-    // Sort
     result.sort((a, b) => {
       if (sortField === "date") {
         const dateA = new Date(a.created_at).getTime();
@@ -140,15 +147,19 @@ export default function AdminVehicles() {
     });
 
     return result;
-  }, [vehicles, searchQuery, typeFilter, sourceFilter, statusFilter, sortField, sortDirection]);
+  }, [vehicles, searchQuery, sourceFilter, statusFilter, sortField, sortDirection]);
 
-  // Stats
-  const totalVehicles = vehicles?.length || 0;
-  const auctionVehicles = vehicles?.filter((v) => v.source === "auction").length || 0;
-  const completedVehicles = vehicles?.filter((v) => {
-    const vin = getPrimaryVin(v);
-    return vin?.current_status === "completed";
-  }).length || 0;
+  const stats = useMemo(() => {
+    if (!vehicles) return { total: 0, active: 0, completed: 0 };
+    return {
+      total: vehicles.length,
+      active: vehicles.filter(v => {
+        const vin = getPrimaryVin(v);
+        return vin && !["completed", "cancelled"].includes(vin.current_status);
+      }).length,
+      completed: vehicles.filter(v => getPrimaryVin(v)?.current_status === "completed").length,
+    };
+  }, [vehicles]);
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
@@ -165,21 +176,15 @@ export default function AdminVehicles() {
   };
 
   const handleEdit = (vehicle: VehicleWithCustomer) => {
-    // Prevent editing completed vehicles
     const vin = getPrimaryVin(vehicle);
-    if (vin?.current_status === "completed") {
-      return;
-    }
+    if (vin?.current_status === "completed") return;
     setSelectedVehicle(vehicle);
     setFormOpen(true);
   };
 
   const handleDelete = (vehicle: VehicleWithCustomer) => {
-    // Prevent deleting completed vehicles
     const vin = getPrimaryVin(vehicle);
-    if (vin?.current_status === "completed") {
-      return;
-    }
+    if (vin?.current_status === "completed") return;
     setSelectedVehicle(vehicle);
     setDeleteOpen(true);
   };
@@ -196,7 +201,6 @@ export default function AdminVehicles() {
     lot_number?: string | null;
   }) => {
     if (selectedVehicle) {
-      // Update only vehicle fields (VIN cannot be changed)
       await updateMutation.mutateAsync({
         id: selectedVehicle.id,
         data: {
@@ -211,7 +215,6 @@ export default function AdminVehicles() {
         },
       });
     } else {
-      // Create new vehicle with VIN
       await createMutation.mutateAsync({
         customer_id: data.customer_id,
         vin: data.vin.toUpperCase(),
@@ -234,56 +237,6 @@ export default function AdminVehicles() {
     }
   };
 
-  const getTypeVariant = (type: VehicleType) => {
-    switch (type) {
-      case "car":
-        return "default";
-      case "suv":
-        return "secondary";
-      case "truck":
-        return "outline";
-      default:
-        return "default";
-    }
-  };
-
-  const getSourceBadge = (source: VehicleSource, auctionSource?: AuctionSource | null) => {
-    if (source === "direct") {
-      return <Badge variant="secondary">Direct</Badge>;
-    }
-    return (
-      <Badge variant="outline">
-        {auctionSource ? auctionSource.toUpperCase() : "Auction"}
-      </Badge>
-    );
-  };
-
-  const getStatusBadge = (status?: VinStatus) => {
-    if (!status) return <Badge variant="outline">No VIN</Badge>;
-    
-    const variants: Record<VinStatus, "default" | "secondary" | "destructive" | "outline"> = {
-      pending: "secondary",
-      active: "default",
-      awaiting_action: "outline",
-      in_progress: "default",
-      delayed: "destructive",
-      completed: "secondary",
-      cancelled: "outline",
-    };
-    
-    const labels: Record<VinStatus, string> = {
-      pending: "Pending",
-      active: "Active",
-      awaiting_action: "Awaiting Action",
-      in_progress: "In Progress",
-      delayed: "Delayed",
-      completed: "Completed",
-      cancelled: "Cancelled",
-    };
-    
-    return <Badge variant={variants[status]}>{labels[status]}</Badge>;
-  };
-
   const isCompleted = (vehicle: VehicleWithCustomer) => {
     const vin = getPrimaryVin(vehicle);
     return vin?.current_status === "completed";
@@ -301,7 +254,7 @@ export default function AdminVehicles() {
 
   if (error) {
     return (
-      <AdminDashboardLayout>
+      <AdminDashboardLayout pageTitle="Vehicles">
         <div className="flex items-center justify-center h-64">
           <p className="text-destructive">Error loading vehicles: {error.message}</p>
         </div>
@@ -310,66 +263,45 @@ export default function AdminVehicles() {
   }
 
   return (
-    <AdminDashboardLayout>
+    <AdminDashboardLayout 
+      pageTitle="Vehicles" 
+      actions={
+        <Button size="sm" onClick={handleCreate}>
+          <Plus className="h-4 w-4 mr-1.5" />
+          Add Vehicle
+        </Button>
+      }
+    >
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* Stats Row */}
+        <div className="grid grid-cols-3 gap-6 max-w-md">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Vehicles</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage vehicle records and assignments
-            </p>
+            <p className="text-sm text-muted-foreground">Total</p>
+            <p className="text-2xl font-semibold tabular-nums">{stats.total}</p>
           </div>
-          <Button onClick={handleCreate}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Vehicle
-          </Button>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Vehicles</CardTitle>
-              <Car className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalVehicles}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Auction Sourced</CardTitle>
-              <Car className="h-4 w-4 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{auctionVehicles}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
-              <CheckCircle2 className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{completedVehicles}</div>
-            </CardContent>
-          </Card>
+          <div>
+            <p className="text-sm text-muted-foreground">Active</p>
+            <p className="text-2xl font-semibold tabular-nums">{stats.active}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Completed</p>
+            <p className="text-2xl font-semibold tabular-nums">{stats.completed}</p>
+          </div>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
-          <div className="relative flex-1 min-w-[200px]">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search by VIN, customer, make, model..."
+              placeholder="Search VIN, customer, make..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
+              className="pl-9 h-9"
             />
           </div>
           <Select value={sourceFilter} onValueChange={setSourceFilter}>
-            <SelectTrigger className="w-full sm:w-[130px]">
+            <SelectTrigger className="w-[120px] h-9">
               <SelectValue placeholder="Source" />
             </SelectTrigger>
             <SelectContent>
@@ -382,7 +314,7 @@ export default function AdminVehicles() {
             </SelectContent>
           </Select>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[150px]">
+            <SelectTrigger className="w-[140px] h-9">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -397,168 +329,143 @@ export default function AdminVehicles() {
         </div>
 
         {/* Table */}
-        <Card>
-          <CardContent className="p-0">
-            {isLoading ? (
-              <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : filteredVehicles && filteredVehicles.length > 0 ? (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>VIN</TableHead>
-                      <TableHead>Customer</TableHead>
-                      <TableHead>Vehicle</TableHead>
-                      <TableHead>Source</TableHead>
-                      <TableHead>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="-ml-3 h-8"
-                          onClick={() => toggleSort("status")}
-                        >
-                          Status
-                          <ArrowUpDown className="ml-1 h-3 w-3" />
-                        </Button>
-                      </TableHead>
-                      <TableHead>Completion</TableHead>
-                      <TableHead>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="-ml-3 h-8"
-                          onClick={() => toggleSort("date")}
-                        >
-                          Created
-                          <ArrowUpDown className="ml-1 h-3 w-3" />
-                        </Button>
-                      </TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredVehicles.map((vehicle) => {
-                      const primaryVin = getPrimaryVin(vehicle);
-                      return (
-                        <TableRow key={vehicle.id}>
-                          <TableCell>
-                            <code className="text-sm font-mono bg-muted px-1.5 py-0.5 rounded">
-                              {primaryVin?.vin || "—"}
-                            </code>
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{vehicle.customers?.full_name}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {vehicle.customers?.email}
-                              </p>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">
-                                {vehicle.year} {vehicle.make} {vehicle.model}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                {vehicle.vehicle_type.toUpperCase()}
-                              </p>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {getSourceBadge(vehicle.source, vehicle.auction_source)}
-                          </TableCell>
-                          <TableCell>
-                            {getStatusBadge(primaryVin?.current_status)}
-                          </TableCell>
-                          <TableCell>
-                            {isCompleted(vehicle) ? (
-                              <div className="flex items-center gap-1.5 text-green-600">
-                                <CheckCircle2 className="h-4 w-4" />
-                                <span className="text-sm font-medium">Complete</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1.5 text-muted-foreground">
-                                <Clock className="h-4 w-4" />
-                                <span className="text-sm">In Progress</span>
-                              </div>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {format(new Date(vehicle.created_at), "MMM d, yyyy")}
-                          </TableCell>
-                          <TableCell>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem asChild>
-                                  <Link to={`/admin/vehicles/${vehicle.id}`}>
-                                    <Eye className="h-4 w-4 mr-2" />
-                                    View Details
-                                  </Link>
+        <div className="bg-card rounded-lg border border-border overflow-hidden">
+          {isLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : filteredVehicles.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/30 hover:bg-muted/30">
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">VIN</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Customer</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Vehicle</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">Source</TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">
+                    <button
+                      className="flex items-center gap-1 hover:text-foreground transition-colors"
+                      onClick={() => toggleSort("status")}
+                    >
+                      Status
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </TableHead>
+                  <TableHead className="text-xs font-medium uppercase tracking-wider">
+                    <button
+                      className="flex items-center gap-1 hover:text-foreground transition-colors"
+                      onClick={() => toggleSort("date")}
+                    >
+                      Created
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </TableHead>
+                  <TableHead className="w-10"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredVehicles.map((vehicle) => {
+                  const primaryVin = getPrimaryVin(vehicle);
+                  return (
+                    <TableRow key={vehicle.id} className="hover:bg-muted/20">
+                      <TableCell>
+                        <code className="text-xs font-mono text-muted-foreground">
+                          {primaryVin?.vin || "—"}
+                        </code>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm">{vehicle.customers?.full_name}</span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm">
+                          {vehicle.year} {vehicle.make} {vehicle.model}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground capitalize">
+                          {vehicle.source === "auction" && vehicle.auction_source 
+                            ? vehicle.auction_source.toUpperCase() 
+                            : vehicle.source}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {primaryVin ? (
+                          <div className="flex items-center gap-1.5">
+                            <Circle className={`h-2 w-2 fill-current ${statusIndicator[primaryVin.current_status]}`} />
+                            <span className="text-sm">
+                              {statusLabels[primaryVin.current_status]}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-muted-foreground">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-sm text-muted-foreground tabular-nums">
+                          {format(new Date(vehicle.created_at), "MMM d, yyyy")}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon-sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link to={`/admin/vehicles/${vehicle.id}`}>
+                                <Eye className="h-4 w-4 mr-2" />
+                                View Details
+                              </Link>
+                            </DropdownMenuItem>
+                            {!isCompleted(vehicle) && (
+                              <>
+                                <DropdownMenuItem onClick={() => handleEdit(vehicle)}>
+                                  <Pencil className="h-4 w-4 mr-2" />
+                                  Edit
                                 </DropdownMenuItem>
-                                {!isCompleted(vehicle) && (
-                                  <>
-                                    <DropdownMenuItem onClick={() => handleEdit(vehicle)}>
-                                      <Pencil className="h-4 w-4 mr-2" />
-                                      Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator />
-                                    <DropdownMenuItem
-                                      onClick={() => handleDelete(vehicle)}
-                                      className="text-destructive"
-                                    >
-                                      <Trash2 className="h-4 w-4 mr-2" />
-                                      Delete
-                                    </DropdownMenuItem>
-                                  </>
-                                )}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
-                <Car className="h-12 w-12 mb-4" />
-                <p className="text-lg font-medium">No vehicles found</p>
-                <p className="text-sm">
-                  {searchQuery || sourceFilter !== "all" || statusFilter !== "all"
-                    ? "Try adjusting your search or filters"
-                    : "Click 'Add Vehicle' to create one"}
-                </p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  onClick={() => handleDelete(vehicle)}
+                                  className="text-destructive"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+              <p className="text-sm">No vehicles found</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Form Dialog */}
       <VehicleFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
         vehicle={selectedVehicle}
-        customers={customers || []}
+        customers={customers}
         onSubmit={handleFormSubmit}
         isLoading={createMutation.isPending || updateMutation.isPending}
       />
 
-      {/* Delete Confirmation */}
       <DeleteConfirmDialog
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         onConfirm={handleDeleteConfirm}
         title="Delete Vehicle"
-        description={`Are you sure you want to delete ${selectedVehicle?.year} ${selectedVehicle?.make} ${selectedVehicle?.model}? This action cannot be undone.`}
+        description="Are you sure you want to delete this vehicle? This will also delete all associated VIN records and documents."
         isLoading={deleteMutation.isPending}
       />
     </AdminDashboardLayout>
