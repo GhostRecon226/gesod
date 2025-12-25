@@ -171,3 +171,107 @@ export async function createReply(replyData: CreateReplyData): Promise<TicketRep
   if (error) throw error;
   return data as TicketReply;
 }
+
+// Attachment types
+export interface TicketAttachment {
+  id: string;
+  ticket_id: string;
+  reply_id: string | null;
+  file_name: string;
+  file_path: string;
+  file_size: number | null;
+  mime_type: string | null;
+  uploaded_by: string;
+  created_at: string;
+}
+
+// Upload attachment to storage
+export async function uploadTicketAttachment(
+  ticketId: string,
+  file: File,
+  userId: string
+): Promise<{ path: string; attachment: TicketAttachment }> {
+  const fileExt = file.name.split(".").pop();
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+  const filePath = `${ticketId}/${fileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("ticket-attachments")
+    .upload(filePath, file);
+
+  if (uploadError) throw uploadError;
+
+  // Create attachment record
+  const { data, error } = await supabase
+    .from("ticket_attachments")
+    .insert({
+      ticket_id: ticketId,
+      file_name: file.name,
+      file_path: filePath,
+      file_size: file.size,
+      mime_type: file.type,
+      uploaded_by: userId,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return { path: filePath, attachment: data as TicketAttachment };
+}
+
+// Upload attachment with reply
+export async function uploadReplyAttachment(
+  ticketId: string,
+  replyId: string,
+  file: File,
+  userId: string
+): Promise<TicketAttachment> {
+  const fileExt = file.name.split(".").pop();
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+  const filePath = `${ticketId}/${fileName}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("ticket-attachments")
+    .upload(filePath, file);
+
+  if (uploadError) throw uploadError;
+
+  const { data, error } = await supabase
+    .from("ticket_attachments")
+    .insert({
+      ticket_id: ticketId,
+      reply_id: replyId,
+      file_name: file.name,
+      file_path: filePath,
+      file_size: file.size,
+      mime_type: file.type,
+      uploaded_by: userId,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as TicketAttachment;
+}
+
+// Fetch attachments for a ticket
+export async function fetchTicketAttachments(ticketId: string): Promise<TicketAttachment[]> {
+  const { data, error } = await supabase
+    .from("ticket_attachments")
+    .select("*")
+    .eq("ticket_id", ticketId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+  return data as TicketAttachment[];
+}
+
+// Get signed URL for attachment download
+export async function getAttachmentUrl(filePath: string): Promise<string> {
+  const { data, error } = await supabase.storage
+    .from("ticket-attachments")
+    .createSignedUrl(filePath, 3600); // 1 hour expiry
+
+  if (error) throw error;
+  return data.signedUrl;
+}
