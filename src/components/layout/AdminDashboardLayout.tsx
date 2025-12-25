@@ -6,6 +6,7 @@ import {
   X,
   LogOut,
   ChevronDown,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,17 @@ export function AdminDashboardLayout({
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4 px-3">
+          {/* Customer View Link */}
+          <div className="mb-4">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm bg-secondary/50 text-secondary-foreground font-medium hover:bg-secondary transition-colors"
+            >
+              <User className="h-4 w-4 flex-shrink-0" />
+              <span className="truncate">Customer View</span>
+            </Link>
+          </div>
+
           {adminNavGroups.map((group, idx) => (
             <div key={group.title} className={cn(idx > 0 && "mt-6")}>
               <p className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
