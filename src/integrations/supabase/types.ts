@@ -56,6 +56,7 @@ export type Database = {
           lot_number: string
           make: string
           model: string
+          remarks: string | null
           status: Database["public"]["Enums"]["auction_vehicle_status"]
           updated_at: string
           vehicle_images: string[] | null
@@ -71,6 +72,7 @@ export type Database = {
           lot_number: string
           make: string
           model: string
+          remarks?: string | null
           status?: Database["public"]["Enums"]["auction_vehicle_status"]
           updated_at?: string
           vehicle_images?: string[] | null
@@ -86,6 +88,7 @@ export type Database = {
           lot_number?: string
           make?: string
           model?: string
+          remarks?: string | null
           status?: Database["public"]["Enums"]["auction_vehicle_status"]
           updated_at?: string
           vehicle_images?: string[] | null

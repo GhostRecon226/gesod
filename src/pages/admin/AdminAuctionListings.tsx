@@ -124,6 +124,8 @@ export default function AdminAuctionListings() {
     lot_number: string;
     auction_date?: string | null;
     yard_location?: string | null;
+    remarks?: string | null;
+    vehicle_images?: string[] | null;
   }) => {
     if (selectedVehicle) {
       await updateMutation.mutateAsync({
