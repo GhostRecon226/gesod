@@ -27,6 +27,8 @@ import CustomerDocuments from "./pages/customer/CustomerDocuments";
 import CustomerQuotes from "./pages/customer/CustomerQuotes";
 import CustomerVinTracking from "./pages/customer/CustomerVinTracking";
 import CustomerProfile from "./pages/customer/CustomerProfile";
+import CustomerSupport from "./pages/customer/CustomerSupport";
+import CustomerTicketDetail from "./pages/customer/CustomerTicketDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminCustomerDetail from "./pages/admin/AdminCustomerDetail";
@@ -39,6 +41,8 @@ import AdminBidRequests from "./pages/admin/AdminBidRequests";
 import AdminDocuments from "./pages/admin/AdminDocuments";
 import AdminStatusUpdates from "./pages/admin/AdminStatusUpdates";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminSupportTickets from "./pages/admin/AdminSupportTickets";
+import AdminTicketDetail from "./pages/admin/AdminTicketDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -138,6 +142,22 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/dashboard/support"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "admin"]}>
+                  <CustomerSupport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/support/:id"
+              element={
+                <ProtectedRoute allowedRoles={["customer", "admin"]}>
+                  <CustomerTicketDetail />
+                </ProtectedRoute>
+              }
+            />
 
             {/* ==================== ADMIN ROUTES ==================== */}
             {/* These routes are ONLY accessible by admins */}
@@ -234,6 +254,22 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminSettings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/support"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminSupportTickets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/support/:id"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminTicketDetail />
                 </ProtectedRoute>
               }
             />

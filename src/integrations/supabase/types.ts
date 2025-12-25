@@ -448,6 +448,105 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          category: Database["public"]["Enums"]["ticket_category"]
+          created_at: string
+          customer_id: string
+          description: string
+          id: string
+          priority: Database["public"]["Enums"]["ticket_priority"]
+          related_vehicle_id: string | null
+          related_vin_record_id: string | null
+          status: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["ticket_category"]
+          created_at?: string
+          customer_id: string
+          description: string
+          id?: string
+          priority?: Database["public"]["Enums"]["ticket_priority"]
+          related_vehicle_id?: string | null
+          related_vin_record_id?: string | null
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["ticket_category"]
+          created_at?: string
+          customer_id?: string
+          description?: string
+          id?: string
+          priority?: Database["public"]["Enums"]["ticket_priority"]
+          related_vehicle_id?: string | null
+          related_vin_record_id?: string | null
+          status?: Database["public"]["Enums"]["ticket_status"]
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_related_vehicle_id_fkey"
+            columns: ["related_vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_related_vin_record_id_fkey"
+            columns: ["related_vin_record_id"]
+            isOneToOne: false
+            referencedRelation: "vin_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_replies: {
+        Row: {
+          author_id: string
+          created_at: string
+          id: string
+          is_admin_reply: boolean
+          message: string
+          ticket_id: string
+        }
+        Insert: {
+          author_id: string
+          created_at?: string
+          id?: string
+          is_admin_reply?: boolean
+          message: string
+          ticket_id: string
+        }
+        Update: {
+          author_id?: string
+          created_at?: string
+          id?: string
+          is_admin_reply?: boolean
+          message?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_replies_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -657,6 +756,19 @@ export type Database = {
       document_type: "invoice" | "bill_of_lading" | "photo" | "other"
       quote_status: "pending" | "issued" | "expired" | "accepted"
       quote_type: "ocean_freight" | "inland_freight"
+      ticket_category:
+        | "general"
+        | "shipping"
+        | "documents"
+        | "billing"
+        | "other"
+      ticket_priority: "low" | "medium" | "high" | "urgent"
+      ticket_status:
+        | "open"
+        | "in_progress"
+        | "awaiting_customer"
+        | "resolved"
+        | "closed"
       vehicle_source: "auction" | "direct"
       vehicle_type: "car" | "suv" | "truck"
       vin_status:
@@ -802,6 +914,15 @@ export const Constants = {
       document_type: ["invoice", "bill_of_lading", "photo", "other"],
       quote_status: ["pending", "issued", "expired", "accepted"],
       quote_type: ["ocean_freight", "inland_freight"],
+      ticket_category: ["general", "shipping", "documents", "billing", "other"],
+      ticket_priority: ["low", "medium", "high", "urgent"],
+      ticket_status: [
+        "open",
+        "in_progress",
+        "awaiting_customer",
+        "resolved",
+        "closed",
+      ],
       vehicle_source: ["auction", "direct"],
       vehicle_type: ["car", "suv", "truck"],
       vin_status: [

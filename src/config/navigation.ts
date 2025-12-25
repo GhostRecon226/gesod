@@ -18,6 +18,7 @@ import {
   Settings,
   Info,
   HelpCircle,
+  LifeBuoy,
   type LucideIcon,
 } from "lucide-react";
 
@@ -97,6 +98,12 @@ export const customerNavItems: NavItem[] = [
     icon: User,
     description: "Manage your profile"
   },
+  { 
+    title: "Support", 
+    href: "/dashboard/support", 
+    icon: LifeBuoy,
+    description: "Get help and support"
+  },
 ];
 
 // Admin dashboard navigation with groups
@@ -132,6 +139,12 @@ export const adminNavGroups: AdminNavGroup[] = [
     title: "Documents",
     items: [
       { title: "Documents", href: "/admin/documents", icon: FileText },
+    ],
+  },
+  {
+    title: "Support",
+    items: [
+      { title: "Support Tickets", href: "/admin/support", icon: LifeBuoy },
     ],
   },
   {
