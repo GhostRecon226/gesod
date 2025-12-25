@@ -27,6 +27,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useCreateTicket } from "@/hooks/useSupportTickets";
+import { useUploadTicketAttachment } from "@/hooks/useTicketAttachments";
+import { useAuth } from "@/contexts/AuthContext";
+import { FileUploadInput } from "@/components/support/FileUploadInput";
 
 const ticketSchema = z.object({
   subject: z.string().min(5, "Subject must be at least 5 characters"),
@@ -63,7 +66,11 @@ export function SupportTicketFormDialog({
   onOpenChange,
   customerId,
 }: SupportTicketFormDialogProps) {
+  const { user } = useAuth();
   const createTicket = useCreateTicket();
+  const uploadAttachment = useUploadTicketAttachment();
+  const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<TicketFormData>({
     resolver: zodResolver(ticketSchema),
@@ -76,19 +83,46 @@ export function SupportTicketFormDialog({
   });
 
   const onSubmit = async (data: TicketFormData) => {
-    await createTicket.mutateAsync({
-      customer_id: customerId,
-      subject: data.subject,
-      description: data.description,
-      priority: data.priority,
-      category: data.category,
-    });
-    form.reset();
-    onOpenChange(false);
+    if (!user?.id) return;
+    setIsSubmitting(true);
+
+    try {
+      // Create the ticket first
+      const ticket = await createTicket.mutateAsync({
+        customer_id: customerId,
+        subject: data.subject,
+        description: data.description,
+        priority: data.priority,
+        category: data.category,
+      });
+
+      // Upload any attachments
+      for (const file of files) {
+        await uploadAttachment.mutateAsync({
+          ticketId: ticket.id,
+          file,
+          userId: user.id,
+        });
+      }
+
+      form.reset();
+      setFiles([]);
+      onOpenChange(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleClose = (open: boolean) => {
+    if (!open) {
+      form.reset();
+      setFiles([]);
+    }
+    onOpenChange(open);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Create Support Ticket</DialogTitle>
@@ -179,16 +213,24 @@ export function SupportTicketFormDialog({
               )}
             />
 
+            <div>
+              <FormLabel>Attachments (optional)</FormLabel>
+              <div className="mt-2">
+                <FileUploadInput files={files} onChange={setFiles} />
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2 pt-4">
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleClose(false)}
+                disabled={isSubmitting}
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={createTicket.isPending}>
-                {createTicket.isPending ? "Submitting..." : "Submit Ticket"}
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Submitting..." : "Submit Ticket"}
               </Button>
             </div>
           </form>

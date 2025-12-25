@@ -22,8 +22,11 @@ import {
   useUpdateTicketPriority,
 } from "@/hooks/useSupportTickets";
 import { useTicketReplies, useCreateReply } from "@/hooks/useTicketReplies";
+import { useTicketAttachments, useUploadReplyAttachment } from "@/hooks/useTicketAttachments";
 import { useAuth } from "@/contexts/AuthContext";
 import { SupportTicket } from "@/services/supportTicketService";
+import { TicketAttachments } from "@/components/support/TicketAttachments";
+import { FileUploadInput } from "@/components/support/FileUploadInput";
 
 const statusColors: Record<SupportTicket["status"], string> = {
   open: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
@@ -64,21 +67,43 @@ export default function AdminTicketDetail() {
   const { user } = useAuth();
   const { data: ticket, isLoading: ticketLoading } = useTicket(id);
   const { data: replies, isLoading: repliesLoading } = useTicketReplies(id);
+  const { data: attachments } = useTicketAttachments(id);
   const createReply = useCreateReply();
+  const uploadAttachment = useUploadReplyAttachment();
   const updateStatus = useUpdateTicketStatus();
   const updatePriority = useUpdateTicketPriority();
   const [replyMessage, setReplyMessage] = useState("");
+  const [replyFiles, setReplyFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmitReply = async () => {
-    if (!replyMessage.trim() || !id || !user?.id) return;
+    if ((!replyMessage.trim() && replyFiles.length === 0) || !id || !user?.id) return;
+    setIsSubmitting(true);
 
-    await createReply.mutateAsync({
-      ticket_id: id,
-      author_id: user.id,
-      is_admin_reply: true,
-      message: replyMessage.trim(),
-    });
-    setReplyMessage("");
+    try {
+      // Create the reply
+      const reply = await createReply.mutateAsync({
+        ticket_id: id,
+        author_id: user.id,
+        is_admin_reply: true,
+        message: replyMessage.trim() || "(Attachment only)",
+      });
+
+      // Upload attachments
+      for (const file of replyFiles) {
+        await uploadAttachment.mutateAsync({
+          ticketId: id,
+          replyId: reply.id,
+          file,
+          userId: user.id,
+        });
+      }
+
+      setReplyMessage("");
+      setReplyFiles([]);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (ticketLoading) {
@@ -147,6 +172,9 @@ export default function AdminTicketDetail() {
                       <div className="mt-1 rounded-lg bg-muted p-3 text-sm whitespace-pre-wrap">
                         {ticket.description}
                       </div>
+                      {attachments && (
+                        <TicketAttachments attachments={attachments} replyId={undefined} />
+                      )}
                     </div>
                   </div>
 
@@ -193,6 +221,9 @@ export default function AdminTicketDetail() {
                           >
                             {reply.message}
                           </div>
+                          {attachments && (
+                            <TicketAttachments attachments={attachments} replyId={reply.id} />
+                          )}
                         </div>
                       </div>
                     ))
@@ -201,20 +232,21 @@ export default function AdminTicketDetail() {
               </ScrollArea>
 
               {/* Reply Input */}
-              <div className="mt-4 space-y-2 border-t pt-4">
+              <div className="mt-4 space-y-3 border-t pt-4">
                 <Textarea
                   placeholder="Type your reply..."
                   value={replyMessage}
                   onChange={(e) => setReplyMessage(e.target.value)}
                   rows={3}
                 />
+                <FileUploadInput files={replyFiles} onChange={setReplyFiles} maxFiles={3} />
                 <div className="flex justify-end">
                   <Button
                     onClick={handleSubmitReply}
-                    disabled={!replyMessage.trim() || createReply.isPending}
+                    disabled={(!replyMessage.trim() && replyFiles.length === 0) || isSubmitting}
                   >
                     <Send className="mr-2 h-4 w-4" />
-                    {createReply.isPending ? "Sending..." : "Send Reply"}
+                    {isSubmitting ? "Sending..." : "Send Reply"}
                   </Button>
                 </div>
               </div>
