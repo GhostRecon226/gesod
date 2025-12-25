@@ -125,90 +125,117 @@ export default function AdminDashboard() {
           </p>
         </header>
 
-        {/* Stats Row */}
+        {/* Metrics Groups */}
         <section className="mb-10">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            <Link to="/admin/customers" className="group">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  Customers
-                </p>
-                {statsLoading ? (
-                  <Skeleton className="h-8 w-12" />
-                ) : (
-                  <p className="text-3xl font-semibold text-foreground tabular-nums">
-                    {stats?.totalCustomers || 0}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Customers Group */}
+            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+                Customers
+              </p>
+              <Link to="/admin/customers" className="group block">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                    Total Customers
                   </p>
-                )}
-              </div>
-            </Link>
-            <Link to="/admin/vehicles" className="group">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  Active Vehicles
-                </p>
-                {statsLoading ? (
-                  <Skeleton className="h-8 w-12" />
-                ) : (
-                  <p className="text-3xl font-semibold text-foreground tabular-nums">
-                    {stats?.activeVehicles || 0}
-                  </p>
-                )}
-              </div>
-            </Link>
-            <Link to="/admin/quotes" className="group">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  Pending Quotes
-                </p>
-                {statsLoading ? (
-                  <Skeleton className="h-8 w-12" />
-                ) : (
-                  <p className="text-3xl font-semibold text-foreground tabular-nums">
-                    {stats?.pendingQuotes || 0}
-                  </p>
-                )}
-              </div>
-            </Link>
-            <Link to="/admin/bid-requests" className="group">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                  Bid Requests
-                </p>
-                {statsLoading ? (
-                  <Skeleton className="h-8 w-12" />
-                ) : (
-                  <p className="text-3xl font-semibold text-foreground tabular-nums">
-                    {stats?.pendingBids || 0}
-                  </p>
-                )}
-              </div>
-            </Link>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Completed (MTD)</p>
-              {statsLoading ? (
-                <Skeleton className="h-8 w-12" />
-              ) : (
-                <p className="text-3xl font-semibold text-foreground tabular-nums">
-                  {stats?.completedThisMonth || 0}
-                </p>
-              )}
+                  {statsLoading ? (
+                    <Skeleton className="h-9 w-16" />
+                  ) : (
+                    <p className="text-4xl font-semibold text-foreground tabular-nums">
+                      {stats?.totalCustomers || 0}
+                    </p>
+                  )}
+                </div>
+              </Link>
             </div>
-            <Link to="/admin/vins" className="group">
-              <div className="space-y-1">
-                <p className="text-sm text-destructive group-hover:text-destructive/80 transition-colors flex items-center gap-1.5">
-                  <AlertTriangle className="h-3.5 w-3.5" />
-                  Delayed
-                </p>
-                {statsLoading ? (
-                  <Skeleton className="h-8 w-12" />
-                ) : (
-                  <p className="text-3xl font-semibold text-foreground tabular-nums">
-                    {stats?.delayedVehicles || 0}
+
+            {/* Vehicles Group */}
+            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+                Vehicles
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                <Link to="/admin/vehicles" className="group">
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                      Active
+                    </p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-10" />
+                    ) : (
+                      <p className="text-2xl font-semibold text-foreground tabular-nums">
+                        {stats?.activeVehicles || 0}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">
+                    Completed
                   </p>
-                )}
+                  {statsLoading ? (
+                    <Skeleton className="h-8 w-10" />
+                  ) : (
+                    <p className="text-2xl font-semibold text-foreground tabular-nums">
+                      {stats?.completedThisMonth || 0}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground">this month</p>
+                </div>
+                <Link to="/admin/vins?status=delayed" className="group">
+                  <div className="space-y-1 pl-3 border-l-2 border-amber-500/60">
+                    <p className="text-sm text-amber-600 dark:text-amber-500 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors flex items-center gap-1.5">
+                      <AlertTriangle className="h-3.5 w-3.5" />
+                      Delayed
+                    </p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-10" />
+                    ) : (
+                      <p className="text-2xl font-semibold text-foreground tabular-nums">
+                        {stats?.delayedVehicles || 0}
+                      </p>
+                    )}
+                  </div>
+                </Link>
               </div>
-            </Link>
+            </div>
+
+            {/* Requests Group */}
+            <div className="bg-muted/30 rounded-lg p-4 border border-border/50">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-4">
+                Requests
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                <Link to="/admin/quotes" className="group">
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                      Pending Quotes
+                    </p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-10" />
+                    ) : (
+                      <p className="text-2xl font-semibold text-foreground tabular-nums">
+                        {stats?.pendingQuotes || 0}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+                <Link to="/admin/bid-requests" className="group">
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                      Bid Requests
+                    </p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-10" />
+                    ) : (
+                      <p className="text-2xl font-semibold text-foreground tabular-nums">
+                        {stats?.pendingBids || 0}
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 
