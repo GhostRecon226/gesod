@@ -29,6 +29,7 @@ import CustomerVinTracking from "./pages/customer/CustomerVinTracking";
 import CustomerProfile from "./pages/customer/CustomerProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminCustomerDetail from "./pages/admin/AdminCustomerDetail";
 import AdminVehicles from "./pages/admin/AdminVehicles";
 import AdminVehicleDetail from "./pages/admin/AdminVehicleDetail";
 import AdminVins from "./pages/admin/AdminVins";
@@ -153,6 +154,14 @@ const App = () => (
               element={
                 <ProtectedRoute allowedRoles={["admin"]}>
                   <AdminCustomers />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/customers/:id"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <AdminCustomerDetail />
                 </ProtectedRoute>
               }
             />
