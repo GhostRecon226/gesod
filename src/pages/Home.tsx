@@ -44,33 +44,6 @@ const services = [
   },
 ];
 
-const processSteps = [
-  {
-    step: "01",
-    title: "Find a Vehicle or Request a Service",
-    description: "Browse auction listings or contact us about bidding, shipping, or towing services.",
-  },
-  {
-    step: "02",
-    title: "Request a Bid or Quote",
-    description: "Submit your maximum bid amount or request a quote for freight services.",
-  },
-  {
-    step: "03",
-    title: "Confirm Service or Auction Outcome",
-    description: "Receive confirmation of auction results or approve your service quote to proceed.",
-  },
-  {
-    step: "04",
-    title: "Track Vehicle by VIN",
-    description: "Monitor your vehicle's status through our VIN tracking system as it moves through the process.",
-  },
-  {
-    step: "05",
-    title: "Completion",
-    description: "Your vehicle arrives at the destination. Final documentation is provided for your records.",
-  },
-];
 
 const platformHighlights = [
   {
@@ -221,50 +194,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works Summary */}
-      <section className="py-16 sm:py-24 bg-muted/30">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
-              How It Works
-            </h2>
-            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto text-lg">
-              A straightforward process from vehicle selection to delivery.
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {processSteps.map((step, idx) => (
-              <div key={idx} className="relative">
-                <div className="bg-card border border-border rounded-xl p-6 h-full">
-                  <span className="text-4xl font-bold text-primary/20">
-                    {step.step}
-                  </span>
-                  <h3 className="mt-3 text-lg font-semibold text-foreground">
-                    {step.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                    {step.description}
-                  </p>
-                </div>
-                {/* Connector line */}
-                {idx < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-0.5 bg-border" />
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10 text-center">
-            <Button variant="outline" asChild>
-              <Link to="/how-it-works">
-                View Detailed Process
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
       {/* Platform Highlights */}
       <section className="py-16 sm:py-24">
