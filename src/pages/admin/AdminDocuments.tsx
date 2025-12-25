@@ -58,6 +58,7 @@ import { useVinRecords } from "@/hooks/useVinRecords";
 import { useCustomers } from "@/hooks/useCustomers";
 import type { DocumentWithDetails } from "@/services/documentService";
 import type { Database } from "@/integrations/supabase/types";
+import { exportToCsv } from "@/lib/exportCsv";
 
 type DocumentType = Database["public"]["Enums"]["document_type"];
 
@@ -225,14 +226,36 @@ export default function AdminDocuments() {
     );
   }
 
+  const handleExport = () => {
+    exportToCsv(
+      filteredDocuments,
+      "documents",
+      [
+        { key: "id", header: "ID" },
+        { key: "file_name", header: "File Name" },
+        { key: "vin_record", header: "VIN", transform: (_v, item) => item.vin_record?.vin || "" },
+        { key: "document_type", header: "Type", transform: (v) => documentTypeLabels[v as DocumentType] || String(v) },
+        { key: "mime_type", header: "MIME Type", transform: (v) => v ? String(v) : "" },
+        { key: "file_size", header: "Size (bytes)", transform: (v) => v ? String(v) : "" },
+        { key: "created_at", header: "Uploaded", transform: (v) => format(new Date(String(v)), "yyyy-MM-dd") },
+      ]
+    );
+  };
+
   return (
     <AdminDashboardLayout
       pageTitle="Documents"
       actions={
-        <Button size="sm" onClick={() => setUploadOpen(true)}>
-          <Plus className="h-4 w-4 mr-1.5" />
-          Upload Document
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleExport} disabled={filteredDocuments.length === 0}>
+            <Download className="h-4 w-4 mr-1.5" />
+            Export
+          </Button>
+          <Button size="sm" onClick={() => setUploadOpen(true)}>
+            <Plus className="h-4 w-4 mr-1.5" />
+            Upload Document
+          </Button>
+        </div>
       }
     >
       <div className="space-y-6">
