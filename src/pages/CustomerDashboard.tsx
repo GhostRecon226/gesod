@@ -7,11 +7,15 @@ import {
   useRecentStatusUpdates,
   useRecentDocuments,
 } from "@/hooks/useCustomerDashboard";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Car,
   FileText,
   ArrowUpRight,
   Circle,
+  MessageSquare,
+  Activity,
 } from "lucide-react";
 import { format } from "date-fns";
 import type { VinStatus } from "@/services/vehicleService";
@@ -44,14 +48,134 @@ const documentTypeLabels: Record<string, string> = {
   other: "Other",
 };
 
+const quoteStatusLabels: Record<string, string> = {
+  pending: "Pending",
+  issued: "Issued",
+  expired: "Expired",
+  accepted: "Accepted",
+};
+
+interface OperationalActivity {
+  id: string;
+  type: "status_update" | "document" | "quote";
+  title: string;
+  description: string;
+  date: string;
+  status?: string;
+  icon: "status" | "document" | "quote";
+}
+
 export default function CustomerDashboard() {
   const { user } = useAuth();
   const { data: customer, isLoading: customerLoading } = useCurrentCustomer();
   const { data: stats, isLoading: statsLoading } = useCustomerDashboardStats(customer?.id);
-  const { data: recentUpdates, isLoading: updatesLoading } = useRecentStatusUpdates(customer?.id);
-  const { data: recentDocs, isLoading: docsLoading } = useRecentDocuments(customer?.id);
+  const { data: recentUpdates, isLoading: updatesLoading } = useRecentStatusUpdates(customer?.id, 5);
+  const { data: recentDocs, isLoading: docsLoading } = useRecentDocuments(customer?.id, 5);
+
+  // Fetch recent quote responses
+  const { data: recentQuotes, isLoading: quotesLoading } = useQuery({
+    queryKey: ["recentQuoteResponses", customer?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("public_quote_requests")
+        .select("id, quote_type, quote_status, quote_amount, currency, updated_at, vehicle_details")
+        .eq("customer_id", customer!.id)
+        .neq("quote_status", "pending")
+        .order("updated_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!customer?.id,
+  });
 
   const firstName = customer?.full_name?.split(" ")[0] || "there";
+
+  // Combine all activities into unified timeline
+  const operationalActivities: OperationalActivity[] = [];
+
+  // Add status updates
+  recentUpdates?.forEach((update) => {
+    operationalActivities.push({
+      id: `status-${update.id}`,
+      type: "status_update",
+      title: `${update.vehicle.year} ${update.vehicle.make} ${update.vehicle.model}`,
+      description: `Status changed to ${statusLabels[update.status]}`,
+      date: update.created_at,
+      status: update.status,
+      icon: "status",
+    });
+  });
+
+  // Add documents
+  recentDocs?.forEach((doc) => {
+    operationalActivities.push({
+      id: `doc-${doc.id}`,
+      type: "document",
+      title: doc.file_name,
+      description: `${documentTypeLabels[doc.document_type] || doc.document_type} uploaded`,
+      date: doc.created_at,
+      icon: "document",
+    });
+  });
+
+  // Add quote responses
+  recentQuotes?.forEach((quote) => {
+    let vehicleInfo = "Vehicle";
+    try {
+      const details = JSON.parse(quote.vehicle_details);
+      vehicleInfo = `${details.year || ""} ${details.make || ""} ${details.model || ""}`.trim() || "Vehicle";
+    } catch {}
+    
+    const quoteType = quote.quote_type === "ocean_freight" ? "Ocean Freight" : "Inland Freight";
+    let description = `${quoteType} quote ${quoteStatusLabels[quote.quote_status]?.toLowerCase()}`;
+    if (quote.quote_status === "issued" && quote.quote_amount) {
+      description += ` - ${quote.currency || "USD"} ${quote.quote_amount}`;
+    }
+    
+    operationalActivities.push({
+      id: `quote-${quote.id}`,
+      type: "quote",
+      title: vehicleInfo,
+      description,
+      date: quote.updated_at,
+      icon: "quote",
+    });
+  });
+
+  // Sort by date descending and take first 8
+  const sortedActivities = operationalActivities
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 8);
+
+  const isLoading = updatesLoading || docsLoading || quotesLoading;
+  const hasActivities = sortedActivities.length > 0;
+
+  const getActivityIcon = (activity: OperationalActivity) => {
+    switch (activity.icon) {
+      case "status":
+        return (
+          <Circle 
+            className={`h-2 w-2 fill-current ${statusIndicator[activity.status as VinStatus] || "text-muted-foreground"}`} 
+          />
+        );
+      case "document":
+        return <FileText className="h-3.5 w-3.5 text-muted-foreground" />;
+      case "quote":
+        return <MessageSquare className="h-3.5 w-3.5 text-muted-foreground" />;
+    }
+  };
+
+  const getActivityTypeLabel = (type: OperationalActivity["type"]) => {
+    switch (type) {
+      case "status_update":
+        return "Status";
+      case "document":
+        return "Document";
+      case "quote":
+        return "Quote";
+    }
+  };
 
   return (
     <CustomerDashboardLayout>
@@ -139,138 +263,72 @@ export default function CustomerDashboard() {
           </div>
         </section>
 
-        {/* Main Content Grid */}
-        <div className="grid gap-8 lg:grid-cols-3">
-          {/* Recent Activity - Table */}
-          <section className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Recent Activity
-              </h2>
-              <Link 
-                to="/dashboard/vehicles" 
-                className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-              >
-                View all
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            
-            <div className="bg-card rounded-lg border border-border overflow-hidden">
-              {updatesLoading ? (
-                <div className="p-4 space-y-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-12 w-full" />
-                  ))}
-                </div>
-              ) : recentUpdates && recentUpdates.length > 0 ? (
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border bg-muted/30">
-                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">
-                        Status
-                      </th>
-                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">
-                        Vehicle
-                      </th>
-                      <th className="text-left text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3 hidden md:table-cell">
-                        VIN
-                      </th>
-                      <th className="text-right text-xs font-medium text-muted-foreground uppercase tracking-wider px-4 py-3">
-                        Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {recentUpdates.map((update) => (
-                      <tr key={update.id} className="hover:bg-muted/20 transition-colors">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <Circle className={`h-2 w-2 fill-current ${statusIndicator[update.status]}`} />
-                            <span className="text-sm text-foreground">
-                              {statusLabels[update.status]}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className="text-sm text-foreground">
-                            {update.vehicle.year} {update.vehicle.make} {update.vehicle.model}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 hidden md:table-cell">
-                          <code className="text-xs text-muted-foreground font-mono">
-                            {update.vin}
-                          </code>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <span className="text-sm text-muted-foreground tabular-nums">
-                            {format(new Date(update.created_at), "MMM d")}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <div className="px-4 py-12 text-center">
-                  <Car className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No recent activity</p>
-                </div>
-              )}
-            </div>
-          </section>
-
-          {/* Recent Documents - List */}
-          <section>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Documents
-              </h2>
-              <Link 
-                to="/dashboard/documents" 
-                className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
-              >
-                View all
-                <ArrowUpRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            
-            <div className="bg-card rounded-lg border border-border overflow-hidden">
-              {docsLoading ? (
-                <div className="p-4 space-y-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-10 w-full" />
-                  ))}
-                </div>
-              ) : recentDocs && recentDocs.length > 0 ? (
-                <ul className="divide-y divide-border">
-                  {recentDocs.map((doc) => (
-                    <li key={doc.id} className="px-4 py-3 hover:bg-muted/20 transition-colors">
-                      <div className="flex items-start gap-3">
-                        <FileText className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm text-foreground truncate">
-                            {doc.file_name}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-0.5">
-                            {documentTypeLabels[doc.document_type] || doc.document_type}
-                            <span className="mx-1.5">·</span>
-                            {format(new Date(doc.created_at), "MMM d")}
-                          </p>
-                        </div>
+        {/* Operational Activity */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Operational Activity
+            </h2>
+            <Link 
+              to="/dashboard/vehicles" 
+              className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+            >
+              View vehicles
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          
+          <div className="bg-card rounded-lg border border-border overflow-hidden">
+            {isLoading ? (
+              <div className="p-4 space-y-3">
+                {[...Array(5)].map((_, i) => (
+                  <Skeleton key={i} className="h-14 w-full" />
+                ))}
+              </div>
+            ) : hasActivities ? (
+              <ul className="divide-y divide-border">
+                {sortedActivities.map((activity) => (
+                  <li 
+                    key={activity.id} 
+                    className="px-4 py-3 hover:bg-muted/20 transition-colors"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-1.5 flex items-center justify-center w-5">
+                        {getActivityIcon(activity)}
                       </div>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="px-4 py-12 text-center">
-                  <FileText className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">No documents</p>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded">
+                            {getActivityTypeLabel(activity.type)}
+                          </span>
+                        </div>
+                        <p className="text-sm text-foreground mt-1 truncate">
+                          {activity.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {activity.description}
+                        </p>
+                      </div>
+                      <span className="text-xs text-muted-foreground tabular-nums flex-shrink-0 mt-1">
+                        {format(new Date(activity.date), "MMM d")}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="px-6 py-16 text-center">
+                <Activity className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
+                <p className="text-sm font-medium text-foreground mb-1">
+                  No activity yet
+                </p>
+                <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
+                  This is where you'll see updates about your vehicles, new documents, and quote responses. Activity will appear here as your shipments progress.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
     </CustomerDashboardLayout>
   );
