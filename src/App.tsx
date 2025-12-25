@@ -43,6 +43,9 @@ import AdminStatusUpdates from "./pages/admin/AdminStatusUpdates";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminSupportTickets from "./pages/admin/AdminSupportTickets";
 import AdminTicketDetail from "./pages/admin/AdminTicketDetail";
+import TermsAndConditions from "./pages/legal/TermsAndConditions";
+import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
+import ConsentPolicy from "./pages/legal/ConsentPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -82,6 +85,11 @@ const App = () => (
             <Route path="/quote/inland-freight" element={<InlandFreightQuote />} />
             <Route path="/auctions" element={<PublicAuctions />} />
             <Route path="/auctions/:id" element={<PublicAuctionDetail />} />
+
+            {/* Legal pages */}
+            <Route path="/terms" element={<TermsAndConditions />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/consent" element={<ConsentPolicy />} />
 
             {/* ==================== CUSTOMER ROUTES ==================== */}
             {/* These routes require authentication - accessible by customers AND admins */}

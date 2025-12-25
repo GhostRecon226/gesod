@@ -331,12 +331,15 @@ export function PublicLayout({ children }: PublicLayoutProps) {
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} GESOD RIDES. All rights reserved.
             </p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-4 md:gap-6">
+              <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Terms & Conditions
+              </Link>
               <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Privacy Policy
               </Link>
-              <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                Terms of Service
+              <Link to="/consent" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Consent & Data Use
               </Link>
             </div>
           </div>
