@@ -375,42 +375,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Call to Action Section */}
       <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-blue-700" />
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
+              Get Started
+            </h2>
+            <p className="mt-4 text-muted-foreground max-w-2xl mx-auto text-lg">
+              Choose an option below to begin working with us.
+            </p>
+          </div>
 
-            <div className="relative p-8 sm:p-12 lg:p-16 text-center">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
-                Ready to Import Your Next Vehicle?
-              </h2>
-              <p className="mt-4 text-white/80 max-w-xl mx-auto text-lg">
-                Request a quote to get started. Our team will provide detailed 
-                cost estimates and answer any questions about the process.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-white text-primary hover:bg-white/90 shadow-lg"
-                >
-                  <Link to="/quote">
-                    Request a Quote
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  asChild
-                  size="lg"
-                  className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm"
-                >
-                  <Link to="/about">Learn More About Us</Link>
-                </Button>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button asChild size="lg" className="w-full sm:w-auto">
+              <Link to="/quote">
+                <ClipboardList className="h-4 w-4 mr-2" />
+                Request a Quote
+              </Link>
+            </Button>
+            <Button variant="outline" asChild size="lg" className="w-full sm:w-auto">
+              <Link to="/track">
+                <Search className="h-4 w-4 mr-2" />
+                Track a Vehicle by VIN
+              </Link>
+            </Button>
+            <Button variant="outline" asChild size="lg" className="w-full sm:w-auto">
+              <Link to="/auctions">
+                <Gavel className="h-4 w-4 mr-2" />
+                View Auction Listings
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
