@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { format } from "date-fns";
+import { useSearchParams } from "react-router-dom";
 import {
   Search,
   Plus,
@@ -10,6 +11,7 @@ import {
   FileText,
   Image,
   File,
+  X,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -53,6 +55,7 @@ import {
   useDocumentDownloadUrl,
 } from "@/hooks/useDocuments";
 import { useVinRecords } from "@/hooks/useVinRecords";
+import { useCustomers } from "@/hooks/useCustomers";
 import type { DocumentWithDetails } from "@/services/documentService";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -87,8 +90,12 @@ function formatFileSize(bytes: number | null) {
 }
 
 export default function AdminDocuments() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const customerIdFromUrl = searchParams.get("customer");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [customerFilter, setCustomerFilter] = useState<string>(customerIdFromUrl || "all");
   const [uploadOpen, setUploadOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<DocumentWithDetails | null>(null);
@@ -101,9 +108,27 @@ export default function AdminDocuments() {
 
   const { data: documents, isLoading, error } = useDocuments();
   const { data: vinRecords } = useVinRecords();
+  const { data: customers } = useCustomers();
   const createMutation = useCreateDocument();
   const deleteMutation = useDeleteDocument();
   const downloadUrlMutation = useDocumentDownloadUrl();
+
+  // Sync URL param with filter state
+  useEffect(() => {
+    if (customerIdFromUrl) {
+      setCustomerFilter(customerIdFromUrl);
+    }
+  }, [customerIdFromUrl]);
+
+  const clearCustomerFilter = () => {
+    setCustomerFilter("all");
+    setSearchParams((params) => {
+      params.delete("customer");
+      return params;
+    });
+  };
+
+  const selectedCustomer = customers?.find((c) => c.id === customerFilter);
 
   const filteredDocuments = useMemo(() => {
     if (!documents) return [];
@@ -117,9 +142,12 @@ export default function AdminDocuments() {
       const matchesType =
         typeFilter === "all" || doc.document_type === typeFilter;
 
-      return matchesSearch && matchesType;
+      const matchesCustomer =
+        customerFilter === "all" || doc.vin_record?.customer_id === customerFilter;
+
+      return matchesSearch && matchesType && matchesCustomer;
     });
-  }, [documents, searchQuery, typeFilter]);
+  }, [documents, searchQuery, typeFilter, customerFilter]);
 
   const stats = useMemo(() => {
     if (!documents) return { total: 0, invoices: 0, photos: 0 };
@@ -223,6 +251,19 @@ export default function AdminDocuments() {
             <p className="text-2xl font-semibold tabular-nums">{stats.photos}</p>
           </div>
         </div>
+
+        {/* Customer Filter Banner */}
+        {selectedCustomer && (
+          <div className="bg-primary/10 border border-primary/20 rounded-lg px-4 py-2.5 flex items-center justify-between">
+            <span className="text-sm">
+              Showing documents for <span className="font-medium">{selectedCustomer.full_name}</span>
+            </span>
+            <Button variant="ghost" size="sm" onClick={clearCustomerFilter}>
+              <X className="h-3.5 w-3.5 mr-1" />
+              Clear filter
+            </Button>
+          </div>
+        )}
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
