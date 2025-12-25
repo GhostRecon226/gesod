@@ -6,6 +6,7 @@ import {
   X,
   LogOut,
   ChevronDown,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,7 +30,9 @@ export function CustomerDashboardLayout({
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, role } = useAuth();
+
+  const isAdmin = role === 'admin';
 
   const userName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "Customer";
   const userEmail = user?.email || "";
@@ -75,8 +78,20 @@ export function CustomerDashboardLayout({
           </Button>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto py-4 px-3">
+          {/* Admin Panel Link */}
+          {isAdmin && (
+            <div className="mb-4">
+              <Link
+                to="/admin"
+                className="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm bg-primary/10 text-primary font-medium hover:bg-primary/20 transition-colors"
+              >
+                <Shield className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">Admin Panel</span>
+              </Link>
+            </div>
+          )}
+
           <div className="space-y-0.5">
             {customerNavItems.map((item) => {
               const isActive = location.pathname === item.href;
