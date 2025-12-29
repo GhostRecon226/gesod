@@ -30,6 +30,9 @@ const statusOptions: { value: VinStatus; label: string }[] = [
   { value: "cancelled", label: "Cancelled" },
 ];
 
+// Valid status values for validation
+const validStatuses: VinStatus[] = ["pending", "active", "awaiting_action", "in_progress", "delayed", "completed", "cancelled"];
+
 interface StatusUpdateDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -47,6 +50,16 @@ export function StatusUpdateDialog({
 }: StatusUpdateDialogProps) {
   const [status, setStatus] = useState<VinStatus | "">("");
   const [description, setDescription] = useState("");
+
+  const handleStatusChange = (value: string) => {
+    // Normalize and validate status value
+    const normalizedValue = value.toLowerCase().replace(/ /g, "_") as VinStatus;
+    if (validStatuses.includes(normalizedValue)) {
+      setStatus(normalizedValue);
+    } else {
+      console.error(`Invalid status value received: ${value}`);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,7 +99,7 @@ export function StatusUpdateDialog({
             <Label htmlFor="status">
               New Status <span className="text-destructive">*</span>
             </Label>
-            <Select value={status} onValueChange={(value) => setStatus(value as VinStatus)}>
+            <Select value={status} onValueChange={handleStatusChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a status" />
               </SelectTrigger>
