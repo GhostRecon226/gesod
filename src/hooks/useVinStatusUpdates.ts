@@ -61,6 +61,8 @@ export function useCreateStatusUpdate() {
       queryClient.invalidateQueries({ queryKey: ["vinStatusUpdates", data.vin_record_id] });
       queryClient.invalidateQueries({ queryKey: ["vinStatusUpdates", "all"] });
       queryClient.invalidateQueries({ queryKey: ["vinRecords"] });
+      queryClient.invalidateQueries({ queryKey: ["vehicles"] });
+      queryClient.invalidateQueries({ queryKey: ["vehicle"] });
       toast({
         title: "Status updated",
         description: "The VIN status has been updated successfully.",

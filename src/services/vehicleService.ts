@@ -123,6 +123,13 @@ export async function fetchVehicleById(id: string) {
         id,
         full_name,
         email
+      ),
+      vin_records (
+        id,
+        vin,
+        current_status,
+        is_active,
+        created_at
       )
     `)
     .eq("id", id)
