@@ -60,6 +60,7 @@ export async function fetchStatusUpdates(vinRecordId: string): Promise<VinStatus
 
   return updates.map(update => ({
     ...update,
+    status: normalizeStatus(String(update.status)),
     updater_profile: profileMap.get(update.updated_by) || null,
   }));
 }
@@ -92,6 +93,7 @@ export async function createStatusUpdate(data: CreateStatusUpdateData): Promise<
 
   return {
     ...result,
+    status: normalizeStatus(String(result.status)),
     updater_profile: profile || null,
   };
 }

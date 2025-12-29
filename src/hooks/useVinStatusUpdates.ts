@@ -32,6 +32,7 @@ async function fetchAllStatusUpdates(): Promise<VinStatusUpdateWithUser[]> {
 
   return updates.map(update => ({
     ...update,
+    status: (String(update.status).toLowerCase().replace(/ /g, "_") as VinStatusUpdateWithUser["status"]),
     updater_profile: profileMap.get(update.updated_by) || null,
   }));
 }
