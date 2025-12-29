@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { format } from "date-fns";
+import { useState, useMemo } from "react";
+import { format, subDays, startOfWeek, startOfMonth, eachDayOfInterval, isSameDay, parseISO } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -9,6 +9,10 @@ import {
   Loader2,
   Circle,
   Eye,
+  TrendingUp,
+  Users,
+  UserPlus,
+  Calendar,
 } from "lucide-react";
 import { AdminDashboardLayout } from "@/components/layout/AdminDashboardLayout";
 import { Button } from "@/components/ui/button";
@@ -35,6 +39,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { CustomerFormDialog } from "@/components/admin/CustomerFormDialog";
 import { DeleteConfirmDialog } from "@/components/admin/DeleteConfirmDialog";
 import {
@@ -72,10 +83,48 @@ export default function AdminCustomers() {
     return matchesSearch && matchesStatus;
   });
 
-  const stats = {
-    total: customers?.length || 0,
-    active: customers?.filter((c) => c.account_status === "active").length || 0,
-    suspended: customers?.filter((c) => c.account_status === "suspended").length || 0,
+  // Calculate registration statistics
+  const registrationStats = useMemo(() => {
+    if (!customers) return { thisWeek: 0, thisMonth: 0, total: 0, active: 0, suspended: 0 };
+    
+    const now = new Date();
+    const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+    const monthStart = startOfMonth(now);
+    
+    const thisWeek = customers.filter(c => parseISO(c.created_at) >= weekStart).length;
+    const thisMonth = customers.filter(c => parseISO(c.created_at) >= monthStart).length;
+    
+    return {
+      total: customers.length,
+      active: customers.filter(c => c.account_status === "active").length,
+      suspended: customers.filter(c => c.account_status === "suspended").length,
+      thisWeek,
+      thisMonth,
+    };
+  }, [customers]);
+
+  // Generate chart data for last 30 days
+  const chartData = useMemo(() => {
+    if (!customers) return [];
+    
+    const now = new Date();
+    const thirtyDaysAgo = subDays(now, 29);
+    const days = eachDayOfInterval({ start: thirtyDaysAgo, end: now });
+    
+    return days.map(day => {
+      const count = customers.filter(c => isSameDay(parseISO(c.created_at), day)).length;
+      return {
+        date: format(day, "MMM d"),
+        registrations: count,
+      };
+    });
+  }, [customers]);
+
+  const chartConfig = {
+    registrations: {
+      label: "Registrations",
+      color: "hsl(var(--primary))",
+    },
   };
 
   const handleEdit = (customer: Customer) => {
@@ -136,21 +185,121 @@ export default function AdminCustomers() {
   return (
     <AdminDashboardLayout pageTitle="Customers">
       <div className="space-y-6">
-        {/* Stats Row */}
-        <div className="grid grid-cols-3 gap-6 max-w-sm">
-          <div>
-            <p className="text-sm text-muted-foreground">Total</p>
-            <p className="text-2xl font-semibold tabular-nums">{stats.total}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Active</p>
-            <p className="text-2xl font-semibold tabular-nums">{stats.active}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Suspended</p>
-            <p className="text-2xl font-semibold tabular-nums">{stats.suspended}</p>
-          </div>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <Card className="bg-card border-border">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Users className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Total</p>
+                  <p className="text-xl font-semibold tabular-nums">{registrationStats.total}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card border-border">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-success/10">
+                  <Circle className="h-4 w-4 text-success fill-success" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Active</p>
+                  <p className="text-xl font-semibold tabular-nums">{registrationStats.active}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card border-border">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-destructive/10">
+                  <Circle className="h-4 w-4 text-destructive" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Suspended</p>
+                  <p className="text-xl font-semibold tabular-nums">{registrationStats.suspended}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card border-border">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <UserPlus className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">This Week</p>
+                  <p className="text-xl font-semibold tabular-nums">{registrationStats.thisWeek}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-card border-border">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Calendar className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">This Month</p>
+                  <p className="text-xl font-semibold tabular-nums">{registrationStats.thisMonth}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* Registration Trend Chart */}
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              Registration Trend (Last 30 Days)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[200px] w-full">
+              <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="registrationsGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis 
+                  dataKey="date" 
+                  tickLine={false} 
+                  axisLine={false}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  interval="preserveStartEnd"
+                />
+                <YAxis 
+                  tickLine={false} 
+                  axisLine={false}
+                  tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                  allowDecimals={false}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Area 
+                  type="monotone" 
+                  dataKey="registrations" 
+                  stroke="hsl(var(--primary))" 
+                  strokeWidth={2}
+                  fill="url(#registrationsGradient)" 
+                />
+              </AreaChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3">
