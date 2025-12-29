@@ -1,6 +1,18 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { VinStatus } from "./vinService";
 
+// Valid status values (lowercase)
+const validStatuses: VinStatus[] = ["pending", "active", "awaiting_action", "in_progress", "delayed", "completed", "cancelled"];
+
+// Normalize status to ensure lowercase enum value
+const normalizeStatus = (status: string): VinStatus => {
+  const normalized = status.toLowerCase().replace(/ /g, "_") as VinStatus;
+  if (!validStatuses.includes(normalized)) {
+    throw new Error(`Invalid status: ${status}`);
+  }
+  return normalized;
+};
+
 export interface VinStatusUpdate {
   id: string;
   vin_record_id: string;
@@ -57,10 +69,13 @@ export async function createStatusUpdate(data: CreateStatusUpdateData): Promise<
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
+  const normalizedStatus = normalizeStatus(data.status);
+
   const { data: result, error } = await supabase
     .from("vin_status_updates")
     .insert({
       ...data,
+      status: normalizedStatus,
       updated_by: user.id,
     })
     .select("*")
