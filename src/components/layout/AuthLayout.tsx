@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Truck } from "lucide-react";
+import gesodLogo from "@/assets/gesod_logo_dark.png";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -17,12 +17,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         <div className="relative z-10 flex flex-col justify-between p-12">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary-foreground/10 backdrop-blur">
-              <Truck className="h-7 w-7 text-primary-foreground" />
-            </div>
-            <span className="text-2xl font-bold text-primary-foreground">
-              GESOD RIDES
-            </span>
+            <img src={gesodLogo} alt="GESOD RIDES" className="h-14 w-auto" />
           </Link>
 
           {/* Tagline */}
@@ -64,12 +59,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         {/* Mobile Logo */}
         <div className="mb-8 lg:hidden">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <Truck className="h-6 w-6 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">
-              GESOD RIDES
-            </span>
+            <img src={gesodLogo} alt="GESOD RIDES" className="h-10 w-auto" />
           </Link>
         </div>
 
