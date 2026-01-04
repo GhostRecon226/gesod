@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, User, LogOut, LayoutDashboard, Settings } from "lucide-react";
-import gesodLogo from "@/assets/gesod_logo_dark.png";
+import gesodLogo from "@/assets/gesod_logo_white.png";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
