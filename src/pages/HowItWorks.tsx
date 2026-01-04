@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import {
   Search,
-  FileText,
   Gavel,
   Truck,
   Ship,
@@ -9,20 +8,17 @@ import {
   ArrowRight,
   ClipboardList,
   MapPin,
-  Package,
   Info,
 } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FeatureIcon } from "@/components/marketing/FeatureIcon";
 import { Disclaimer } from "@/components/ui/disclaimer";
 
 const processSteps = [
   {
     step: 1,
     icon: Search,
-    color: "blue" as const,
     title: "Browse & Select",
     description: "Review available auction vehicle listings from third-party platforms like Copart and IAAI. Identify vehicles that meet your requirements.",
     details: [
@@ -35,7 +31,6 @@ const processSteps = [
   {
     step: 2,
     icon: ClipboardList,
-    color: "emerald" as const,
     title: "Request a Quote",
     description: "Submit a quote request for the services you need. We provide estimates for bidding assistance, inland transport, and ocean freight.",
     details: [
@@ -48,7 +43,6 @@ const processSteps = [
   {
     step: 3,
     icon: Gavel,
-    color: "violet" as const,
     title: "Bidding Assistance",
     description: "If you proceed, we place bids on your behalf according to your maximum bid instructions. Auction outcomes depend on competing bidders and reserve prices.",
     details: [
@@ -61,7 +55,6 @@ const processSteps = [
   {
     step: 4,
     icon: Truck,
-    color: "orange" as const,
     title: "Inland Transport",
     description: "Once a vehicle is won, we coordinate pickup from the auction yard and transport to the designated port or location within the United States.",
     details: [
@@ -73,7 +66,6 @@ const processSteps = [
   {
     step: 5,
     icon: Ship,
-    color: "blue" as const,
     title: "Ocean Freight",
     description: "We arrange RORO (Roll-on/Roll-off) shipping from U.S. ports to your destination port. Transit times vary based on route and carrier schedules.",
     details: [
@@ -86,7 +78,6 @@ const processSteps = [
   {
     step: 6,
     icon: MapPin,
-    color: "emerald" as const,
     title: "Status Updates",
     description: "Track your vehicle through our VIN tracking system. We provide status updates at key milestones throughout the shipping process.",
     details: [
@@ -101,26 +92,17 @@ const processSteps = [
 export default function HowItWorks() {
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-background to-accent/40 py-20 sm:py-28">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-accent/50 blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Hero Section - Dark */}
+      <section className="bg-hero py-20 sm:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Package className="h-4 w-4" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-hero-muted/30 text-hero-muted text-sm font-medium mb-6">
               Our Process
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              How It{" "}
-              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                Works
-              </span>
+            <h1 className="text-4xl font-bold tracking-tight text-hero-foreground sm:text-5xl lg:text-6xl">
+              How It Works
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground leading-relaxed sm:text-xl">
+            <p className="mt-6 text-lg text-hero-muted leading-relaxed sm:text-xl">
               From vehicle selection to delivery, here is an overview of the steps 
               involved when working with GESOD RIDES. Each stage has defined responsibilities 
               and clear communication points.
@@ -137,14 +119,14 @@ export default function HowItWorks() {
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-border hidden sm:block" />
 
             <div className="space-y-12">
-              {processSteps.map((step, index) => (
+              {processSteps.map((step) => (
                 <div key={step.step} className="relative">
                   {/* Step content */}
                   <div className="sm:pl-20">
                     {/* Step number badge - positioned on timeline */}
                     <div className="hidden sm:flex absolute left-0 top-0 h-16 w-16 items-center justify-center">
-                      <div className="relative z-10">
-                        <FeatureIcon icon={step.icon} color={step.color} size="md" />
+                      <div className="relative z-10 h-14 w-14 rounded-full bg-primary flex items-center justify-center">
+                        <step.icon className="h-6 w-6 text-primary-foreground" />
                       </div>
                     </div>
 
@@ -152,7 +134,9 @@ export default function HowItWorks() {
                       <CardContent className="p-6 sm:p-8">
                         {/* Mobile icon */}
                         <div className="sm:hidden mb-4">
-                          <FeatureIcon icon={step.icon} color={step.color} size="md" />
+                          <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center">
+                            <step.icon className="h-5 w-5 text-primary-foreground" />
+                          </div>
                         </div>
 
                         {/* Step header */}

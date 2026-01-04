@@ -66,6 +66,15 @@ export default {
           foreground: "hsl(var(--in-progress-foreground))",
           muted: "hsl(var(--in-progress-muted))",
         },
+        hero: {
+          DEFAULT: "hsl(var(--hero))",
+          foreground: "hsl(var(--hero-foreground))",
+          muted: "hsl(var(--hero-muted))",
+        },
+        "accent-bright": {
+          DEFAULT: "hsl(var(--accent-bright))",
+          foreground: "hsl(var(--accent-bright-foreground))",
+        },
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",

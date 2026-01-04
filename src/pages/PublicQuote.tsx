@@ -53,7 +53,7 @@ export default function PublicQuote() {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-primary/10 mb-4">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-muted mb-4">
             <FileQuestion className="h-7 w-7 text-primary" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
@@ -91,7 +91,7 @@ export default function PublicQuote() {
                   className="flex flex-col h-full cursor-pointer rounded-lg border-2 border-border bg-card p-6 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 transition-all"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
                       <Ship className="h-5 w-5 text-primary" />
                     </div>
                     <div className="font-semibold text-foreground">Ocean Freight (RORO)</div>
@@ -130,7 +130,7 @@ export default function PublicQuote() {
                   className="flex flex-col h-full cursor-pointer rounded-lg border-2 border-border bg-card p-6 hover:bg-accent/50 hover:border-accent peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 transition-all"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
                       <Car className="h-5 w-5 text-primary" />
                     </div>
                     <div className="font-semibold text-foreground">Inland Freight (Vehicle Towing)</div>
@@ -173,7 +173,7 @@ export default function PublicQuote() {
         </Card>
 
         {/* Disclaimer */}
-        <Card className="border-border bg-accent/30">
+        <Card className="border-border bg-muted/30">
           <CardContent className="py-4">
             <div className="flex items-start gap-3">
               <Info className="h-5 w-5 text-muted-foreground flex-shrink-0 mt-0.5" />

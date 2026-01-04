@@ -14,13 +14,8 @@ export default function PublicAuctions() {
   });
 
   const getSourceBadge = (source: AuctionSource) => {
-    const colors: Record<AuctionSource, string> = {
-      copart: "bg-primary/10 text-primary border-primary/20",
-      iaai: "bg-secondary/10 text-secondary border-secondary/20",
-      other: "bg-muted text-muted-foreground border-border",
-    };
     return (
-      <Badge variant="outline" className={colors[source]}>
+      <Badge variant="outline" className="bg-card/90 border-border">
         {source.toUpperCase()}
       </Badge>
     );
@@ -28,18 +23,18 @@ export default function PublicAuctions() {
 
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/5 via-background to-accent/30 py-16 sm:py-20">
+      {/* Hero Section - Dark */}
+      <section className="bg-hero py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 mb-6">
-              <Gavel className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Auction Vehicles</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-hero-muted/30 text-hero-muted text-sm font-medium mb-6">
+              <Gavel className="h-4 w-4" />
+              Auction Vehicles
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            <h1 className="text-4xl font-bold tracking-tight text-hero-foreground sm:text-5xl">
               Auction Vehicle Listings
             </h1>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-hero-muted max-w-2xl mx-auto">
               Browse available auction vehicles from third-party platforms. 
               Contact us to request bidding assistance.
             </p>
@@ -134,7 +129,7 @@ export default function PublicAuctions() {
                 </div>
               </div>
               <div className="flex justify-center">
-                <div className="bg-primary/5 rounded-xl p-8 text-center">
+                <div className="bg-muted rounded-xl p-8 text-center">
                   <Gavel className="h-12 w-12 text-primary mx-auto mb-4" />
                   <p className="text-sm font-medium text-muted-foreground">
                     Contact us to discuss your requirements

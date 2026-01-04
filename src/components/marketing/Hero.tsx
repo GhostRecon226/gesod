@@ -17,6 +17,7 @@ interface HeroProps {
   };
   features?: string[];
   children?: React.ReactNode;
+  variant?: "light" | "dark";
 }
 
 export function Hero({
@@ -27,31 +28,37 @@ export function Hero({
   secondaryCta,
   features,
   children,
+  variant = "dark",
 }: HeroProps) {
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-background to-accent/30 py-16 sm:py-24 lg:py-32">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,hsl(var(--primary)/0.1),transparent)]" />
-      </div>
+  const isDark = variant === "dark";
 
+  return (
+    <section className={`py-16 sm:py-24 lg:py-32 ${isDark ? "bg-hero" : "bg-background"}`}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           {/* Subtitle/Badge */}
           {subtitle && (
-            <div className="inline-flex items-center rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-accent-foreground mb-6">
+            <div className={`inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium mb-6 ${
+              isDark 
+                ? "border border-hero-muted/30 text-hero-muted" 
+                : "bg-accent text-accent-foreground"
+            }`}>
               {subtitle}
             </div>
           )}
 
           {/* Title */}
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          <h1 className={`text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl ${
+            isDark ? "text-hero-foreground" : "text-foreground"
+          }`}>
             {title}
           </h1>
 
           {/* Description */}
           {description && (
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">
+            <p className={`mx-auto mt-6 max-w-2xl text-lg leading-relaxed ${
+              isDark ? "text-hero-muted" : "text-muted-foreground"
+            }`}>
               {description}
             </p>
           )}
@@ -60,7 +67,11 @@ export function Hero({
           {(primaryCta || secondaryCta) && (
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               {primaryCta && (
-                <Button size="lg" asChild className="min-w-[200px]">
+                <Button 
+                  size="lg" 
+                  asChild 
+                  className={isDark ? "bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground" : ""}
+                >
                   <Link to={primaryCta.href}>
                     {primaryCta.label}
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -72,7 +83,7 @@ export function Hero({
                   size="lg"
                   variant="outline"
                   asChild
-                  className="min-w-[200px]"
+                  className={isDark ? "border-hero-muted/30 text-hero-foreground hover:bg-hero-foreground/10" : ""}
                 >
                   <Link to={secondaryCta.href}>{secondaryCta.label}</Link>
                 </Button>
@@ -86,7 +97,9 @@ export function Hero({
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                  className={`flex items-center gap-2 text-sm ${
+                    isDark ? "text-hero-muted" : "text-muted-foreground"
+                  }`}
                 >
                   <CheckCircle className="h-4 w-4 text-success" />
                   <span>{feature}</span>
