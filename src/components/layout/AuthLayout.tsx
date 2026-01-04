@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import gesodLogo from "@/assets/gesod_logo_dark.png";
+import gesodLogo from "@/assets/gesod_logo_white.png";
 
 interface AuthLayoutProps {
   children: React.ReactNode;

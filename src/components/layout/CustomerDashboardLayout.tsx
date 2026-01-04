@@ -7,7 +7,7 @@ import {
   ChevronDown,
   Shield,
 } from "lucide-react";
-import gesodLogo from "@/assets/gesod_logo_dark.png";
+import gesodLogo from "@/assets/gesod_logo_white.png";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
