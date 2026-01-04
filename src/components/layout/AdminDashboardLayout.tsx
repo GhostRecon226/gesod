@@ -1,13 +1,13 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Truck,
   Menu,
   X,
   LogOut,
   ChevronDown,
   User,
 } from "lucide-react";
+import gesodLogo from "@/assets/gesod_logo_dark.png";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -66,10 +66,7 @@ export function AdminDashboardLayout({
         {/* Logo */}
         <div className="flex h-14 items-center justify-between border-b border-border px-4 flex-shrink-0">
           <Link to="/admin" className="flex items-center gap-2">
-            <Truck className="h-5 w-5 text-foreground" />
-            <span className="text-sm font-semibold text-foreground">
-              GESOD RIDES
-            </span>
+            <img src={gesodLogo} alt="GESOD RIDES" className="h-8 w-auto" />
           </Link>
           <Button
             variant="ghost"
