@@ -6,24 +6,17 @@ import {
   CheckCircle,
   XCircle,
   ArrowRight,
-  Anchor,
-  MapPin,
   Clock,
-  FileText,
-  Users,
-  Shield,
   AlertTriangle,
 } from "lucide-react";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FeatureIcon } from "@/components/marketing/FeatureIcon";
 import { Separator } from "@/components/ui/separator";
 
 interface ServiceDetail {
   id: string;
   icon: typeof Gavel;
-  color: "blue" | "emerald" | "violet" | "orange";
   title: string;
   subtitle: string;
   description: string[];
@@ -37,7 +30,6 @@ const services: ServiceDetail[] = [
   {
     id: "auction-bidding",
     icon: Gavel,
-    color: "blue",
     title: "Auction Vehicle Sourcing & Bidding Support",
     subtitle: "Access U.S. salvage and clean-title auctions with structured bidding assistance",
     description: [
@@ -65,7 +57,6 @@ const services: ServiceDetail[] = [
   {
     id: "ocean-freight",
     icon: Ship,
-    color: "violet",
     title: "Ocean Freight (RORO Shipping)",
     subtitle: "Roll-on/Roll-off shipping from U.S. ports to international destinations",
     description: [
@@ -95,7 +86,6 @@ const services: ServiceDetail[] = [
   {
     id: "inland-freight",
     icon: Truck,
-    color: "orange",
     title: "Inland Freight (Vehicle Towing)",
     subtitle: "Ground transportation from auction yards to ports or designated locations",
     description: [
@@ -127,26 +117,17 @@ const services: ServiceDetail[] = [
 export default function Services() {
   return (
     <PublicLayout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/15 via-background to-accent/40 py-20 sm:py-28">
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-accent/50 blur-3xl" />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Hero Section - Dark */}
+      <section className="bg-hero py-20 sm:py-28">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Shield className="h-4 w-4" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-hero-muted/30 text-hero-muted text-sm font-medium mb-6">
               Our Services
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Vehicle Sourcing &{" "}
-              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                Logistics Services
-              </span>
+            <h1 className="text-4xl font-bold tracking-tight text-hero-foreground sm:text-5xl lg:text-6xl">
+              Vehicle Sourcing & Logistics Services
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground leading-relaxed sm:text-xl">
+            <p className="mt-6 text-lg text-hero-muted leading-relaxed sm:text-xl">
               We facilitate vehicle acquisition from U.S. auctions and coordinate 
               transportation to international destinations. Each service below outlines 
               what is included and what falls outside our scope.
@@ -163,9 +144,11 @@ export default function Services() {
               <a
                 key={service.id}
                 href={`#${service.id}`}
-                className="group flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-md transition-all"
+                className="group flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:shadow-md transition-all"
               >
-                <FeatureIcon icon={service.icon} color={service.color} size="md" />
+                <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                  <service.icon className="h-6 w-6 text-primary" />
+                </div>
                 <div>
                   <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
                     {service.title.split(" ").slice(0, 2).join(" ")}
@@ -192,7 +175,9 @@ export default function Services() {
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
               <div className="lg:w-2/3">
                 <div className="flex items-start gap-5 mb-6">
-                  <FeatureIcon icon={service.icon} color={service.color} size="xl" />
+                  <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                    <service.icon className="h-7 w-7 text-primary" />
+                  </div>
                   <div>
                     <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
                       {service.title}
@@ -213,7 +198,7 @@ export default function Services() {
 
               {/* CTA Card */}
               <div className="lg:w-1/3 w-full">
-                <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-accent/20">
+                <Card className="border shadow-lg">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                       <Clock className="h-4 w-4" />
@@ -238,7 +223,7 @@ export default function Services() {
             {/* Included / Not Included */}
             <div className="grid gap-8 lg:grid-cols-2">
               {/* What's Included */}
-              <Card className="border-2 border-success/20 bg-gradient-to-br from-success/5 via-card to-card">
+              <Card className="border-2 border-success/20">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg">
                     <div className="h-8 w-8 rounded-lg bg-success/20 flex items-center justify-center">
@@ -260,7 +245,7 @@ export default function Services() {
               </Card>
 
               {/* What's Not Included */}
-              <Card className="border-2 border-warning/20 bg-gradient-to-br from-warning/5 via-card to-card">
+              <Card className="border-2 border-warning/20">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-3 text-lg">
                     <div className="h-8 w-8 rounded-lg bg-warning/20 flex items-center justify-center">
@@ -328,38 +313,33 @@ export default function Services() {
       {/* CTA Section */}
       <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-blue-700" />
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
-
-            <div className="relative p-8 sm:p-12 lg:p-16 text-center">
-              <h2 className="text-2xl font-bold text-white sm:text-3xl lg:text-4xl">
-                Ready to Get Started?
-              </h2>
-              <p className="mt-4 text-white/80 max-w-xl mx-auto text-lg">
-                Request a quote for any of our services. Our team will respond 
-                with detailed pricing and next steps.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-white text-primary hover:bg-white/90 shadow-lg"
-                >
-                  <Link to="/quote">
-                    Request a Quote
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  asChild
-                  size="lg"
-                  className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm"
-                >
-                  <Link to="/auctions">Browse Auctions</Link>
-                </Button>
-              </div>
+          <div className="bg-hero rounded-2xl p-8 sm:p-12 lg:p-16 text-center">
+            <h2 className="text-2xl font-bold text-hero-foreground sm:text-3xl lg:text-4xl">
+              Ready to Get Started?
+            </h2>
+            <p className="mt-4 text-hero-muted max-w-xl mx-auto text-lg">
+              Request a quote for any of our services. Our team will respond 
+              with detailed pricing and next steps.
+            </p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                asChild
+                size="lg"
+                className="bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground"
+              >
+                <Link to="/quote">
+                  Request a Quote
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                asChild
+                size="lg"
+                className="border-hero-muted/30 text-hero-foreground hover:bg-hero-foreground/10"
+              >
+                <Link to="/auctions">Browse Auctions</Link>
+              </Button>
             </div>
           </div>
         </div>
