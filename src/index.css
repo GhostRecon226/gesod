@@ -11,95 +11,6 @@
 
 @layer base {
   :root {
-    /* Primary - Electric Blue */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 100%;
-    --primary-hover: 217 91% 50%;
-    
-    /* Secondary - Cool Slate */
-    --secondary: 215 20% 25%;
-    --secondary-foreground: 210 40% 95%;
-    
-    /* Background & Surface - Deep Charcoal */
-    --background: 220 20% 7%;
-    --foreground: 210 40% 95%;
-    
-    /* Cards & Elevated Surfaces */
-    --card: 220 18% 10%;
-    --card-foreground: 210 40% 95%;
-    
-    /* Popover */
-    --popover: 220 18% 10%;
-    --popover-foreground: 210 40% 95%;
-    
-    /* Muted Elements */
-    --muted: 220 16% 14%;
-    --muted-foreground: 215 15% 55%;
-    
-    /* Accent */
-    --accent: 217 50% 15%;
-    --accent-foreground: 217 91% 70%;
-    
-    /* Hero - Deep Navy */
-    --hero: 220 25% 5%;
-    --hero-foreground: 210 40% 98%;
-    --hero-muted: 215 15% 55%;
-    
-    /* Accent Bright - Electric Orange for CTAs */
-    --accent-bright: 25 95% 55%;
-    --accent-bright-foreground: 0 0% 100%;
-    
-    /* Success - Vibrant Emerald */
-    --success: 158 60% 45%;
-    --success-foreground: 0 0% 100%;
-    --success-muted: 158 40% 12%;
-    
-    /* Warning - Rich Amber */
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-    --warning-muted: 38 50% 12%;
-    
-    /* Destructive - Bright Coral */
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 0 0% 100%;
-    --destructive-muted: 0 50% 12%;
-    
-    /* Pending - Blue */
-    --pending: 217 70% 55%;
-    --pending-foreground: 0 0% 100%;
-    --pending-muted: 217 40% 14%;
-    
-    /* Awaiting - Purple */
-    --awaiting: 262 55% 55%;
-    --awaiting-foreground: 0 0% 100%;
-    --awaiting-muted: 262 35% 14%;
-    
-    /* In Progress - Cyan */
-    --in-progress: 190 70% 45%;
-    --in-progress-foreground: 0 0% 100%;
-    --in-progress-muted: 190 40% 12%;
-    
-    /* Borders & Inputs */
-    --border: 220 16% 16%;
-    --input: 220 16% 16%;
-    --ring: 217 91% 60%;
-    
-    /* Border Radius */
-    --radius: 0.75rem;
-    
-    /* Sidebar */
-    --sidebar-background: 220 25% 5%;
-    --sidebar-foreground: 210 40% 85%;
-    --sidebar-primary: 217 91% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 217 40% 12%;
-    --sidebar-accent-foreground: 210 40% 95%;
-    --sidebar-border: 220 16% 14%;
-    --sidebar-ring: 217 91% 60%;
-    --sidebar-muted: 215 15% 45%;
-  }
-
-  .light {
     /* Primary - Deep Navy */
     --primary: 213 50% 23%;
     --primary-foreground: 210 40% 98%;
@@ -161,6 +72,9 @@
     --input: 220 13% 88%;
     --ring: 213 50% 23%;
     
+    /* Border Radius */
+    --radius: 0.75rem;
+
     --sidebar-background: 213 50% 15%;
     --sidebar-foreground: 210 40% 90%;
     --sidebar-primary: 210 40% 98%;
@@ -170,6 +84,79 @@
     --sidebar-border: 213 40% 25%;
     --sidebar-ring: 213 50% 50%;
     --sidebar-muted: 213 30% 70%;
+  }
+
+  .dark {
+    /* Primary - Electric Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 217 91% 50%;
+    
+    /* Secondary - Cool Slate */
+    --secondary: 215 20% 25%;
+    --secondary-foreground: 210 40% 95%;
+    
+    /* Background & Surface - Deep Charcoal */
+    --background: 220 20% 7%;
+    --foreground: 210 40% 95%;
+    
+    /* Cards & Elevated Surfaces */
+    --card: 220 18% 10%;
+    --card-foreground: 210 40% 95%;
+    
+    --popover: 220 18% 10%;
+    --popover-foreground: 210 40% 95%;
+    
+    --muted: 220 16% 14%;
+    --muted-foreground: 215 15% 55%;
+    
+    --accent: 217 50% 15%;
+    --accent-foreground: 217 91% 70%;
+    
+    --hero: 220 25% 5%;
+    --hero-foreground: 210 40% 98%;
+    --hero-muted: 215 15% 55%;
+    
+    --accent-bright: 25 95% 55%;
+    --accent-bright-foreground: 0 0% 100%;
+    
+    --success: 158 60% 45%;
+    --success-foreground: 0 0% 100%;
+    --success-muted: 158 40% 12%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-muted: 38 50% 12%;
+    
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --destructive-muted: 0 50% 12%;
+    
+    --pending: 217 70% 55%;
+    --pending-foreground: 0 0% 100%;
+    --pending-muted: 217 40% 14%;
+    
+    --awaiting: 262 55% 55%;
+    --awaiting-foreground: 0 0% 100%;
+    --awaiting-muted: 262 35% 14%;
+    
+    --in-progress: 190 70% 45%;
+    --in-progress-foreground: 0 0% 100%;
+    --in-progress-muted: 190 40% 12%;
+    
+    --border: 220 16% 16%;
+    --input: 220 16% 16%;
+    --ring: 217 91% 60%;
+    
+    --sidebar-background: 220 25% 5%;
+    --sidebar-foreground: 210 40% 85%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 40% 12%;
+    --sidebar-accent-foreground: 210 40% 95%;
+    --sidebar-border: 220 16% 14%;
+    --sidebar-ring: 217 91% 60%;
+    --sidebar-muted: 215 15% 45%;
   }
 }
 
