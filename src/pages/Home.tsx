@@ -82,11 +82,15 @@ export default function Home() {
 
   return (
     <PublicLayout>
-      {/* Hero Section - Dark */}
-      <section className="bg-hero py-20 sm:py-28 lg:py-32">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* Hero Section - Dark with gradient */}
+      <section className="bg-hero py-20 sm:py-28 lg:py-32 relative overflow-hidden">
+        {/* Subtle gradient orbs */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-accent-bright/5 rounded-full blur-3xl" />
+        
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-hero-muted/30 text-hero-muted text-sm font-medium mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium mb-6">
               Vehicle Import & Logistics
             </div>
             
@@ -101,7 +105,7 @@ export default function Home() {
 
             {/* CTAs */}
             <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground text-base px-8">
+              <Button asChild size="lg" className="bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground text-base px-8 shadow-glow-accent">
                 <Link to="/quote">
                   Request a Quote
                   <ArrowRight className="h-4 w-4 ml-2" />
@@ -133,7 +137,7 @@ export default function Home() {
           <div className="grid gap-8 md:grid-cols-4">
             {processSteps.map((step, idx) => (
               <div key={idx} className="text-center">
-                <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-primary text-primary-foreground text-xl font-bold mb-4">
+                <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-primary/10 border border-primary/20 text-primary text-xl font-bold mb-4">
                   {step.step}
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-2">
@@ -158,7 +162,7 @@ export default function Home() {
       </section>
 
       {/* Live Auction Preview */}
-      <section className="py-16 sm:py-24 bg-muted/30">
+      <section className="py-16 sm:py-24 bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
             <div>
@@ -181,7 +185,7 @@ export default function Home() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {previewVehicles.map((vehicle) => (
                 <Link key={vehicle.id} to={`/auctions/${vehicle.id}`}>
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 group cursor-pointer">
+                  <Card className="overflow-hidden group cursor-pointer">
                     <div className="aspect-[16/10] bg-muted relative overflow-hidden">
                       {vehicle.vehicle_images && vehicle.vehicle_images.length > 0 ? (
                         <img
@@ -196,7 +200,7 @@ export default function Home() {
                         </div>
                       )}
                       <div className="absolute top-3 left-3">
-                        <Badge variant="outline" className="bg-card/90 border-border">
+                        <Badge variant="outline" className="bg-card/90 border-border/50 backdrop-blur-sm">
                           {vehicle.auction_source.toUpperCase()}
                         </Badge>
                       </div>
@@ -229,7 +233,7 @@ export default function Home() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-card rounded-lg border border-border">
+            <div className="text-center py-12 glass-card rounded-xl">
               <Gavel className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground">No Active Listings</h3>
               <p className="text-muted-foreground mt-1">Check back soon for new auction vehicles.</p>
@@ -268,7 +272,7 @@ export default function Home() {
                 ))}
               </ul>
               <div className="mt-8">
-                <Button asChild>
+                <Button variant="glow" asChild>
                   <Link to="/track">
                     <Search className="h-4 w-4 mr-2" />
                     Track a Vehicle
@@ -278,14 +282,14 @@ export default function Home() {
             </div>
 
             {/* Tracking Preview */}
-            <Card className="border border-border">
+            <Card className="glass-card">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <p className="text-sm text-muted-foreground">Sample VIN</p>
-                    <p className="font-mono font-semibold text-foreground">1HGCM82633A******</p>
+                    <p className="text-label">Sample VIN</p>
+                    <p className="text-mono font-semibold text-foreground mt-1">1HGCM82633A******</p>
                   </div>
-                  <Badge className="bg-in-progress text-in-progress-foreground">In Transit</Badge>
+                  <Badge variant="in-progress">In Transit</Badge>
                 </div>
                 
                 {/* Progress Bar */}
@@ -295,7 +299,7 @@ export default function Home() {
                     <span>50%</span>
                   </div>
                   <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div className="h-full bg-primary rounded-full" style={{ width: "50%" }} />
+                    <div className="h-full bg-primary rounded-full shadow-glow" style={{ width: "50%" }} />
                   </div>
                 </div>
 
@@ -323,7 +327,7 @@ export default function Home() {
       </section>
 
       {/* Services Overview */}
-      <section className="py-16 sm:py-24 bg-muted/30">
+      <section className="py-16 sm:py-24 bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
@@ -336,9 +340,11 @@ export default function Home() {
 
           <div className="grid gap-8 md:grid-cols-3">
             {services.map((service, idx) => (
-              <Card key={idx} className="border bg-card">
+              <Card key={idx} className="glass-card border-border/30">
                 <CardContent className="p-6">
-                  <service.icon className="h-8 w-8 text-primary mb-4" />
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                    <service.icon className="h-6 w-6 text-primary" />
+                  </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">
                     {service.title}
                   </h3>
@@ -371,30 +377,33 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="bg-hero rounded-2xl p-8 sm:p-12 lg:p-16 text-center">
-            <h2 className="text-2xl font-bold text-hero-foreground sm:text-3xl lg:text-4xl">
-              Ready to Import Your Vehicle?
-            </h2>
-            <p className="mt-4 text-hero-muted max-w-xl mx-auto text-lg">
-              Get started with a quote or browse current auction listings.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground">
-                <Link to="/quote">
-                  Request a Quote
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              </Button>
-              <Button variant="outline" asChild size="lg" className="border-hero-muted/30 text-hero-foreground hover:bg-hero-foreground/10">
-                <Link to="/auctions">Browse Auctions</Link>
-              </Button>
+          <div className="bg-hero rounded-2xl p-8 sm:p-12 lg:p-16 text-center relative overflow-hidden">
+            <div className="absolute top-0 left-1/3 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
+            <div className="relative z-10">
+              <h2 className="text-2xl font-bold text-hero-foreground sm:text-3xl lg:text-4xl">
+                Ready to Import Your Vehicle?
+              </h2>
+              <p className="mt-4 text-hero-muted max-w-xl mx-auto text-lg">
+                Get started with a quote or browse current auction listings.
+              </p>
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+                <Button asChild size="lg" className="bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground shadow-glow-accent">
+                  <Link to="/quote">
+                    Request a Quote
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild size="lg" className="border-hero-muted/30 text-hero-foreground hover:bg-hero-foreground/10">
+                  <Link to="/auctions">Browse Auctions</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Disclaimer */}
-      <section className="py-8 border-t border-border bg-muted/20">
+      <section className="py-8 border-t border-border/50 bg-muted/10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-xs text-muted-foreground text-center max-w-3xl mx-auto">
             GESOD RIDES is a logistics facilitation company. We coordinate services between 

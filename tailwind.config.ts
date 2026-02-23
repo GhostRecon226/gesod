@@ -20,6 +20,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        display: ['"Inter"', '"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"Inter"', '"SF Mono"', '"Fira Code"', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -109,9 +111,13 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        'card': '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
-        'card-hover': '0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
-        'dropdown': '0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05)',
+        'card': '0 2px 8px -2px hsl(220 20% 0% / 0.2)',
+        'card-hover': '0 8px 24px -4px hsl(220 20% 0% / 0.3), 0 0 0 1px hsl(217 91% 60% / 0.1)',
+        'dropdown': '0 10px 30px -5px hsl(220 20% 0% / 0.35), 0 0 0 1px hsl(220 16% 16% / 0.5)',
+        'glow': '0 0 20px hsl(217 91% 60% / 0.15)',
+        'glow-lg': '0 0 40px hsl(217 91% 60% / 0.2), 0 0 80px hsl(217 91% 60% / 0.05)',
+        'glow-accent': '0 0 20px hsl(25 95% 55% / 0.2)',
+        'inner-glow': 'inset 0 1px 0 0 hsl(0 0% 100% / 0.03)',
       },
       keyframes: {
         "accordion-down": {
@@ -134,6 +140,18 @@ export default {
           from: { transform: "translateY(10px)", opacity: "0" },
           to: { transform: "translateY(0)", opacity: "1" },
         },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 8px hsl(217 91% 60% / 0.2)" },
+          "50%": { boxShadow: "0 0 20px hsl(217 91% 60% / 0.4)" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -141,6 +159,9 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "slide-in-left": "slide-in-left 0.3s ease-out",
         "slide-in-up": "slide-in-up 0.3s ease-out",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "shimmer": "shimmer 2s ease-in-out infinite",
+        "scale-in": "scale-in 0.2s ease-out",
       },
     },
   },

@@ -12,8 +12,8 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-hover opacity-90" />
+      <div className="hidden lg:flex lg:w-1/2 bg-hero relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-hero via-hero to-primary/20 opacity-90" />
         <div className="relative z-10 flex flex-col justify-between p-12">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
@@ -22,10 +22,10 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
 
           {/* Tagline */}
           <div className="max-w-md">
-            <h1 className="text-4xl font-bold text-primary-foreground leading-tight">
+            <h1 className="text-4xl font-bold text-hero-foreground leading-tight">
               Your Trusted Partner in Vehicle Logistics
             </h1>
-            <p className="mt-4 text-lg text-primary-foreground/80">
+            <p className="mt-4 text-lg text-hero-muted">
               Streamline your vehicle import operations with our comprehensive 
               logistics platform. Track shipments, manage documents, and 
               coordinate deliveries all in one place.
@@ -35,23 +35,23 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-8">
             <div>
-              <p className="text-3xl font-bold text-primary-foreground">10K+</p>
-              <p className="text-sm text-primary-foreground/70">Vehicles Shipped</p>
+              <p className="text-display text-3xl text-hero-foreground">10K+</p>
+              <p className="text-sm text-hero-muted">Vehicles Shipped</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-primary-foreground">98%</p>
-              <p className="text-sm text-primary-foreground/70">On-Time Delivery</p>
+              <p className="text-display text-3xl text-hero-foreground">98%</p>
+              <p className="text-sm text-hero-muted">On-Time Delivery</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-primary-foreground">50+</p>
-              <p className="text-sm text-primary-foreground/70">Countries Served</p>
+              <p className="text-display text-3xl text-hero-foreground">50+</p>
+              <p className="text-sm text-hero-muted">Countries Served</p>
             </div>
           </div>
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-primary-foreground/5" />
-        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary-foreground/5" />
+        <div className="absolute -bottom-20 -right-20 h-80 w-80 rounded-full bg-primary/5" />
+        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-primary/5" />
       </div>
 
       {/* Right Panel - Auth Form */}
@@ -73,7 +73,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
           </div>
 
           {/* Auth Card */}
-          <div className="bg-card rounded-xl border border-border p-8 shadow-sm">
+          <div className="glass-card rounded-xl p-8">
             {children}
           </div>
 
