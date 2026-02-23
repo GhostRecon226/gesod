@@ -18,6 +18,11 @@ import {
 import heroCar1 from "@/assets/hero-car-1.png";
 import heroCar2 from "@/assets/hero-car-2.png";
 import heroCar3 from "@/assets/hero-car-3.png";
+import illustFind from "@/assets/illust-find-vehicle.png";
+import illustBid from "@/assets/illust-bid.png";
+import illustShipping from "@/assets/illust-shipping.png";
+import illustTracking from "@/assets/illust-tracking.png";
+import howItWorksCenter from "@/assets/how-it-works-center.png";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -47,24 +52,24 @@ const services = [
 
 const processSteps = [
   {
-    step: "01",
     title: "Find Your Vehicle",
-    description: "Browse auction listings from Copart, IAAI, and other U.S. platforms.",
+    description: "Browse auction listings from Copart, IAAI, and other U.S. platforms to find the right vehicle.",
+    image: illustFind,
   },
   {
-    step: "02",
     title: "We Bid For You",
     description: "Set your maximum bid and we handle the auction process on your behalf.",
+    image: illustBid,
   },
   {
-    step: "03",
     title: "Secure Shipping",
-    description: "We coordinate inland transport and ocean freight to your destination.",
+    description: "We coordinate inland transport and ocean freight to your destination port.",
+    image: illustShipping,
   },
   {
-    step: "04",
     title: "Track & Receive",
     description: "Monitor your vehicle's journey with VIN tracking until delivery.",
+    image: illustTracking,
   },
 ];
 
@@ -207,7 +212,7 @@ export default function Home() {
         <HeroSection />
       </section>
 
-      {/* How It Works - Process Steps */}
+      {/* How It Works - Reference Layout */}
       <section className="py-16 sm:py-24 bg-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
@@ -215,24 +220,60 @@ export default function Home() {
               How It Works
             </h2>
             <p className="mt-4 text-muted-foreground max-w-2xl mx-auto text-lg">
-              A simple, structured process from vehicle selection to delivery.
+              A simple, structured process from vehicle selection to delivery — distinguishing us from the rest.
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-4">
-            {processSteps.map((step, idx) => (
-              <div key={idx} className="text-center">
-                <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-primary/10 border border-primary/20 text-primary text-xl font-bold mb-4">
-                  {step.step}
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {step.description}
-                </p>
+          {/* Cards + Center Image Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            {/* Left column - 2 cards */}
+            <div className="space-y-6">
+              {processSteps.slice(0, 2).map((step, idx) => (
+                <Card key={idx} className="border bg-card">
+                  <CardContent className="p-5">
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="h-16 w-16 object-contain rounded-lg mb-3"
+                    />
+                    <h3 className="font-semibold text-foreground">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                      {step.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Center image */}
+            <div className="hidden md:flex justify-center">
+              <div className="rounded-2xl overflow-hidden max-w-[280px]">
+                <img
+                  src={howItWorksCenter}
+                  alt="GESOD RIDES logistics coordinator"
+                  className="w-full h-auto object-cover rounded-2xl"
+                />
               </div>
-            ))}
+            </div>
+
+            {/* Right column - 2 cards */}
+            <div className="space-y-6">
+              {processSteps.slice(2, 4).map((step, idx) => (
+                <Card key={idx} className="border bg-card">
+                  <CardContent className="p-5">
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="h-16 w-16 object-contain rounded-lg mb-3"
+                    />
+                    <h3 className="font-semibold text-foreground">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                      {step.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
 
           <div className="mt-10 text-center">
