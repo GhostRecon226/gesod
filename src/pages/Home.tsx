@@ -53,22 +53,22 @@ const services = [
 const processSteps = [
   {
     title: "Find Your Vehicle",
-    description: "Browse thousands of high-quality vehicles from top U.S. auction platforms including Copart and IAAI.",
+    description: "Browse auction listings from Copart, IAAI, and other U.S. platforms to find the right vehicle.",
     image: illustFind,
   },
   {
     title: "We Bid For You",
-    description: "Provide your maximum bid and our expert team will represent you at the auction to secure the best deal.",
+    description: "Set your maximum bid and we handle the auction process on your behalf.",
     image: illustBid,
   },
   {
     title: "Secure Shipping",
-    description: "We handle the complete logistics chain, coordinating both inland transport and ocean freight to your port.",
+    description: "We coordinate inland transport and ocean freight to your destination port.",
     image: illustShipping,
   },
   {
     title: "Track & Receive",
-    description: "Monitor your vehicle's progress in real-time with VIN tracking until it safely reaches its destination.",
+    description: "Monitor your vehicle's journey with VIN tracking until delivery.",
     image: illustTracking,
   },
 ];
@@ -213,9 +213,8 @@ export default function Home() {
       </section>
 
       {/* How It Works - Reference Layout */}
-      <section className="py-20 sm:py-28 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #000 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+      <section className="py-16 sm:py-24 bg-background">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
               How It Works
@@ -230,17 +229,15 @@ export default function Home() {
             {/* Left column - 2 cards */}
             <div className="space-y-6">
               {processSteps.slice(0, 2).map((step, idx) => (
-                <Card key={idx} className="dashboard-card border-none bg-card hover:shadow-card-hover transition-default">
-                  <CardContent className="p-6">
-                    <div className="h-20 w-20 mb-6 flex items-center justify-center rounded-2xl bg-primary/5 p-3 border border-primary/10 shadow-inner-glow transition-smooth group-hover:scale-110">
-                      <img
-                        src={step.image}
-                        alt={step.title}
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                    <h3 className="font-bold text-lg text-foreground mb-2">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                <Card key={idx} className="border bg-card">
+                  <CardContent className="p-5">
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="h-16 w-16 object-contain rounded-lg mb-3"
+                    />
+                    <h3 className="font-semibold text-foreground">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                       {step.description}
                     </p>
                   </CardContent>
@@ -249,33 +246,28 @@ export default function Home() {
             </div>
 
             {/* Center image */}
-            <div className="hidden md:flex justify-center items-center px-4">
-              <div className="relative group">
-                <div className="absolute -inset-4 bg-primary/10 rounded-full blur-3xl opacity-30 group-hover:opacity-50 transition-opacity" />
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-card max-w-[320px] aspect-[4/5]">
-                  <img
-                    src={howItWorksCenter}
-                    alt="GESOD RIDES logistics coordinator"
-                    className="w-full h-full object-cover transform hover:scale-105 transition-smooth"
-                  />
-                </div>
+            <div className="hidden md:flex justify-center">
+              <div className="rounded-2xl overflow-hidden max-w-[280px]">
+                <img
+                  src={howItWorksCenter}
+                  alt="GESOD RIDES logistics coordinator"
+                  className="w-full h-auto object-cover rounded-2xl"
+                />
               </div>
             </div>
 
             {/* Right column - 2 cards */}
             <div className="space-y-6">
               {processSteps.slice(2, 4).map((step, idx) => (
-                <Card key={idx} className="dashboard-card border-none bg-card hover:shadow-card-hover transition-default">
-                  <CardContent className="p-6">
-                    <div className="h-20 w-20 mb-6 flex items-center justify-center rounded-2xl bg-primary/5 p-3 border border-primary/10 shadow-inner-glow transition-smooth group-hover:scale-110">
-                      <img
-                        src={step.image}
-                        alt={step.title}
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                    <h3 className="font-bold text-lg text-foreground mb-2">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                <Card key={idx} className="border bg-card">
+                  <CardContent className="p-5">
+                    <img
+                      src={step.image}
+                      alt={step.title}
+                      className="h-16 w-16 object-contain rounded-lg mb-3"
+                    />
+                    <h3 className="font-semibold text-foreground">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                       {step.description}
                     </p>
                   </CardContent>
