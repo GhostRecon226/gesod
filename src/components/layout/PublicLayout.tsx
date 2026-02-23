@@ -38,8 +38,8 @@ export function PublicLayout({ children }: PublicLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Top Navigation */}
-      <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+      {/* Top Navigation - Glass Effect */}
+      <header className="sticky top-0 z-50 border-b border-border/50 glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                   key={item.href}
                   to={item.href}
                   className={cn(
-                    "text-sm font-medium transition-colors",
+                    "text-sm font-medium transition-colors duration-150",
                     isActive
                       ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
@@ -81,7 +81,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="icon" className="rounded-full">
+                        <Button variant="outline" size="icon" className="rounded-full border-primary/30">
                           <span className="text-xs font-medium">{userInitials}</span>
                         </Button>
                       </DropdownMenuTrigger>
@@ -127,7 +127,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                     <Button variant="ghost" asChild>
                       <Link to="/auth">Sign In</Link>
                     </Button>
-                    <Button asChild>
+                    <Button variant="glow" asChild>
                       <Link to="/auth?mode=signup">Get Started</Link>
                     </Button>
                   </>
@@ -153,7 +153,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="border-t border-border bg-card md:hidden">
+          <div className="border-t border-border/50 glass md:hidden">
             <div className="space-y-1 px-4 py-4">
               {publicHeaderNavItems.map((item) => {
                 const isActive = location.pathname === item.href;
@@ -174,7 +174,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                   </Link>
                 );
               })}
-              <div className="mt-4 flex flex-col gap-2 pt-4 border-t border-border">
+              <div className="mt-4 flex flex-col gap-2 pt-4 border-t border-border/50">
                 {!loading && (
                   <>
                     {user ? (
@@ -210,7 +210,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                         <Button variant="outline" asChild className="w-full">
                           <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
                         </Button>
-                        <Button asChild className="w-full">
+                        <Button variant="glow" asChild className="w-full">
                           <Link to="/auth?mode=signup" onClick={() => setMobileMenuOpen(false)}>Get Started</Link>
                         </Button>
                       </>
@@ -227,7 +227,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-card">
+      <footer className="border-t border-border/50 bg-card/50">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-4">
             {/* Company Info */}
@@ -255,7 +255,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                   <li key={item.href}>
                     <Link
                       to={item.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors duration-150"
                     >
                       {item.title}
                     </Link>
@@ -288,7 +288,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </div>
 
           {/* Trust Elements & Legal */}
-          <div className="mt-8 pt-8 border-t border-border">
+          <div className="mt-8 pt-8 border-t border-border/50">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 text-xs text-muted-foreground mb-6">
               <div>
                 <p className="font-medium text-foreground mb-1">Terminology</p>
@@ -318,18 +318,18 @@ export function PublicLayout({ children }: PublicLayoutProps) {
           </div>
 
           {/* Bottom Bar */}
-          <div className="pt-6 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="pt-6 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
               © {new Date().getFullYear()} GESOD RIDES. All rights reserved.
             </p>
             <div className="flex flex-wrap gap-4 md:gap-6">
-              <Link to="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-150">
                 Terms & Conditions
               </Link>
-              <Link to="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-150">
                 Privacy Policy
               </Link>
-              <Link to="/consent" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <Link to="/consent" className="text-sm text-muted-foreground hover:text-primary transition-colors duration-150">
                 Consent & Data Use
               </Link>
             </div>

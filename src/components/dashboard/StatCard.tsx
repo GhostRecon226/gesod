@@ -18,11 +18,11 @@ export function StatCard({
   icon: Icon,
 }: StatCardProps) {
   return (
-    <div className="rounded-lg border border-border bg-card p-6 shadow-card transition-shadow hover:shadow-card-hover">
+    <div className="glass-card rounded-xl p-6 transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
+          <p className="text-label">{title}</p>
+          <p className="mt-2 text-display text-3xl">{value}</p>
           {change && (
             <p
               className={cn(
@@ -36,8 +36,8 @@ export function StatCard({
             </p>
           )}
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent">
-          <Icon className="h-6 w-6 text-accent-foreground" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+          <Icon className="h-6 w-6 text-primary" />
         </div>
       </div>
     </div>
