@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { useCallback, useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import {
   Gavel,
   Ship,
@@ -13,6 +15,9 @@ import {
   ImageOff,
   Car,
 } from "lucide-react";
+import heroCar1 from "@/assets/hero-car-1.png";
+import heroCar2 from "@/assets/hero-car-2.png";
+import heroCar3 from "@/assets/hero-car-3.png";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -72,6 +77,124 @@ const trackingSteps = [
   { label: "Delivered", completed: false },
 ];
 
+const heroImages = [heroCar1, heroCar2, heroCar3];
+
+function HeroSection() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+
+    const interval = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 4000);
+
+    return () => {
+      clearInterval(interval);
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      <div className="bg-hero rounded-2xl overflow-hidden relative">
+        {/* Gradient orbs */}
+        <div className="absolute top-0 left-0 w-80 h-80 bg-primary/8 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 right-1/3 w-60 h-60 bg-accent-bright/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="grid lg:grid-cols-[45%_55%] relative z-10">
+          {/* Left Column - Text Content */}
+          <div className="flex flex-col justify-center p-8 sm:p-10 lg:p-12 xl:p-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-medium mb-6 w-fit">
+              Vehicle Import & Logistics
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-bold tracking-tight text-hero-foreground leading-[1.1]">
+              U.S. Auction Vehicles, Shipped Worldwide
+            </h1>
+
+            <p className="mt-5 text-hero-muted leading-relaxed text-base lg:text-lg max-w-lg">
+              GESOD RIDES coordinates vehicle acquisition from U.S. auctions and handles 
+              the complete logistics chain — bidding support, inland transport, and ocean freight.
+            </p>
+
+            {/* CTAs */}
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <Button asChild size="lg" className="bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground shadow-glow-accent">
+                <Link to="/quote">
+                  Request a Quote
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+              <Button variant="outline" asChild size="lg" className="border-hero-muted/30 text-hero-foreground hover:bg-hero-foreground/10">
+                <Link to="/track">
+                  <Search className="h-4 w-4 mr-2" />
+                  Track a Vehicle
+                </Link>
+              </Button>
+            </div>
+
+            {/* Stats Row */}
+            <div className="mt-10 pt-8 border-t border-hero-muted/10 grid grid-cols-3 gap-4">
+              {[
+                { value: "500+", label: "Vehicles Imported" },
+                { value: "30+", label: "Countries Served" },
+                { value: "98%", label: "Satisfaction Rate" },
+              ].map((stat, idx) => (
+                <div key={idx}>
+                  <p className="text-2xl lg:text-3xl font-bold text-hero-foreground">{stat.value}</p>
+                  <p className="text-xs text-hero-muted mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column - Car Carousel */}
+          <div className="relative min-h-[300px] lg:min-h-[520px]">
+            <div ref={emblaRef} className="overflow-hidden h-full">
+              <div className="flex h-full">
+                {heroImages.map((src, idx) => (
+                  <div key={idx} className="flex-[0_0_100%] min-w-0 h-full">
+                    <img
+                      src={src}
+                      alt={`Premium vehicle ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Dot indicators */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {heroImages.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => emblaApi?.scrollTo(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    idx === selectedIndex
+                      ? "w-6 bg-primary"
+                      : "w-2 bg-hero-foreground/30 hover:bg-hero-foreground/50"
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const { data: vehicles } = useQuery({
     queryKey: ["auction-vehicles", "active", "preview"],
@@ -82,44 +205,9 @@ export default function Home() {
 
   return (
     <PublicLayout>
-      {/* Hero Section - Dark with gradient */}
-      <section className="bg-hero py-20 sm:py-28 lg:py-32 relative overflow-hidden">
-        {/* Subtle gradient orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-accent-bright/5 rounded-full blur-3xl" />
-        
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-sm font-medium mb-6">
-              Vehicle Import & Logistics
-            </div>
-            
-            <h1 className="text-4xl font-bold tracking-tight text-hero-foreground sm:text-5xl lg:text-6xl">
-              U.S. Auction Vehicles, Shipped Worldwide
-            </h1>
-            
-            <p className="mt-6 text-lg text-hero-muted leading-relaxed max-w-2xl mx-auto">
-              GESOD RIDES coordinates vehicle acquisition from U.S. auctions and handles 
-              the complete logistics chain — bidding support, inland transport, and ocean freight.
-            </p>
-
-            {/* CTAs */}
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-accent-bright hover:bg-accent-bright/90 text-accent-bright-foreground text-base px-8 shadow-glow-accent">
-                <Link to="/quote">
-                  Request a Quote
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Link>
-              </Button>
-              <Button variant="outline" asChild size="lg" className="border-hero-muted/30 text-hero-foreground hover:bg-hero-foreground/10 text-base px-8">
-                <Link to="/track">
-                  <Search className="h-4 w-4 mr-2" />
-                  Track a Vehicle
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
+      {/* Hero Section - Split Layout */}
+      <section className="px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <HeroSection />
       </section>
 
       {/* How It Works - Process Steps */}
