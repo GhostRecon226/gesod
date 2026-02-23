@@ -1,0 +1,1 @@
+UPDATE app_settings SET value = 'false'::jsonb WHERE key = 'dark_mode';
